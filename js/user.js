@@ -5,11 +5,7 @@ var angular = require('angular');
 /**
  * @ngInject
  */
-var User = function($scope, base64) {
-
-  this.isWriter = function() {
-    return $scope.user.name;
-  };
+var User = function(base64) {
 
   this.getUser = function() {
     var user = sessionStorage.getItem(this.getStorageKey());

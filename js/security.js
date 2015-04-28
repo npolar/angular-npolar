@@ -1,11 +1,4 @@
-/**
- *
- *
- *
- *
- */
 'use strict';
-require('angular-utf8-base64');
 
 /**
  * @ngInject

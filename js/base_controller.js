@@ -1,0 +1,130 @@
+/**
+* NpolarApiBaseController is meant to be the parent of a safe controller,
+* ie. a controller dealing with only with presentation. See also NpolarApiEditController.
+*
+*
+* Usage:
+*
+* angular.module("myApp").controller("MyApiController", function($scope, $routeParams, $controller, MyModel) {
+*
+* // 1. MyApiController -> NpolarApiBaseController
+* $controller("NpolarApiBaseController", {$scope: $scope});
+*
+* // 2. Set resource for parent document operations
+* $scope.resource = MyModel;
+*
+* // 3. Set document for resource (and view)
+* MyModel.fetch($routeParams, function(document) {
+*   $scope.document = document;
+* }, function() error {
+*   $scope.error = error;
+* });
+*
+*/
+
+'use strict';
+var _ = require('lodash');
+
+/**
+ * @ngInject
+ */
+var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
+  npolarApiConfig, npolarApiSecurity, npolarApiUser, NpolarApiResource) {
+
+    $scope.init = function() {
+      $scope.base = npolarApiConfig.base;
+      $scope.environment = npolarApiConfig.environment;
+      $scope.lang = npolarApiConfig.lang;
+      $scope.user = npolarApiSecurity.getUser();
+    };
+
+    // back() click handler
+    $scope.back = function() {
+      $window.history.back();
+    };
+
+    $scope.login = function() {
+      console.log("NpolarApiBaseController.login()", $scope.user.username);
+      if (!$scope.user.username || !$scope.user.password) {
+        return false;
+      }
+      var url = npolarApiConfig.base+"/user/authenticate/";
+
+      var req = { method: 'GET', url: url,
+      headers: { "Authorization": "Basic "+npolarApiSecurity.basicToken($scope.user) } //, data: { test: 'test' }
+    };
+    $http(req).success(function(data) {
+
+      $scope.user.jwt = data.token;
+      $scope.user.name = $scope.user.username;
+
+      //var d = npolarApiSecurity.decodeJwt(data.token);
+      // FIXME extract rights
+      npolarApiUser.setUser($scope.user);
+
+    }).error(function(error){
+      console.error(error);
+      $scope.logout();
+    });
+
+  };
+
+  $scope.logout = function() {
+    npolarApiSecurity.removeUser();
+    $scope.user = null;
+  };
+
+  $scope.locationBase = function() {
+    console.log($routeParams.id);
+    if ($routeParams.id === "__new") {
+      $location.path("/");
+    } else {
+      $location.path($routeParams.id);
+    }
+  };
+
+  // Show action, ie. fetch document and inject into scope
+  $scope.show = function() {
+    $scope.resource.fetch($routeParams, function(document) {
+      $scope.document = document;
+
+    }, function(error) {
+      $scope.error = NpolarApiResource.error(error);
+    });
+  };
+
+  $scope.search = function(query) {
+    $scope.resource.feed(query, function(response) {
+      $scope.feed = response.feed;
+    }, function(error) {
+      $scope.error = NpolarApiResource.error(error);
+    });
+  };
+
+  $scope.getLang = function() {
+    return $scope.lang;
+  };
+
+  $scope.setLang = function(lang) {
+    $scope.lang = lang;
+    $scope.title = $scope.getTitle(lang);
+  };
+
+  $scope.getTitle = function(lang) {
+    return _.where($scope.document.titles,
+      { lang: lang }
+    )[0].text || $scope.document.titles[0].text;
+  };
+
+  $scope.isSuccess = function(status) {
+    return (status >= 200 && status <= 299);
+  };
+
+  $scope.isError = function(status) {
+    return (status <= 99 || status >= 400);
+  };
+
+  $scope.init();
+};
+
+module.exports = BaseController;

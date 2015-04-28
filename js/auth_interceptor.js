@@ -3,7 +3,7 @@
 *
 * // Usage:npolarApiError
 * myApp.config(function($httpProvider, npolarApiAuthInterceptorProvider) {
-*  $httpProvider.interceptors.push("npolarApiAuthInterceptor");
+*  $httpProvider.interceptors.push('npolarApiAuthInterceptor');
 * });
 *
 */
@@ -22,10 +22,10 @@ var AuthInterceptor = function ($rootScope, $q, $window, npolarApiConfig, npolar
         if (!config.headers.Authorization) {
           config.headers.Authorization = npolarApiSecurity.authorization();
         }
-        console.log(config.method +" "+ config.url, config.params||{}, "[npolarApi]");
-        if ("PUT" === config.method) {
+        console.log(config.method +' '+ config.url, config.params||{}, '[npolarApi]');
+        if ('PUT' === config.method) {
           $rootScope.saving = true;
-        } else if ("DELETE" === config.method) {
+        } else if ('DELETE' === config.method) {
           $rootScope.deleting = true;
         }
       }
@@ -34,14 +34,14 @@ var AuthInterceptor = function ($rootScope, $q, $window, npolarApiConfig, npolar
     response: function (response) {
 
       if (response.status >= 300 || response.status < 100) {
-        console.error(response.status +" "+ response.statusText + " <- "+ response.config.method +" "+ response.config.url + " [npolarApi]");
+        console.error(response.status +' '+ response.statusText + ' <- '+ response.config.method +' '+ response.config.url + ' [npolarApi]');
       }
-      if (response.config.method !== "GET") {
-        console.log(response.status +" "+ response.statusText + " <- "+ response.config.method +" "+ response.config.url + " [npolarApi]");
+      if (response.config.method !== 'GET') {
+        console.log(response.status +' '+ response.statusText + ' <- '+ response.config.method +' '+ response.config.url + ' [npolarApi]');
       }
-      if ("PUT" === response.config.method) {
+      if ('PUT' === response.config.method) {
         $rootScope.saving = false;
-      } else if ("DELETE" === response.config.method) {
+      } else if ('DELETE' === response.config.method) {
         $rootScope.deleting = false;
       }
       return response || $q.when(response);

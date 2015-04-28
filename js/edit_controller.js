@@ -1,5 +1,5 @@
 /**
- * NpolarApiEditController provides methods for manipulating documents (using ngResource)
+ * npolarApiEditController provides methods for manipulating documents (using ngResource)
  * and controller action methods like edit().
  *
  * The following ngResource-bound methods are defined
@@ -10,10 +10,10 @@
  *
  * Usage:
  *
- * angular.module("myApp").controller("MyApiController", function($scope, $routeParams, $controller, MyModel) {
+ * angular.module('myApp').controller('MyApiController', function($scope, $routeParams, $controller, MyModel) {
  *
- * // 1. MyApiController -> NpolarApiEditController
- * $controller("NpolarApiBaseController", {$scope: $scope});
+ * // 1. MyApiController -> npolarApiEditController
+ * $controller('npolarApiBaseController', {$scope: $scope});
  *
  * // 2. Set resource for parent document operations
  * $scope.resource = MyModel;
@@ -35,14 +35,14 @@ var angular = require('angular');
  * @ngInject
  */
 var EditController = function($scope, $location, $route, $routeParams, $window, $controller,
-  npolarApiConfig, npolarApiSecurity, NpolarApiResource ) {
+  npolarApiConfig, npolarApiSecurity, npolarApiResource ) {
 
 
-  // Extend NpolarApiBaseController
-  $controller("NpolarApiBaseController", {$scope: $scope});
+  // Extend npolarApiBaseController
+  $controller('npolarApiBaseController', {$scope: $scope});
 
   $scope.formula = {
-    template: npolarApiConfig.formula.template || "formula",
+    template: npolarApiConfig.formula.template || 'formula',
     language: null,
     model: {},
     onsave: function () {
@@ -53,7 +53,7 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
   // Create action, ie. save document and reload app
   $scope.create = function() {
     $scope.resource.save($scope.document, function(data) {
-      var uri = $location.path().replace(/\/__new\/edit$/, "/"+data.id+"/edit");
+      var uri = $location.path().replace(/\/__new\/edit$/, '/'+data.id+'/edit');
 
       $scope.document = data;
       $location.path(uri);
@@ -81,7 +81,7 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
       $scope.document = document;
       $scope.formula.model = document;
     }, function(error) {
-      $scope.error = NpolarApiResource.error(error);
+      $scope.error = npolarApiResource.error(error);
     });
   };
 
@@ -94,7 +94,7 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
 
   // Edit (or new) action
   $scope.edit = function() {
-    if ($routeParams.id === "__new") {
+    if ($routeParams.id === '__new') {
       $scope.newAction();
     } else {
       $scope.editAction(); // from parent
@@ -107,7 +107,7 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
     $scope.resource.update($scope.document, function(data) {
 
       $scope.document = data;
-      $scope.info = { header: "Success", message: "Saved document revision #"+data._rev.split("-")[0] +" at " + new Date().toISOString() };
+      $scope.info = { header: 'Success', message: 'Saved document revision #'+data._rev.split('-')[0] +' at ' + new Date().toISOString() };
 
     }, function(error) {
       $scope.info = null;
@@ -122,8 +122,8 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
 
   $scope.resource.remove({id: $scope.document.id }, function() {
 
-    // $scope.info = { header: "Success", message: "Deleted document revision #"+data._rev.split("-")[0] +" at " + new Date().toISOString() }
-    $location.path("/");
+    // $scope.info = { header: 'Success', message: 'Deleted document revision #'+data._rev.split('-')[0] +' at ' + new Date().toISOString() }
+    $location.path('/');
 
   }, function(error) {
     $scope.error = error;

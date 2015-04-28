@@ -1,14 +1,14 @@
 /**
-* NpolarApiBaseController is meant to be the parent of a safe controller,
-* ie. a controller dealing with only with presentation. See also NpolarApiEditController.
+* npolarApiBaseController is meant to be the parent of a safe controller,
+* ie. a controller dealing with only with presentation. See also npolarApiEditController.
 *
 *
 * Usage:
 *
-* angular.module("myApp").controller("MyApiController", function($scope, $routeParams, $controller, MyModel) {
+* angular.module('myApp').controller('MyApiController', function($scope, $routeParams, $controller, MyModel) {
 *
-* // 1. MyApiController -> NpolarApiBaseController
-* $controller("NpolarApiBaseController", {$scope: $scope});
+* // 1. MyApiController -> npolarApiBaseController
+* $controller('npolarApiBaseController', {$scope: $scope});
 *
 * // 2. Set resource for parent document operations
 * $scope.resource = MyModel;
@@ -29,7 +29,7 @@ var _ = require('lodash');
  * @ngInject
  */
 var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
-  npolarApiConfig, npolarApiSecurity, npolarApiUser, NpolarApiResource) {
+  npolarApiConfig, npolarApiSecurity, npolarApiUser, npolarApiResource) {
 
     $scope.init = function() {
       $scope.base = npolarApiConfig.base;
@@ -44,14 +44,14 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     };
 
     $scope.login = function() {
-      console.log("NpolarApiBaseController.login()", $scope.user.username);
+      console.log('npolarApiBaseController.login()', $scope.user.username);
       if (!$scope.user.username || !$scope.user.password) {
         return false;
       }
-      var url = npolarApiConfig.base+"/user/authenticate/";
+      var url = npolarApiConfig.base+'/user/authenticate/';
 
       var req = { method: 'GET', url: url,
-      headers: { "Authorization": "Basic "+npolarApiSecurity.basicToken($scope.user) } //, data: { test: 'test' }
+      headers: { 'Authorization': 'Basic '+npolarApiSecurity.basicToken($scope.user) } //, data: { test: 'test' }
     };
     $http(req).success(function(data) {
 
@@ -76,8 +76,8 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
 
   $scope.locationBase = function() {
     console.log($routeParams.id);
-    if ($routeParams.id === "__new") {
-      $location.path("/");
+    if ($routeParams.id === '__new') {
+      $location.path('/');
     } else {
       $location.path($routeParams.id);
     }
@@ -89,7 +89,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
       $scope.document = document;
 
     }, function(error) {
-      $scope.error = NpolarApiResource.error(error);
+      $scope.error = npolarApiResource.error(error);
     });
   };
 
@@ -97,7 +97,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     $scope.resource.feed(query, function(response) {
       $scope.feed = response.feed;
     }, function(error) {
-      $scope.error = NpolarApiResource.error(error);
+      $scope.error = npolarApiResource.error(error);
     });
   };
 

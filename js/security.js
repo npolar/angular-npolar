@@ -16,13 +16,13 @@ var Security = function(base64, jwtHelper, npolarApiConfig, npolarApiUser) {
 
     var user = npolarApiUser.getUser();
 
-    if ("basic" === npolarApiConfig.security.authorization) {
-      return "Basic "+ this.basicToken(user);
-    } else if ("jwt" === npolarApiConfig.security.authorization) { // or bearer?
-      return "Bearer "+ this.jsonWebToken(user);
+    if ('basic' === npolarApiConfig.security.authorization) {
+      return 'Basic '+ this.basicToken(user);
+    } else if ('jwt' === npolarApiConfig.security.authorization) { // or bearer?
+      return 'Bearer '+ this.jsonWebToken(user);
     } else {
-      console.error("npolarApiSecurity authorization not implemented: " + npolarApiConfig.security.authorization);
-      return "";
+      console.error('npolarApiSecurity authorization not implemented: ' + npolarApiConfig.security.authorization);
+      return '';
     }
   };
 

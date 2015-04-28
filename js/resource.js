@@ -13,7 +13,7 @@ var _ = require('lodash');
 var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location) {
 
   this.info = function() {
-    //return { status: status, statusText: "Npolar API error, failed accessing "+npolarApiConfig.base, data: "Please inform data@npolar.no if this problem persists" };
+    //return { status: status, statusText: 'Npolar API error, failed accessing '+npolarApiConfig.base, data: 'Please inform data@npolar.no if this problem persists' };
   };
 
 
@@ -27,22 +27,22 @@ var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location
    *  MyResource.feed(angular.extend({ limit: 10 }, $location.search()), function(response) {
    *    $scope.feed = response.feed;
    *  }, function(error) {
-   *    $scope.error = NpolarApiResource.error(error);
+   *    $scope.error = npolarApiResource.error(error);
    *  });
    */
   this.error = function(error) {
-  // response: {data: null, status: 0, headers: function, config: Object, statusText: ""}
+  // response: {data: null, status: 0, headers: function, config: Object, statusText: ''}
   if (error.status >= 400) {
     return error;
   } else {
     var status = (error.status === undefined) ? 500 : error.status ;
-    return { status: status, statusText: "Npolar API error, failed accessing "+npolarApiConfig.base, data: "Please inform data@npolar.no if this problem persists" };
+    return { status: status, statusText: 'Npolar API error, failed accessing '+npolarApiConfig.base, data: 'Please inform data@npolar.no if this problem persists' };
   }
   };
 
-  // NpolarApiResource factory
-  // @param service e.g. { path: "/dataset", "resource": "Dataset"}
-  // @return NpolarApiResource - extended ngResource
+  // npolarApiResource factory
+  // @param service e.g. { path: '/dataset', 'resource': 'Dataset'}
+  // @return npolarApiResource - extended ngResource
   // @todo service.get == null|GET|JSONP
   // @todo make extending ngResource optional
   // @todo Support user-supplied extending
@@ -52,28 +52,28 @@ var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location
     var base = this.base(service);
 
     // Default parameters
-    var params = { id:null, limit: 100, format: "json", q: "", variant: "atom" };
+    var params = { id:null, limit: 100, format: 'json', q: '', variant: 'atom' };
 
     //var fields_feed = (angular.isString(service.fields)) ? service.fields : null ;
     var fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated' ;
 
     //var params_feed = angular.extend({}, params, { fields: fields_feed });
-    var params_query = angular.extend({}, params, { variant: "array", limit: 1000, fields: fields_query });
+    var params_query = angular.extend({}, params, { variant: 'array', limit: 1000, fields: fields_query });
 
     // @todo Store information on which APIs are  used
 
     var resource = $resource(base+service.path+'/:id', {  }, {
-    feed: { method: 'GET', params: params, headers: { Accept:"application/json, application/vnd.geo+json" } },
+    feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' } },
     query: { method: 'GET', params: params_query, isArray: true },
     array: { method: 'GET', params: params_query, isArray: true },
-    fetch: { method: 'GET', params: { }, headers: { Accept:"application/json" } },
-    //delete: { method:'DELETE', params: {  }, headers: { Accept:"application/json", Authorization: npolarApiSecurity.authorization() } },
-    update: { method:'PUT', params: { id: "@id" }, headers: { Accept:"application/json" } } //
+    fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' } },
+    //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: npolarApiSecurity.authorization() } },
+    update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } } //
     });
 
     // Extend Npolar API resources (individual documents)
     angular.extend(resource.prototype, {
-    // Usage: var parameter = timeseries._link({rel: "parameter", type: "application/json"});
+    // Usage: var parameter = timeseries._link({rel: 'parameter', type: 'application/json'});
     _link: function(link) {
       return _.find(this.links, link);
     },

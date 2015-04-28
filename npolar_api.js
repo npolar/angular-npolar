@@ -7,29 +7,6 @@
 angular.module("npolarApi", ["ngResource", "base64", "angular-jwt"]);
 
 /**
- * Adapted from ...
- *
- */
-angular.module("npolarApi").directive('jsonText', function() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function(scope, element, attr, ngModel) {      
-      function into(input) {
-      console.log(JSON.parse(input));
-      return JSON.parse(input);
-      }
-      function out(data) {
-      return JSON.stringify(data);
-      }
-      ngModel.$parsers.push(into);
-      ngModel.$formatters.push(out);
-    }
-  };
-});
-
-
-/**
  * npolarApiConfig, meant to be .run and merged with overrides for the current environment
  *
  * angular.module("myApp").run(function(npolarApiConfig, $http) {
@@ -56,18 +33,6 @@ angular.module("npolarApi").value("npolarApiConfig", {
   formula: {}
 });
 
-/**
- * Generic API error handler
- */
-//angular.module("npolarApi").factory('npolarApiError', function ($rootScope, npolarApiConfig) {
-//  return function(error) {
-//    if (error.status) {
-//     $scope.error = error;
-//    } else {
-//     $scope.error = { status: 500, statusText: "Data API error", data: "Please inform data@npolar.no if this problem persists" };
-//    }
-//   }
-//});
 
 /**
  * Authorization interceptor, adds Basic or Bearer tokens to (FIXME: currently all) API requests
@@ -122,7 +87,7 @@ angular.module("npolarApi").factory('npolarApiAuthInterceptor', function ($rootS
  *
  *
  */
-angular.module("npolarApi").service('npolarApiText', function() {
+angular.module("npolarApi").service("npolarApiText", function() {
   
   // Extract the first capture (1) for all regex matches in text
   this.extract = function(text, regex, capture_capture) {
@@ -143,20 +108,7 @@ angular.module("npolarApi").service('npolarApiText', function() {
 });
 
 
-// User object example
-//{
-//  "schema": ""
-//  "id": "username",
-//  "email": "login@example.com",
-//  ("emails: [{"alternative@mail.com"}],)?
-//  "name": "First Last",
-// password: "base64(pkbf2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%)"
-// cipher: "ppkbf2"
-
-//  "groups":[ {"system": "api", "group": "sysadmin"}, {"system": "pbhims", "role": "editor"],
-//  "roles": [ {"system": "metadata": "role": "editor"}]
-//}
-// misnamed => session?
+// FIXME This service is misnamed and will probably die (it's just a thin session storage wrapper)
 angular.module("npolarApi").service('npolarApiUser', function($base64, npolarApiConfig) {
   
   
@@ -188,6 +140,12 @@ angular.module("npolarApi").service('npolarApiUser', function($base64, npolarApi
   
 });
 
+/**
+ *
+ *
+ *
+ *
+ */
 angular.module("npolarApi").service("npolarApiSecurity", function($base64, jwtHelper, npolarApiConfig, npolarApiUser) {
   
   this.authorization = function(type) {
@@ -239,26 +197,16 @@ angular.module("npolarApi").service("npolarApiSecurity", function($base64, jwtHe
   
 });
 
-
-
 /**
  * NpolarApiBaseController is meant to be the parent of a safe controller,
  * ie. a controller dealing with only with presentation. See also NpolarApiEditController.
  * 
- * The following ngResource-bound methods are defined:
- * - read()
  *
- * The followin action methods are defined:
- * - fetch()
- * 
  * Usage:
- * 1. Inject $controller into child (e.g. "MyApiController") and call it with the parent controller name as argument 
- * 2. Inject $scope.resource, a ngResource (e.g MyModel -> NpolarApiResource -> ngResource)
- * 3. Inject $scope.document, typically in a callback after ngResource.fetch()
  * 
  * angular.module("myApp").controller("MyApiController", function($scope, $routeParams, $controller, MyModel) {
  * 
- * // 1. MyApiController -> NpolarApiBaseControController.edit()ller
+ * // 1. MyApiController -> NpolarApiBaseController
  * $controller("NpolarApiBaseController", {$scope: $scope});
  * 
  * // 2. Set resource for parent document operations
@@ -280,7 +228,7 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
     $scope.environment = npolarApiConfig.environment;
     $scope.lang = npolarApiConfig.lang;
     $scope.user = npolarApiSecurity.getUser();
-  }();
+  };
   
   // back() click handler
   $scope.back = function() {
@@ -300,10 +248,9 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
     $http(req).success(function(data) {
       
         $scope.user.jwt = data.token;
-        $scope.user.name = $scope.user.username;
+        $scope.user.name = $scope.user.username; 
         
         //var d = npolarApiSecurity.decodeJwt(data.token);
-        //console.log(d);
         // FIXME extract rights
         npolarApiUser.setUser($scope.user);
 
@@ -313,7 +260,6 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
     });
     
   };
-  
   
   $scope.logout = function() {
     npolarApiSecurity.removeUser();
@@ -328,20 +274,6 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
       $location.path($routeParams.id);
     }
   }
-  
-  // Create action, ie. save document and reload app
-  $scope.create = function() {
-  $scope.resource.save($scope.document, function(data) {
-    var uri = $location.path().replace(/\/__new\/edit$/, "/"+data.id+"/edit");
-
-    $scope.document = data;
-    $location.path(uri);
-    //$route.reload();
-    
-  }, function(error) {
-    $scope.error = error;
-  });
-  };
   
   // Show action, ie. fetch document and inject into scope 
   $scope.show = function() {
@@ -360,9 +292,7 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
       $scope.error = NpolarApiResource.error(error);
     });
   };
-  
-
-  
+    
   $scope.getLang = function() {
   return $scope.lang;
   };
@@ -379,23 +309,20 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
   };
   
   $scope.isSuccess = function(status) {
-  return (status >= 200 && status <= 299);
+    return (status >= 200 && status <= 299);
   };
   
   $scope.isError = function(status) {
-  return (status <= 99 || status >= 400);
+    return (status <= 99 || status >= 400);
   };
   
-  
-  
-  //$scope.init();
-  
+  $scope.init();
   
 });
 
 /**
- * NpolarApiEditController provides methods for manipulating documents using ngResource,
- * as well as controller action methods that are injected in child document controller's scope
+ * NpolarApiEditController provides methods for manipulating documents (using ngResource)
+ * and controller action methods like edit(). 
  *
  * The following ngResource-bound methods are defined
  * - create()
@@ -404,13 +331,10 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
  * - save()
  * 
  * Usage:
- * 1. Inject $controller into child (e.g. "MyApiController") and call it with the parent controller name as argument 
- * 2. Inject $scope.resource, a ngResource (e.g MyModel -> NpolarApiResource -> ngResource)
- * 3. Inject $scope.document, typically in a callback after ngResource.fetch()
  * 
  * angular.module("myApp").controller("MyApiController", function($scope, $routeParams, $controller, MyModel) {
  * 
- * // 1. MyApiController -> NpolarApiBaseControIndicatorEditController.edit()ller
+ * // 1. MyApiController -> NpolarApiEditController
  * $controller("NpolarApiBaseController", {$scope: $scope});
  * 
  * // 2. Set resource for parent document operations
@@ -419,6 +343,7 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
  * // 3. Set document for resource (and view)
  * MyModel.fetch($routeParams, function(document) {
  *   $scope.document = document;
+ *   $scope.formula.model = document;
  * }, function() error {
  *   $scope.error = error;
  * });
@@ -427,15 +352,6 @@ angular.module("npolarApi").controller("NpolarApiBaseController", function($scop
 angular.module("npolarApi").controller("NpolarApiEditController", function($scope, $location, $route, $routeParams, $window, $controller,
   npolarApiConfig, npolarApiSecurity, NpolarApiResource ) {
   
-  
-  //// Init formula [FIXME] - move to NpolarApiEditController -> NpolarApiBaseController
-  //$scope.formula = {
-  //  template: npolarApiConfig.formula.template || "bootstrap3",
-  //  model: {},
-  //  onsave: function(model) {
-  //  $scope.save();
-  //  }
-  //};
   
   // Extend NpolarApiBaseController
   $controller("NpolarApiBaseController", {$scope: $scope});
@@ -447,6 +363,20 @@ angular.module("npolarApi").controller("NpolarApiEditController", function($scop
     onsave: function(model) {
       $scope.save();
     }
+  };
+  
+  // Create action, ie. save document and reload app
+  $scope.create = function() {
+    $scope.resource.save($scope.document, function(data) {
+      var uri = $location.path().replace(/\/__new\/edit$/, "/"+data.id+"/edit");
+  
+      $scope.document = data;
+      $location.path(uri);
+      //$route.reload();
+      
+    }, function(error) {
+      $scope.error = error;
+    });
   };
   
   
@@ -624,20 +554,27 @@ var npolarResource = angular.module("npolarApi").service("NpolarApiResource", fu
 });
 
 
+/**
+ * Adapted from [Stackoverflow?]...
+ *
+ */
+angular.module("npolarApi").directive("npolarJsonText", function() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, element, attr, ngModel) {      
+      function into(input) {
+        //console.log(JSON.parse(input));
+        return JSON.parse(input);
+      }
+      function out(data) {
+        return JSON.stringify(data);
+      }
+      ngModel.$parsers.push(into);
+      ngModel.$formatters.push(out);
+    }
+  };
+});
+
+
 }());
-
-
-
-  //$scope.links = _.map([indicator, parameter],
-  //  function(l) {
-  //  
-  //  var uri = document.createElement('a');
-  //  uri.href = l.href;
-  //  uri.type = "title/html";
-  //  //uri.title = ""; Need to grab this from service
-  //  uri.rel = l.rel;
-  //  uri.href = uri.pathname;
-  //  return uri;
-  //  }
-  //);
-  //// convert API links to UI links

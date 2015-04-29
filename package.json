@@ -2,7 +2,7 @@
   "name": "angular-npolar",
   "version": "1.0.0",
   "description": "[angular-npolar](https://github.com/npolar/angular-npolar) simplifies development of Angular web apps driven by the [Npolar API](http://api.npolar.no/).",
-  "main": "js/index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

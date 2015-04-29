@@ -10,7 +10,7 @@ var _ = require('lodash');
 /**
  * @ngInject
  */
-var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location) {
+var Resource = function(npolarApiConfig, NpolarApiSecurity, $resource, $location) {
 
   this.info = function() {
     //return { status: status, statusText: 'Npolar API error, failed accessing '+npolarApiConfig.base, data: 'Please inform data@npolar.no if this problem persists' };
@@ -27,7 +27,7 @@ var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location
    *  MyResource.feed(angular.extend({ limit: 10 }, $location.search()), function(response) {
    *    $scope.feed = response.feed;
    *  }, function(error) {
-   *    $scope.error = npolarApiResource.error(error);
+   *    $scope.error = NpolarApiResource.error(error);
    *  });
    */
   this.error = function(error) {
@@ -40,9 +40,9 @@ var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location
   }
   };
 
-  // npolarApiResource factory
+  // NpolarApiResource factory
   // @param service e.g. { path: '/dataset', 'resource': 'Dataset'}
-  // @return npolarApiResource - extended ngResource
+  // @return NpolarApiResource - extended ngResource
   // @todo service.get == null|GET|JSONP
   // @todo make extending ngResource optional
   // @todo Support user-supplied extending
@@ -67,7 +67,7 @@ var Resource = function(npolarApiConfig, npolarApiSecurity, $resource, $location
     query: { method: 'GET', params: params_query, isArray: true },
     array: { method: 'GET', params: params_query, isArray: true },
     fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' } },
-    //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: npolarApiSecurity.authorization() } },
+    //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
     update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } } //
     });
 

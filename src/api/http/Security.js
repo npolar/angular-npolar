@@ -3,18 +3,18 @@
 /**
  * @ngInject
  */
-var Security = function(base64, jwtHelper, npolarApiConfig, npolarApiUser) {
+var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
 
   this.authorization = function () {
 
-    var user = npolarApiUser.getUser();
+    var user = NpolarApiUser.getUser();
 
     if ('basic' === npolarApiConfig.security.authorization) {
       return 'Basic '+ this.basicToken(user);
     } else if ('jwt' === npolarApiConfig.security.authorization) { // or bearer?
       return 'Bearer '+ this.jsonWebToken(user);
     } else {
-      console.error('npolarApiSecurity authorization not implemented: ' + npolarApiConfig.security.authorization);
+      console.error('NpolarApiSecurity authorization not implemented: ' + npolarApiConfig.security.authorization);
       return '';
     }
   };
@@ -37,16 +37,16 @@ var Security = function(base64, jwtHelper, npolarApiConfig, npolarApiUser) {
   };
 
   this.getUser = function() {
-    return npolarApiUser.getUser();
+    return NpolarApiUser.getUser();
   };
 
   this.setUser = function(user) {
     // if valid... @todo
-    return npolarApiUser.setUser(user);
+    return NpolarApiUser.setUser(user);
   };
 
   this.removeUser = function() {
-    return npolarApiUser.removeUser();
+    return NpolarApiUser.removeUser();
   };
 
 };

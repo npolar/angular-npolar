@@ -12,7 +12,7 @@
 /**
  * @ngInject
  */
-var AuthInterceptor = function ($rootScope, $q, $window, npolarApiConfig, npolarApiSecurity) {
+var authInterceptor = function ($rootScope, $q, $window, npolarApiConfig, NpolarApiSecurity) {
   return {
     request: function (config) {
       // Only intercept Npolar API requests
@@ -20,7 +20,7 @@ var AuthInterceptor = function ($rootScope, $q, $window, npolarApiConfig, npolar
         config.headers = config.headers || {};
         console.log(config.headers);
         if (!config.headers.Authorization) {
-          config.headers.Authorization = npolarApiSecurity.authorization();
+          config.headers.Authorization = NpolarApiSecurity.authorization();
         }
         console.log(config.method +' '+ config.url, config.params||{}, '[npolarApi]');
         if ('PUT' === config.method) {
@@ -49,4 +49,4 @@ var AuthInterceptor = function ($rootScope, $q, $window, npolarApiConfig, npolar
   };
 };
 
-module.exports = AuthInterceptor;
+module.exports = authInterceptor;

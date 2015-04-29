@@ -26,7 +26,7 @@ var User = function(base64) {
   };
 
   this.getStorageKey = function() {
-    return 'npolarApiUser';
+    return 'NpolarApiUser';
   };
 
 };

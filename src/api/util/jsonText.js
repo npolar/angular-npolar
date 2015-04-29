@@ -6,7 +6,7 @@
 /**
  * @ngInject
  */
-var JsonText = function() {
+var jsonText = function() {
   return {
     restrict: 'A',
     require: 'ngModel',
@@ -24,4 +24,4 @@ var JsonText = function() {
   };
 };
 
-module.exports = JsonText;
+module.exports = jsonText;

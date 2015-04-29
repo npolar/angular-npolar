@@ -12,13 +12,13 @@ require('angular-jwt');
  */
 var npolarApi = angular.module('npolarApi', ['ngResource', 'utf8-base64', 'angular-jwt']);
 npolarApi.value('npolarApiConfig', require('./config'));
-npolarApi.service('npolarApiUser', require('./user'));
-npolarApi.service('npolarApiSecurity', require('./security'));
-npolarApi.service('npolarApiResource', require('./resource'));
+npolarApi.service('NpolarApiUser', require('./user'));
+npolarApi.service('NpolarApiSecurity', require('./security'));
+npolarApi.service('NpolarApiResource', require('./resource'));
 npolarApi.service('npolarApiText', require('./text'));
 npolarApi.factory('npolarApiAuthInterceptor', require('./auth_interceptor'));
-npolarApi.controller('npolarApiBaseController', require('./base_controller'));
-npolarApi.controller('npolarApiEditController', require('./edit_controller'));
+NpolarUi.controller('npolarApiBaseController', require('./base_Controller'));
+NpolarUi.controller('npolarApiEditController', require('./edit_Controller'));
 npolarApi.directive('npolarJsonText', require('./json_text'));
 
 

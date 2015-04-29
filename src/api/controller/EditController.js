@@ -1,5 +1,5 @@
 /**
- * npolarApiEditController provides methods for manipulating documents (using ngResource)
+ * NpolarUiEditController provides methods for manipulating documents (using ngResource)
  * and controller action methods like edit().
  *
  * The following ngResource-bound methods are defined
@@ -12,8 +12,8 @@
  *
  * angular.module('myApp').controller('MyApiController', function($scope, $routeParams, $controller, MyModel) {
  *
- * // 1. MyApiController -> npolarApiEditController
- * $controller('npolarApiBaseController', {$scope: $scope});
+ * // 1. MyApiController -> NpolarUiEditController
+ * $controller('NpolarUiBaseController', {$scope: $scope});
  *
  * // 2. Set resource for parent document operations
  * $scope.resource = MyModel;
@@ -34,12 +34,12 @@ var angular = require('angular');
 /**
  * @ngInject
  */
-var EditController = function($scope, $location, $route, $routeParams, $window, $controller,
-  npolarApiConfig, npolarApiSecurity, npolarApiResource ) {
+var EditController = function ($scope, $location, $route, $routeParams, $window, $controller,
+  npolarApiConfig, NpolarApiSecurity, NpolarApiResource) {
 
 
-  // Extend npolarApiBaseController
-  $controller('npolarApiBaseController', {$scope: $scope});
+  // Extend NpolarUiBaseController
+  $controller('NpolarUiBaseController', {$scope: $scope});
 
   $scope.formula = {
     template: npolarApiConfig.formula.template || 'formula',
@@ -81,7 +81,7 @@ var EditController = function($scope, $location, $route, $routeParams, $window, 
       $scope.document = document;
       $scope.formula.model = document;
     }, function(error) {
-      $scope.error = npolarApiResource.error(error);
+      $scope.error = NpolarApiResource.error(error);
     });
   };
 

@@ -2,7 +2,7 @@
 var angular = require('angular');
 
 // angular modules
-window.angular = angular;
+//window.angular = angular;
 require('angular-resource');
 require('angular-utf8-base64');
 require('angular-jwt');

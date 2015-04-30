@@ -4,7 +4,7 @@ var loginLogout = function () {
   return {
    scope: {},
    controller: 'NpolarUiEditController',
-   templateUrl: './_user.html',
+   template: require('./_user.html'),
    link: function(scope) {
       scope.user = {};
    }

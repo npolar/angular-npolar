@@ -3,7 +3,7 @@
 var nav = function () {
   return {
     //scope: { },
-    templateUrl: './_nav.html'
+    template: require('./_nav.html')
   };
 };
 

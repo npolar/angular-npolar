@@ -3,7 +3,7 @@
 var nav = function () {
   return {
     //scope: { },
-    template: require('./_nav.html')
+    template: 'angular-npolar/ui/_nav.html'
   };
 };
 

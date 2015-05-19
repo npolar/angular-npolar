@@ -19,4 +19,7 @@ npolarApi.factory('npolarApiAuthInterceptor', require('./http/authInterceptor'))
 npolarApi.service('NpolarApiText', require('./util/Text'));
 npolarApi.directive('npolarJsonText', require('./util/jsonText'));
 
+npolarApi.controller('NpolarBaseController', require('./controller/BaseController'));
+npolarApi.controller('NpolarEditController', require('./controller/EditController'));
+
 module.exports = npolarApi;

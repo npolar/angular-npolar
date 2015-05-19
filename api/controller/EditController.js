@@ -1,5 +1,5 @@
 /**
- * NpolarUiEditController provides methods for manipulating documents (using ngResource)
+ * NpolarEditController provides methods for manipulating documents (using ngResource)
  * and controller action methods like edit().
  *
  * The following ngResource-bound methods are defined
@@ -12,8 +12,8 @@
  *
  * angular.module('myApp').controller('MyApiController', function($scope, $routeParams, $controller, MyModel) {
  *
- * // 1. MyApiController -> NpolarUiEditController
- * $controller('NpolarUiBaseController', {$scope: $scope});
+ * // 1. MyApiController -> NpolarEditController
+ * $controller('NpolarBaseController', {$scope: $scope});
  *
  * // 2. Set resource for parent document operations
  * $scope.resource = MyModel;
@@ -38,8 +38,8 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
   npolarApiConfig, NpolarApiSecurity, NpolarApiResource) {
 
 
-  // Extend NpolarUiBaseController
-  $controller('NpolarUiBaseController', {$scope: $scope});
+  // Extend NpolarBaseController
+  $controller('NpolarBaseController', {$scope: $scope});
 
   $scope.formula = {
     template: npolarApiConfig.formula.template || 'formula',

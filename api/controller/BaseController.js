@@ -1,14 +1,14 @@
 /**
-* NpolarUiBaseController is meant to be the parent of a safe Controller,
-* ie. a controller dealing with only with presentation. See also NpolarUiEditController.
+* NpolarBaseController is meant to be the parent of a safe Controller,
+* ie. a controller dealing with only with presentation. See also NpolarEditController.
 *
 *
 * Usage:
 *
 * angular.module('myApp').controller('MyApiController', function($scope, $routeParams, $controller, MyModel) {
 *
-* // 1. MyApiController -> NpolarUiBaseController
-* $controller('NpolarUiBaseController', {$scope: $scope});
+* // 1. MyApiController -> NpolarBaseController
+* $controller('NpolarBaseController', {$scope: $scope});
 *
 * // 2. Set resource for parent document operations
 * $scope.resource = MyModel;
@@ -44,7 +44,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     };
 
     $scope.login = function() {
-      console.log('NpolarUiBaseController.login()', $scope.user.username);
+      console.log('NpolarBaseController.login()', $scope.user.username);
       if (!$scope.user.username || !$scope.user.password) {
         return false;
       }

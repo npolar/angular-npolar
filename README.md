@@ -13,6 +13,6 @@ Injects JWT Bearer tokens in Npolar API requests.
 
 ### NpolarApiSecurity
 
-### NpolarUiBaseController
+### NpolarBaseController
 
-### NpolarUiEditController
+### NpolarEditController

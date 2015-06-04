@@ -1,6 +1,6 @@
 'use strict';
 
-var LoginController = function ($scope, $http, npolarApiConfig, NpolarApiUser, NpolarApiSecurity) {
+var LoginController = function ($scope, $http, $location, npolarApiConfig, NpolarApiUser, NpolarApiSecurity) {
 
   $scope.login = function() {
     if (!$scope.user.username || !$scope.user.password) {
@@ -27,6 +27,7 @@ var LoginController = function ($scope, $http, npolarApiConfig, NpolarApiUser, N
   $scope.logout = function() {
     NpolarApiSecurity.removeUser();
     $scope.user = {};
+    $location.path('/');
   };
 };
 

@@ -6,7 +6,7 @@
 
 <h3><span ng-if="filters.length">Filters: {{filters | json}}</span><span ng-if="filters.length"><a ng-href="/vessel">Remove filters</a></span></h3>
 
-<h2>Hello/Hallo<a ng-if="user.name" href="__new/edit"><button type="button" class="btn btn-primary">new</button></a></h2> 
+<h2><a ng-if="user.name" href="__new/edit"><button type="button" class="pure-button">New</button></a></h2>
 
 <p>Filter: <input ng-model="entryfilter"></p>
 

@@ -11,8 +11,8 @@ Extends ngResource and provides a resource factory method.
 ### npolarApiAuthInterceptor
 Injects JWT Bearer tokens in Npolar API requests.
 
-### npolarApiSecurity
+### NpolarApiSecurity
 
-### NpolarApiBaseController
+### NpolarBaseController
 
-### NpolarApiEditController
+### NpolarEditController

@@ -2,7 +2,7 @@
   "name": "angular-npolar",
   "version": "1.0.0",
   "description": "[angular-npolar](https://github.com/npolar/angular-npolar) simplifies development of Angular web apps driven by the [Npolar API](http://api.npolar.no/).",
-  "main": "npolar_api.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +10,28 @@
     "type": "git",
     "url": "git+https://github.com/npolar/angular-npolar.git"
   },
+  "dependencies": {
+    "angular": "^1.4.0-rc.1",
+    "angular-resource": "^1.4.0-rc.1",
+    "angular-utf8-base64": "*",
+    "lodash": "^2",
+    "angular-jwt": "*"
+  },
   "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/npolar/angular-npolar/issues"
   },
-  "homepage": "https://github.com/npolar/angular-npolar#readme"
+  "homepage": "https://github.com/npolar/angular-npolar#readme",
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "browserify-ngannotate": "^0.7.2",
+    "partialify": "^3.1.3"
+  },
+  "browserify": {
+    "transform": [
+      "partialify",
+      "browserify-ngannotate"
+    ]
+  }
 }

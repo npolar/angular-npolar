@@ -47,6 +47,10 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
     var jwt = this.getUser().jwt;
     return (jwt !== undefined) && ((Date.now() / 1000) > this.decodeJwt(jwt).exp );
   };
+  
+  this.isJwtValid = function() {
+    return (false === this.isJwtExpired());
+  };
 
 };
 

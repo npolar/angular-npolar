@@ -31,49 +31,22 @@ var _ = require('lodash');
 var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
   npolarApiConfig, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
 
-    $scope.init = function() {
-      $scope.base = npolarApiConfig.base;
-      $scope.environment = npolarApiConfig.environment;
-      $scope.lang = npolarApiConfig.lang;
-      $scope.user = NpolarApiSecurity.getUser();
-    };
-
-    // back() click handler
-    $scope.back = function() {
-      $window.history.back();
-    };
-
-    $scope.login = function() {
-      console.log('NpolarBaseController.login()', $scope.user.username);
-      if (!$scope.user.username || !$scope.user.password) {
-        return false;
-      }
-      var url = npolarApiConfig.base+'/user/authenticate/';
-
-      var req = { method: 'GET', url: url,
-      headers: { 'Authorization': 'Basic '+NpolarApiSecurity.basicToken($scope.user) } //, data: { test: 'test' }
-    };
-    $http(req).success(function(data) {
-
-      $scope.user.jwt = data.token;
-      $scope.user.name = $scope.user.username;
-
-      //var d = NpolarApiSecurity.decodeJwt(data.token);
-      // FIXME extract rights
-      NpolarApiUser.setUser($scope.user);
-
-    }).error(function(error){
-      console.error(error);
-      $scope.logout();
-    });
-
+  $scope.init = function() {
+    $scope.base = npolarApiConfig.base;
+    $scope.environment = npolarApiConfig.environment;
+    $scope.lang = npolarApiConfig.lang;
+    $scope.user = NpolarApiSecurity.getUser();
   };
 
-  $scope.logout = function() {
-    NpolarApiSecurity.removeUser();
-    $scope.user = null;
+  // back() click handler
+  $scope.back = function() {
+    $window.history.back();
   };
-
+ 
+  $scope.isAuthenticated = function() {
+    return (NpolarApiSecurity.isJwtValid());
+  };
+    
   $scope.locationBase = function() {
     console.log($routeParams.id);
     if ($routeParams.id === '__new') {

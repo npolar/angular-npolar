@@ -11,8 +11,8 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
 
     if ('basic' === npolarApiConfig.security.authorization) {
       return 'Basic '+ this.basicToken(user);
-    } else if ('jwt' === npolarApiConfig.security.authorization) { // or bearer?
-      return 'Bearer '+ this.jsonWebToken(user);
+    } else if ('jwt' === npolarApiConfig.security.authorization) {
+      return 'Bearer '+ user.jwt;
     } else {
       console.error('NpolarApiSecurity authorization not implemented: ' + npolarApiConfig.security.authorization);
       return '';
@@ -20,35 +20,34 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   };
 
   this.basicToken = function(user) {
-  return base64.encode(user.username + ':' + user.password);
-  };
-
-  this.jsonWebToken = function(user) {
-    return user.jwt;
+    return base64.encode(user.username + ':' + user.password);
   };
 
   this.decodeJwt = function(jwt) {
     return jwtHelper.decodeToken(jwt);
   };
 
-  this.user = function() {
-    // if user not void and valid => setUser
-    return this.getUser();
-  };
-
   this.getUser = function() {
     return NpolarApiUser.getUser();
   };
+  
+  this.user = function() {
+    return this.getUser();
+  };
 
   this.setUser = function(user) {
-    // if valid... @todo
     return NpolarApiUser.setUser(user);
   };
 
   this.removeUser = function() {
     return NpolarApiUser.removeUser();
   };
-
+  
+  this.isExpired = function() {
+    var jwt = this.getUser().jwt;
+    return (jwt !== undefined) && ((Date.now() / 1000) > this.decodeJwt(jwt).exp );
+  };
+  
 };
 
 module.exports = Security;

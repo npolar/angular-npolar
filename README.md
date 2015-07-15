@@ -16,3 +16,9 @@ Injects JWT Bearer tokens in Npolar API requests.
 ### NpolarBaseController
 
 ### NpolarEditController
+
+
+## Developing
+Lots of applications depend on angular-npolar. Use npm link to use your local copy during development.
+➜  angular-npolar git:(master) ✗ sudo npm link
+➜  npdc-application git:(master) ✗ npm link angular-npolar

@@ -70,13 +70,13 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
     $scope.resource.fetch($routeParams, function(document) {
 
-      var p, c = 0;
-      for(p in document) {
-        if (document.hasOwnProperty(p)) {
-          ++c;
-        }
-      }
-      console.log(c, document);
+      //var p, c = 0;
+      //for(p in document) {
+      //  if (document.hasOwnProperty(p)) {
+      //    ++c;
+      //  }
+      //}
+      //console.log(c, document);
 
       $scope.document = document;
       $scope.formula.model = document;

@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @ngInject
+ */
 var loginLogout = function (NpolarApiSecurity) {
   return {
    scope: {},

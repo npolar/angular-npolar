@@ -1,8 +1,8 @@
 /**
-* Authorization interceptor, adds Basic or Bearer tokens to (FIXME: currently all) API requests
+* Authorization interceptor, adds JWT Bearer token to Npolar API requests
 *
-* // Usage:npolarApiError
-* myApp.config(function($httpProvider, npolarApiAuthInterceptorProvider) {
+* Usage:
+* myApp.config(function($httpProvider) {
 *  $httpProvider.interceptors.push('npolarApiAuthInterceptor');
 * });
 *
@@ -15,10 +15,11 @@
 var authInterceptor = function ($rootScope, $q, $window, npolarApiConfig, NpolarApiSecurity) {
   return {
     request: function (config) {
+      
       // Only intercept Npolar API requests
-      if (config.url.indexOf(npolarApiConfig.base) === 0) {
+      if (config.url !== undefined && config.url.indexOf(npolarApiConfig.base) === 0 || config.url.indexOf("https:"+npolarApiConfig.base) === 0) {
         config.headers = config.headers || {};
-        console.log(config.headers);
+        
         if (!config.headers.Authorization) {
           config.headers.Authorization = NpolarApiSecurity.authorization();
         }

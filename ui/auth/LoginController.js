@@ -20,23 +20,25 @@ var LoginController = function ($scope, $http, $location, npolarApiConfig, Npola
 
       var token = NpolarApiSecurity.decodeJwt(data.token);
 
-      $scope.user = { name: $scope.user.username, username: $scope.user.username, jwt: data.token };
+      $scope.user = { name: token.name || $scope.user.username, username: $scope.user.username, jwt: data.token };
+      
+      NpolarApiUser.setUser($scope.user);
 
-      // Merge user with data from the Person API
-      $http.get(token.uri).success(function(person) {
-        $scope.user.name = person.first_name+" "+person.last_name;
-        $scope.user.email = person.email;
-        $scope.user.uri = token.uri;
-        $scope.user.uuid = person.uuid;
-        $scope.user.exp = token.exp;
-        $scope.user.systems = token.systems;
+      if (/^http/.test(token.uri)) {
+        // Merge user with data from the Person API
+        $http.get(token.uri).success(function(person) {
+          $scope.user.name = person.first_name+" "+person.last_name;
+          $scope.user.email = person.email;
+          $scope.user.uri = token.uri;
+          $scope.user.uuid = person.uuid;
+          $scope.user.exp = token.exp;
+          $scope.user.systems = token.systems;
+  
+          NpolarApiUser.setUser($scope.user);
+  
+        });
+      }
 
-        NpolarApiUser.setUser($scope.user);
-
-      }).error(function() {
-        // Person API failed, still valid user
-        NpolarApiUser.setUser($scope.user);
-      });
 
     }).error(function(error){
       console.error(error);

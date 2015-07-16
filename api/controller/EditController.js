@@ -52,8 +52,9 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
   // Create action, ie. save document and reload app
   $scope.create = function() {
+
     $scope.resource.save($scope.document, function(data) {
-      var uri = $location.path().replace(/\/__new\/edit$/, '/'+data.id+'/edit');
+      var uri = $location.path().replace(/\/__new(\/edit)?$/, '/'+data.id+'/edit');
 
       $scope.document = data;
       $location.path(uri);
@@ -70,14 +71,6 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
     $scope.resource.fetch($routeParams, function(document) {
 
-      //var p, c = 0;
-      //for(p in document) {
-      //  if (document.hasOwnProperty(p)) {
-      //    ++c;
-      //  }
-      //}
-      //console.log(c, document);
-
       $scope.document = document;
       $scope.formula.model = document;
     }, function(error) {
@@ -89,7 +82,6 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
   $scope.newAction = function() {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
-
   };
 
   // Edit (or new) action
@@ -97,7 +89,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
     if ($routeParams.id === '__new') {
       $scope.newAction();
     } else {
-      $scope.editAction(); // from parent
+      $scope.editAction();
     }
   };
 

@@ -27,6 +27,9 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
   };
   
   var isNpolarApiResponse = function(response) {
+    if (0 === response.status) {
+      return true;
+    }
     return (isJSON(response.headers('Content-Type')) && isNpolarApiRequest(response.config));
   };
   

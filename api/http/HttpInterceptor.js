@@ -20,10 +20,11 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
   var message = NpolarApiMessage;
   
   var isNpolarApiRequest = function(config) {
-    if (config.url !== undefined || false === (/\/\//).test(config.url)) {
+    if (config.url === undefined || false === (/\/\//).test(config.url)) {
       return false;
     }
-    return (config.url.split("//")[1].indexOf(npolarApiConfig.base.split("//")[1]) === 0);
+    var isApi = (config.url.split("//")[1].indexOf(npolarApiConfig.base.split("//")[1]) === 0);
+    return isApi;
   };
   
   var isNpolarApiResponse = function(response) {
@@ -43,6 +44,7 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
       
       // Only intercept Npolar API requests
       if (isNpolarApiRequest(config)) {
+        
         config.headers = config.headers || {};
         
         if (!config.headers.Authorization) {
@@ -61,7 +63,8 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
     response: function (response) {
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
-        message.emit("npolar-api-info", message.getMessage(response));
+        console.log(response);
+        message.emit("npolar-api-info", message.getMessage(response, response.body));
       }
       if ('PUT' === response.config.method || 'POST' === response.config.method) {
         $rootScope.saving = false;

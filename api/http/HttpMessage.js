@@ -7,7 +7,11 @@ var HttpMessage = function() {
   
   this.getMessage = function(response, body) {
     
-    var time = new Date(Date.now()).toJSON();
+    let time = new Date(Date.now()).toJSON();
+    
+    if (response.body && response.body.time) {
+      time = response.body.time;
+    }
     
     if (0 === response.status) {
       body = { "error": { explanation: `Failed accessing Npolar API ${response.config.url}` } };
@@ -20,6 +24,7 @@ var HttpMessage = function() {
       time: time,
       body: body
     };
+    
   };
   
   return angular.extend(new EventEmitter(), this);

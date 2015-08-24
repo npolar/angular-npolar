@@ -5,7 +5,7 @@ var angular = require('angular');
 /**
  * @ngInject
  */
-var User = function(base64) {
+var User = function(base64, npolarApiConfig) {
 
   this.getUser = function() {
     var user = sessionStorage.getItem(this.getStorageKey());
@@ -26,7 +26,7 @@ var User = function(base64) {
   };
 
   this.getStorageKey = function() {
-    return 'NpolarApiUser';
+    return 'NpolarApiUser-'+npolarApiConfig.base.split("//")[1];
   };
 
 };

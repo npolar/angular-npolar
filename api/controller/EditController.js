@@ -35,7 +35,7 @@ var angular = require('angular');
  * @ngInject
  */
 var EditController = function ($scope, $location, $route, $routeParams, $window, $controller,
-  npolarApiConfig, NpolarApiSecurity, NpolarApiResource) {
+  npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
 
 
   // Extend NpolarBaseController
@@ -58,7 +58,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
       $scope.document = data;
       $location.path(uri);
-      //$route.reload();
+      $route.reload();
 
     }, function(error) {
       $scope.error = error;
@@ -83,7 +83,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
   };
-
+  
   // Edit (or new) action
   $scope.edit = function() {
     if ($routeParams.id === '__new') {
@@ -99,7 +99,11 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
     $scope.resource.update($scope.document, function(data) {
 
       $scope.document = data;
-      $scope.info = { header: 'Success', message: 'Saved document revision #'+data._rev.split('-')[0] +' at ' + new Date().toISOString() };
+      
+      var message = { header: 'Success', message: 'Saved document revision #'+data._rev.split('-')[0] +' at ' + new Date().toISOString() };
+      console.log(message);
+      
+      $route.reload();
 
     }, function(error) {
       $scope.info = null;

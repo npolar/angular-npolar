@@ -63,7 +63,6 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
     response: function (response) {
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
-        console.log(response);
         message.emit("npolar-api-info", message.getMessage(response, response.body));
       }
       if ('PUT' === response.config.method || 'POST' === response.config.method) {

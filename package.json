@@ -1,6 +1,6 @@
 {
   "name": "angular-npolar",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "[angular-npolar](https://github.com/npolar/angular-npolar) simplifies development of Angular web apps driven by the [Npolar API](http://api.npolar.no/).",
   "main": "src/index.js",
   "scripts": {
@@ -11,8 +11,8 @@
     "url": "git+https://github.com/npolar/angular-npolar.git"
   },
   "dependencies": {
-    "angular": "^1.4.0-rc.1",
-    "angular-resource": "^1.4.0-rc.1",
+    "angular": "^1.4.3",
+    "angular-resource": "^1.4.3",
     "angular-utf8-base64": "*",
     "lodash": "^2",
     "angular-jwt": "*",

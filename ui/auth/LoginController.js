@@ -3,55 +3,108 @@
 /**
  * @ngInject
  */
-var LoginController = function ($scope, $http, $location, npolarApiConfig, NpolarApiUser, NpolarApiSecurity) {
-
-  // Login and store user (jwt, name, username, email, uri, uuid, exp, systems)
+var LoginController = function ($scope, $http, $route, $location, $rootScope, $timeout, $interval, npolarApiConfig, NpolarApiUser, NpolarApiMessage, NpolarApiSecurity) {
+  
+  const message = NpolarApiMessage;
+  
+  const authenticateUri = "https://"+ npolarApiConfig.base.split("//")[1] +"/user/authenticate";
+  
+  $scope.security = NpolarApiSecurity; 
+  
+  // @var response Gouncer response body
+  var getErrorMessage = function(response) {
+    
+    if (null === response) {
+      
+      return message.getMessage(response);
+    
+    } else {
+        
+      var time = new Date(Date.now()).toJSON();
+      
+      return { status: response.status,
+        method: "GET",
+        uri: authenticateUri,
+        time: time,
+        body: { error: { explanation: response.error } }
+      };
+    }
+    
+  };
+     
+  // After login success: store user in session
+  $scope.onLogin = function(data) {
+    
+    var token = NpolarApiSecurity.decodeJwt(data.token);
+    var expires = new Date(1000*token.exp).toISOString();
+    var now = Date.now();
+    
+    $scope.user = { name: token.name || $scope.user.username,
+      email: $scope.user.username,
+      username: $scope.user.username,
+      jwt: data.token,
+      uri: token.uri,
+      exp: token.exp,
+      expires: expires,
+      systems: token.systems
+    };
+    
+    NpolarApiUser.setUser($scope.user);
+    
+    // Merge user name, email, and uuid from the Person API
+    // FIXME
+    if (/^http/.test(token.uri)) {
+      
+      $http.get(token.uri).success(function(person) {
+        
+        $scope.user.name = person.first_name+" "+person.last_name;
+        $scope.user.email = person.email;
+        $scope.user.uuid = person.uuid;
+        
+        NpolarApiUser.setUser($scope.user);
+        
+        message.emit("npolar-login", $scope.user);
+        
+        
+      });
+    } else {
+      message.emit("npolar-login", $scope.user); 
+    }
+    
+  };
+  
+  // Login (using username and password)
   $scope.login = function() {
+    
     if (!$scope.user.username || !$scope.user.password) {
       return false;
-    }
-    // TODO force https
-    var url = npolarApiConfig.base+"/user/authenticate/";
+    } 
 
-    var req = { method: "GET", url: url,
+    var req = { method: "GET", url: authenticateUri,
       headers: { "Authorization": "Basic " + NpolarApiSecurity.basicToken($scope.user) }
     };
-    $http(req).success(function(data) {
-
-      var token = NpolarApiSecurity.decodeJwt(data.token);
-
-      $scope.user = { name: token.name || $scope.user.username, username: $scope.user.username, jwt: data.token };
-      
-      NpolarApiUser.setUser($scope.user);
-
-      if (/^http/.test(token.uri)) {
-        // Merge user with data from the Person API
-        $http.get(token.uri).success(function(person) {
-          $scope.user.name = person.first_name+" "+person.last_name;
-          $scope.user.email = person.email;
-          $scope.user.uri = token.uri;
-          $scope.user.uuid = person.uuid;
-          $scope.user.exp = token.exp;
-          $scope.user.systems = token.systems;
-  
-          NpolarApiUser.setUser($scope.user);
-  
-        });
-      }
-
-
-    }).error(function(error){
-      console.error(error);
-      $scope.logout();
-    });
-
+    $http(req).success($scope.onLogin).error(
+      response => { message.emit("npolar-api-error", "Login failed"); }
+    );
   };
-
+  
   $scope.logout = function() {
-    NpolarApiSecurity.removeUser();
+    var who = NpolarApiUser.getUser();
+    message.emit("npolar-logout", who);
+    
     $scope.user = {};
+    NpolarApiSecurity.removeUser();
+    
     $location.path('/');
+    //$route.reload();
+    
   };
+  
+  // Clean user session if existing JWT is expired or invalid
+  //if (NpolarApiSecurity.isJwtExpired()) {
+  //  NpolarApiSecurity.removeUser();
+  //}
+  
 };
 
 module.exports = LoginController;

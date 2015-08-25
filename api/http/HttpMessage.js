@@ -3,6 +3,9 @@
 var angular = require('angular');
 var EventEmitter = require('events').EventEmitter;
 
+/**
+ * @ngInject
+ */
 var HttpMessage = function() {
   
   this.getMessage = function(response, body) {

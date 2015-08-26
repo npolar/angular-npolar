@@ -1,9 +1,14 @@
 <div class="login-logout">
   <div ng-show="security.isAuthenticated()">
+    
     <button ng-click="logout()">Logout</button> <a ng-href="/user/{{user.username}}">{{ user.name }} </a>
+    
     <p>Session opened by {{ user.username }} expires {{ 1000*user.exp | date:'HH:mm' }}</p>
+    
+    <!--<p>Last edits</p>-->
+    
     <section>
-      <h2>Rights</h2>
+      <h2>Permissions</h2>
       <dl ng-repeat="system in user.systems">
         <dt>{{ system.uri }}</dt>
         <dd>{{ system.rights }}</dd>

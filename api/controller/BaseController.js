@@ -36,6 +36,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     $scope.environment = npolarApiConfig.environment;
     $scope.lang = npolarApiConfig.lang;
     $scope.user = NpolarApiSecurity.getUser();
+    $scope.security = NpolarApiSecurity;
   };
 
   // back() click handler

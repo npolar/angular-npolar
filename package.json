@@ -32,8 +32,9 @@
   },
   "browserify": {
     "transform": [
-      "partialify",
-      "browserify-ngannotate"
+    "babelify",
+    "partialify",
+    "browserify-ngannotate"
     ]
   }
 }

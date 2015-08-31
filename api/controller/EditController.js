@@ -42,7 +42,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
   $controller('NpolarBaseController', {$scope: $scope});
 
   $scope.formula = {
-    template: npolarApiConfig.formula.template || 'formula',
+    template: npolarApiConfig.formula.template || 'default',
     language: null,
     model: {},
     onsave: function () {
@@ -73,6 +73,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
       $scope.document = document;
       $scope.formula.model = document;
+      
     }, function(error) {
       $scope.error = NpolarApiResource.error(error);
     });

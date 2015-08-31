@@ -70,6 +70,7 @@ var LoginController = function ($scope, $http, $route, $location, $rootScope, $t
     } else {
       message.emit("npolar-login", $scope.user); 
     }
+    $route.reload();
     
   };
   
@@ -94,16 +95,10 @@ var LoginController = function ($scope, $http, $route, $location, $rootScope, $t
     
     $scope.user = {};
     NpolarApiSecurity.removeUser();
-    
     $location.path('/');
-    //$route.reload();
+    $route.reload();
     
   };
-  
-  // Clean user session if existing JWT is expired or invalid
-  //if (NpolarApiSecurity.isJwtExpired()) {
-  //  NpolarApiSecurity.removeUser();
-  //}
   
 };
 

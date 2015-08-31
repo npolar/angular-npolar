@@ -46,7 +46,11 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   // Is user authenticated and authorized to perform action on current URI?
   // @var action "create" | "read" | "update" | "delete"
   this.isAuthorized = function(action, uri) {
-    
+    // @todo support relative URIs
+    //if (uri instanceof String && (/^\/[^/]/).test(uri)) {
+    //  uri = npolarApiConfig.base + uri;
+    //  console.log(uri);
+    //}    
     uri = uri.split('//')[1];
     
     // console.log("isAuthorized()", action, uri);
@@ -80,10 +84,7 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
     );
     
      // User is authorized if we are left with at least 1 system
-    let isAuthorized = (systems.length > 0);
-    console.log(`isAuthorized('${action}', '\/\/${uri}') =>`, isAuthorized);
-    return isAuthorized;
-  
+    return (systems.length > 0);
   };
   
   this.isJwtExpired = function() {

@@ -1,11 +1,17 @@
 <div class="login-logout">
   <div ng-show="security.isAuthenticated()">
     
-    <button ng-click="logout()">Logout</button> <a ng-href="/user/{{user.username}}">{{ user.name }} </a>
+    <button ng-click="logout()">Logout</button> <b>{{ user.name }}</b> (<a title="View profile for user {{user.username}}" ng-href="/user/{{user.username}}">{{ user.username }} </a>)
     
-    <p>Session opened by {{ user.username }} expires {{ 1000*user.exp | date:'HH:mm' }}</p>
+    <p>Login session expires {{ 1000*user.exp | date:'HH:mm' }}</p>
     
-    <!--<p>Last edits</p>-->
+    <!--<section>
+    <h2>Recent edits</h2>
+    <dl ng-repeat="edit in edits">
+      <dt>{{ edit.request.time }}</dt>
+      <dd><a href="{{ edit.response.header.Location }}">{{ edit.response.header.Location }}</a></dd>
+    </dl>
+    </section>-->
     
     <section>
       <h2>Permissions</h2>
@@ -15,6 +21,7 @@
       </dl>
     </section>
   </div>
+  
   <div ng-show="security.notAuthenticated()">
     <h1>Login</h1>
     <form role="form">

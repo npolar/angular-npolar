@@ -79,7 +79,10 @@ var LoginController = function ($scope, $http, $route, $location, $rootScope, $t
     
     if (!$scope.user.username || !$scope.user.password) {
       return false;
-    } 
+    }
+    if (false === (/[@]/).test($scope.user.username)) {
+      $scope.user.username = $scope.user.username + "@npolar.no";
+    }
 
     var req = { method: "GET", url: authenticateUri,
       headers: { "Authorization": "Basic " + NpolarApiSecurity.basicToken($scope.user) }

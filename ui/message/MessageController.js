@@ -46,9 +46,12 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   
   
   NpolarApiMessage.on("npolar-api-info", function(response) {
-    console.log(response);
+    console.log("<- npolar-api-info", response);
     if ("POST" === response.method || "PUT" === response.method) {
-      flashInfo(`Saved document at ${ new Date(response.time).toLocaleTimeString() }`);
+      let time = new Date(response.time);
+      flashInfo(`Saved at ${ time.toISOString() }`);
+    } else if ("DELETE" === response.method) {
+      flashInfo(`Deleted document ${ response.uri } at ${ response.time }`);
     }
   });
   
@@ -61,7 +64,12 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   });
     
   NpolarApiMessage.on("npolar-api-error", function(message) {
-    flashError(message);
+    console.log("<- npolar-api-error", message);
+    if (404 === message.status) {
+      flashError("Document does not exist: "+$location.absUrl());
+    } else {
+      flashError(message);
+    }
   });
   
 };

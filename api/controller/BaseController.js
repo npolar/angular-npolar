@@ -1,6 +1,6 @@
 /**
-* NpolarBaseController is meant to be the parent of a safe Controller,
-* ie. a controller dealing with only with presentation. See also NpolarEditController.
+* NpolarBaseController is meant to be the parent of a safe controller,
+* ie. a controller dealing with only with presentation, search, etc. See also NpolarEditController.
 *
 *
 * Usage:
@@ -39,23 +39,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     $scope.security = NpolarApiSecurity;
   };
 
-  // back() click handler
-  $scope.back = function() {
-    $window.history.back();
-  };
- 
-  $scope.isAuthenticated = function() {
-    return (NpolarApiSecurity.isJwtValid());
-  };
-    
-  $scope.locationBase = function() {
-    console.log($routeParams.id);
-    if ($routeParams.id === '__new') {
-      $location.path('/');
-    } else {
-      $location.path($routeParams.id);
-    }
-  };
+
 
   // Show action, ie. fetch document and inject into scope
   $scope.show = function() {
@@ -90,13 +74,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     )[0].text || $scope.document.titles[0].text;
   };
 
-  $scope.isSuccess = function(status) {
-    return (status >= 200 && status <= 299);
-  };
 
-  $scope.isError = function(status) {
-    return (status <= 99 || status >= 400);
-  };
 
   $scope.init();
 };

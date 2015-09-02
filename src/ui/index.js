@@ -1,5 +1,7 @@
 'use strict';
 var angular = require('angular');
+var b = require ('angular-animate');
+require ('angular-aria');
 require ('angular-material');
 
 var npolarUi = angular.module('npolarUi', ['ngMaterial']);
@@ -12,10 +14,10 @@ npolarUi.controller('NpolarMessageController', require('./message/MessageControl
 npolarUi.directive('npolarApiMessage', require('./message/message'));
 
 npolarUi.controller('ToastCtrl', function($scope, $mdToast, message, explanation) {
-  
+
   $scope.message = message;
   $scope.explanation = explanation;
-  
+
   $scope.closeToast = function() {
     $mdToast.hide();
   };

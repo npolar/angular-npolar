@@ -47,13 +47,15 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   // @var action "create" | "read" | "update" | "delete"
   this.isAuthorized = function(action, uri) {
     // @todo support relative URIs
-    //if (uri instanceof String && (/^\/[^/]/).test(uri)) {
-    //  uri = npolarApiConfig.base + uri;
-    //  console.log(uri);
-    //}    
-    uri = uri.split('//')[1];
+     //if (uri === undefined) {
+     // return false;
+     //}
     
-    // console.log("isAuthorized()", action, uri);
+    if (uri instanceof String && (/^\/[^/]/).test(uri)) {
+    //  uri = npolarApiConfig.base + uri;
+      console.log(uri);
+    }    
+    uri = uri.split('//')[1];
     
     // 1. First, verify login
     if (false === this.isAuthenticated()) {
@@ -84,7 +86,9 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
     );
     
      // User is authorized if we are left with at least 1 system
-    return (systems.length > 0);
+    let isAuthorized = (systems.length > 0);
+    console.log(`isAuthorized(${action}, ${uri})`, isAuthorized);
+    return isAuthorized;
   };
   
   this.isJwtExpired = function() {

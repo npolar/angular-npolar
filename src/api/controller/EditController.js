@@ -45,7 +45,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
     template: npolarApiConfig.formula.template || 'default',
     language: null,
     validateHidden: true,
-    model: {},
+    saveHidden: true,
     onsave: function () {
       $scope.save();
     }

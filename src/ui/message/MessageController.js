@@ -9,6 +9,8 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
 
     if (message.body && message.body.error && message.body.error.explanation ) {
       explanation = message.body.error.explanation;
+    } else if (message.body && message.body.reason) {
+      explanation = message.body.reason;
     } else {
       explanation = message;
     }
@@ -21,7 +23,7 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
       locals: { message: message, explanation: explanation },
       position: "top left"
     }).then(function() {
-      $route.reload();
+      //$route.reload();
     });
   };
 
@@ -40,7 +42,7 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
       locals: { message: message, explanation: explanation },
       position: "bottom right"
     }).then(function() {
-      $route.reload();
+      // noop
     });
   };
 
@@ -68,7 +70,7 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
     if (404 === message.status) {
       flashError("Document does not exist: "+$location.absUrl());
     } else {
-      flashError(message);
+      flashError(message, message.body);
     }
   });
 

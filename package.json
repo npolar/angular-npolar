@@ -17,6 +17,7 @@
     "angular-jwt": "*",
     "angular-material": "^0.10.1",
     "angular-resource": "^1.4.3",
+    "angular-route": "^1.4.5",
     "angular-utf8-base64": "*",
     "lodash": "^2"
   },

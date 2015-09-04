@@ -1,10 +1,11 @@
 'use strict';
 var angular = require('angular');
-var b = require ('angular-animate');
-require ('angular-aria');
-require ('angular-material');
+require('angular-animate');
+require('angular-aria');
+require('angular-material');
+require('angular-route');
 
-var npolarUi = angular.module('npolarUi', ['ngMaterial']);
+var npolarUi = angular.module('npolarUi', ['ngMaterial', 'ngRoute']);
 npolarUi.value('version', '0.1');
 
 npolarUi.controller('NpolarLoginController', require('./auth/LoginController'));

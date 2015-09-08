@@ -61,10 +61,10 @@ var Resource = function(npolarApiConfig, NpolarApiSecurity, $resource, $location
     var params_query = angular.extend({}, params, { variant: 'array', limit: 1000, fields: fields_query });
 
     var resource = $resource(base+service.path+'/:id', {  }, {
-      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' } },
-      query: { method: 'GET', params: params_query, isArray: true },
-      array: { method: 'GET', params: params_query, isArray: true },
-      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' } },
+      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache: true },
+      query: { method: 'GET', params: params_query, isArray: true, cache: true},
+      array: { method: 'GET', params: params_query, isArray: true, cache: true },
+      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache: true },
       //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
       update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } }
     });

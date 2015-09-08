@@ -87,7 +87,7 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
     
      // User is authorized if we are left with at least 1 system
     let isAuthorized = (systems.length > 0);
-    console.log(`isAuthorized(${action}, ${uri})`, isAuthorized);
+    //console.log(`isAuthorized(${action}, ${uri})`, isAuthorized);
     return isAuthorized;
   };
   

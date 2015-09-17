@@ -1,24 +1,47 @@
-/**
-*
-*
-*/
-
 'use strict';
 var angular = require('angular');
-var _ = require('lodash');
+var _ = require('lodash'); //@todo eliminate
 
 /**
  * @ngInject
  */
-var Resource = function(npolarApiConfig, NpolarApiSecurity, $resource, $location) {
-
-  this.info = function() {
-    //return { status: status, statusText: 'Npolar API error, failed accessing '+npolarApiConfig.base, data: 'Please inform data@npolar.no if this problem persists' };
+var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSecurity) {
+  
+  // @return Array of path segments "under" the current request URI
+  let pathSegments = function() {
+    // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
+    return $location.absUrl().split("//")[1].split("?")[0].split("/").filter(s => { return s !== "";}).slice(2);
   };
-
-
+  
+  // Get href for id [warn:] relative to current application /path/
+  // @return href 
+  this.href = function(id) { 
+    // Add .json if id contains dots, otherwise the API barfs
+    if ((/[.]/).test(id)) {
+      id += ".json";
+    }
+    let segments = pathSegments();
+    
+    // For apps at /something, we just need to link to the id
+    if (segments.length === 0) {
+      return id;
+    
+    // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
+    } else {
+      return segments.join("/")+'/'+id;
+    }
+  };
+  
+  this.editHref = function() {
+    return pathSegments().join('/')+'/edit';
+  };
+  
+  this.newHref = function() {
+    return pathSegments().join('/')+'/__new/edit';
+  };
+  
   this.base = function(service) {
-  return (angular.isString(service.base)) ? service.base : npolarApiConfig.base;
+    return (angular.isString(service.base)) ? service.base : npolarApiConfig.base;
   };
 
   /**
@@ -70,7 +93,11 @@ var Resource = function(npolarApiConfig, NpolarApiSecurity, $resource, $location
     });
     
     resource.path = base+service.path;
-
+    
+    resource.href = this.href;
+    resource.newHref = this.newHref;
+    resource.editHref = this.editHref;
+    
     // Extend Npolar API resources (individual documents)
     angular.extend(resource.prototype, {
       

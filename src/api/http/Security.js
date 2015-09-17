@@ -3,7 +3,9 @@
 /**
  * @ngInject
  */
-var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
+var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
+  
+  this.actions = ['create', 'read', 'update', 'delete'];
 
   this.authorization = function () {
 
@@ -44,12 +46,22 @@ var Security = function(base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   };
   
   // Is user authenticated and authorized to perform action on current URI?
-  // @var action "create" | "read" | "update" | "delete"
+  // @var action ["create" | "read" | "update" | "delete"] => this.actions
   this.isAuthorized = function(action, uri) {
+    
+    if (false === this.actions.includes(action)) {
+      $log.error(`isAuthorized(${action}, ${uri}) called with invalid action`);
+      return false;
+    }
+    
     // @todo support relative URIs
-     //if (uri === undefined) {
-     // return false;
-     //}
+    // @todo support just ngResource or NpolarApiResurce => get path from that
+    // @todo fallback to application path?
+    
+    if (uri === undefined || false === (/\/\//).test(uri)) {
+      $log.error(`isAuthorized(${action}, ${uri}) called with invalid URI`);
+      return false;
+    }
     
     if (uri instanceof String && (/^\/[^/]/).test(uri)) {
     //  uri = npolarApiConfig.base + uri;

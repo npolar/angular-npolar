@@ -1,3 +1,4 @@
+'use strict';
 /**
  * NpolarEditController extends [NpolarBaseController](https://github.com/npolar/angular-npolar/blob/master/src/api/controller/BaseController.js) with scope methods for REST-style document editing (using ngResource)
  * and [formula](https://github.com/npolar/formula)-bound controller action methods, like $scope.edit()

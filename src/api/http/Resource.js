@@ -10,7 +10,8 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {
     // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
-    return $location.absUrl().split("//")[1].split("?")[0].split("/").filter(s => { return s !== "";}).slice(2);
+    let segments = $location.absUrl().split("//")[1].split("?")[0].split("/").filter(s => { return s !== "";});
+    return segments.slice(2);
   };
   
   // Get href for id [warn:] relative to current application /path/
@@ -32,11 +33,14 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
     }
   };
   
-  this.editHref = function() {
+  this.editHref = function(id) {
+    // @todo test that provided id is last segment before edit
+    // @warn now only works if id is in current request URI
     return pathSegments().join('/')+'/edit';
   };
   
   this.newHref = function() {
+    console.debug(pathSegments());
     return pathSegments().join('/')+'/__new/edit';
   };
   
@@ -84,10 +88,10 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
     var params_query = angular.extend({}, params, { variant: 'array', limit: 1000, fields: fields_query });
 
     var resource = $resource(base+service.path+'/:id', {  }, {
-      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache: true },
-      query: { method: 'GET', params: params_query, isArray: true, cache: true},
-      array: { method: 'GET', params: params_query, isArray: true, cache: true },
-      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache: true },
+      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache: false },
+      query: { method: 'GET', params: params_query, isArray: true, cache: false},
+      array: { method: 'GET', params: params_query, isArray: true, cache: false },
+      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache: false },
       //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
       update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } }
     });

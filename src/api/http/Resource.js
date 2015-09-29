@@ -63,6 +63,10 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
   this.resource = function(service) {
 
     var base = this.base(service);
+    var cache = false;
+    if (service.cache && (true === service.cache)) {
+      cache = true;
+    }
 
     // Default parameters
     var params = { id:null, limit: 100, format: 'json', q: '', variant: 'atom' };
@@ -74,10 +78,10 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
     var params_query = angular.extend({}, params, { variant: 'array', limit: 1000, fields: fields_query });
 
     var resource = $resource(base+service.path+'/:id', {  }, {
-      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache: false },
-      query: { method: 'GET', params: params_query, isArray: true, cache: false},
-      array: { method: 'GET', params: params_query, isArray: true, cache: false },
-      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache: false },
+      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache },
+      query: { method: 'GET', params: params_query, isArray: true, cache },
+      array: { method: 'GET', params: params_query, isArray: true, cache },
+      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache },
       //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
       update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } }
     });

@@ -38,33 +38,19 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
     // @warn now only works if id is in current request URI
     return pathSegments().join('/')+'/edit';
   };
-  
+    
+  // Path to new, relative to /base/ defined in index.html
   this.newHref = function() {
-    console.debug(pathSegments());
-    return pathSegments().join('/')+'/__new/edit';
+
+    let base = pathSegments().join('/');
+    if ('' === base) {
+      base = '.';
+    }
+    return base +'/__new/edit';
   };
   
   this.base = function(service) {
     return (angular.isString(service.base)) ? service.base : npolarApiConfig.base;
-  };
-
-  /**
-   * Generic error handler
-   *
-   *  MyResource.feed(angular.extend({ limit: 10 }, $location.search()), function(response) {
-   *    $scope.feed = response.feed;
-   *  }, function(error) {
-   *    $scope.error = NpolarApiResource.error(error);
-   *  });
-   */
-  this.error = function(error) {
-  // response: {data: null, status: 0, headers: function, config: Object, statusText: ''}
-  if (error.status >= 400) {
-    return error;
-  } else {
-    var status = (error.status === undefined) ? 500 : error.status ;
-    return { status: status, statusText: 'Npolar API error, failed accessing '+npolarApiConfig.base, data: 'Please inform data@npolar.no if this problem persists' };
-  }
   };
 
   // NpolarApiResource factory

@@ -25,9 +25,7 @@
 'use strict';
 var _ = require('lodash');
 
-/**
- * @ngInject
- */
+// @ngInject
 var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
   npolarApiConfig, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
 
@@ -39,11 +37,9 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     $scope.security = NpolarApiSecurity;
   };
 
-
-
   // Show action, ie. fetch document and inject into scope
   $scope.show = function() {
-    $scope.resource.fetch($routeParams, function(document) {
+    return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
 
     }, function(error) {
@@ -52,7 +48,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
   };
 
   $scope.search = function(query) {
-    $scope.resource.feed(query, function(response) {
+    return $scope.resource.feed(query, function(response) {
       $scope.feed = response.feed;
     }, function(error) {
       $scope.error = NpolarApiResource.error(error);
@@ -73,8 +69,6 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
       { lang: lang }
     )[0].text || $scope.document.titles[0].text;
   };
-
-
 
   $scope.init();
 };

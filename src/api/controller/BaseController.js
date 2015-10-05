@@ -13,10 +13,10 @@ var _ = require('lodash');
 var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
   npolarApiConfig, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
 
-  $scope.init = function() {
+  let init = function() {
     $scope.base = npolarApiConfig.base;
     $scope.environment = npolarApiConfig.environment;
-    $scope.lang = npolarApiConfig.lang;
+    //$scope.lang = npolarApiConfig.lang;
     $scope.user = NpolarApiSecurity.getUser();
     $scope.security = NpolarApiSecurity;
   };
@@ -35,22 +35,44 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     });
   };
 
-  $scope.getLang = function() {
-    return $scope.lang;
+  // Deprecated
+  //$scope.getLang = function() {
+  //  return $scope.lang;
+  //};
+  //
+  //$scope.setLang = function(lang) {
+  //  $scope.lang = lang;
+  //  $scope.title = $scope.getTitle(lang);
+  //};
+  //
+  //$scope.getTitle = function(lang) {
+  //  return _.where($scope.document.titles,
+  //    { lang: lang }
+  //  )[0].text || $scope.document.titles[0].text;
+  //};
+  $scope.showNext = function() {
+    if (!$scope.feed) {
+      return false;
+    }
+    return ($scope.feed.entries.length < $scope.feed.opensearch.totalResults);
   };
-
-  $scope.setLang = function(lang) {
-    $scope.lang = lang;
-    $scope.title = $scope.getTitle(lang);
+  
+  $scope.next = function() {
+    if (!$scope.feed.links) {
+      return;
+    }
+    console.debug($scope.feed.links);
+    let nextLink = $scope.feed.links.find(link => { return (link.rel === "next"); });
+    if (nextLink.href) {
+        $http.get(nextLink.href.replace(/^https?:/, "")).success(function(response) {
+        response.feed.entries = $scope.feed.entries.concat(response.feed.entries);
+        $scope.feed = response.feed;
+      });
+    }
   };
+  
 
-  $scope.getTitle = function(lang) {
-    return _.where($scope.document.titles,
-      { lang: lang }
-    )[0].text || $scope.document.titles[0].text;
-  };
-
-  $scope.init();
+  init();
 };
 
 module.exports = BaseController;

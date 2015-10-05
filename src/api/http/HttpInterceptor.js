@@ -51,9 +51,9 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
           config.headers.Authorization = NpolarApiSecurity.authorization();
         }
         if ('PUT' === config.method || 'POST' === config.method) {
-          $rootScope.saving = true;
+          // @todo fire saving event?
         } else if ('DELETE' === config.method) {
-          $rootScope.deleting = true;
+          // @todo fire deleting event?
         }
 
       }
@@ -66,9 +66,9 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
         message.emit("npolar-api-info", message.getMessage(response, response.body));
       }
       if ('PUT' === response.config.method || 'POST' === response.config.method) {
-        $rootScope.saving = false;
+        // @todo fire saved event?
       } else if ('DELETE' === response.config.method) {
-        $rootScope.deleting = false;
+        // @todo fire deleted event?
       }
       return response || $q.when(response);
     },

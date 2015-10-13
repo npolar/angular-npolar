@@ -5,11 +5,13 @@
  */
 var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   
-  this.actions = ['create', 'read', 'update', 'delete'];
+  const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
+  
+  const actions = ['create', 'read', 'update', 'delete'];
 
   this.authorization = function () {
 
-    var user = NpolarApiUser.getUser();
+    let user = NpolarApiUser.getUser();
    
     if ('basic' === npolarApiConfig.security.authorization) {
       return 'Basic '+ this.basicToken(user);
@@ -35,7 +37,15 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     } catch (e) {
       return {};
     }
- };
+  };
+  
+  this.hasGroup = function(group) {
+    let user = this.getUser();
+    if (!user.groups) {
+      return false;
+    }
+    return user.groups.includes(group);
+  };
   
   this.getJwt = function() {
     return this.getUser().jwt;
@@ -45,18 +55,19 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     return this.isJwtValid();
   };
   
-  // Is user authenticated and authorized to perform action on current URI?
-  // @var action ["create" | "read" | "update" | "delete"] => this.actions
+  // Is current user authorized to perform action on the provided uri?
+  // Checks if the user is authorized *at the current time* - ie. always returns false if not authenticated
+  // @param action ["create" | "read" | "update" | "delete"] => actions
   this.isAuthorized = function(action, uri) {
     
-    if (false === this.actions.includes(action)) {
+    if (false === actions.includes(action)) {
       $log.error(`isAuthorized(${action}, ${uri}) called with invalid action`);
       return false;
     }
     
     // @todo support relative URIs
     // @todo support just ngResource or NpolarApiResurce => get path from that
-    // @todo fallback to application path?
+    // @todo fallback to relative application path
     
     if (uri === undefined || false === (/\/\//).test(uri)) {
       $log.error(`isAuthorized(${action}, ${uri}) called with invalid URI`);
@@ -69,13 +80,37 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     }    
     uri = uri.split('//')[1];
     
-    // 1. First, verify login
+    // First, verify login
     if (false === this.isAuthenticated()) {
       return false;
     }
+    // Then check permissions
+    return this.isPermitted(action, uri, this.getUser());
+  };
+  
+  this.isJwtExpired = function() {
+    let jwt = this.getJwt();
     
-    // 2. Find all systems URIs matching current URI or *
-    let systems = this.getUser().systems.filter(
+    if (jwt === undefined || jwt === null || !angular.isString(jwt)) {
+      return true;
+    }
+    
+    try {  
+      return ((Date.now() / 1000) > this.decodeJwt(jwt).exp );
+    } catch (e) {
+      return true;
+    }
+  };
+  
+  
+  // Check permissions for action on uri for any user
+  // @see isAuthorized()
+  this.isPermitted = function(action, uri, user) {
+   
+    uri = uri.split('//')[1];
+    
+    // 1. Find all systems URIs matching current URI or *
+    let systems = user.systems.filter(
       system => {
         
         system.uri = system.uri.split('//')[1];
@@ -98,37 +133,20 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     );
     
      // User is authorized if we are left with at least 1 system
-    let isAuthorized = (systems.length > 0);
+    let isPermitted = (systems.length > 0);
     //console.log(`isAuthorized(${action}, ${uri})`, isAuthorized);
-    return isAuthorized;
+    return isPermitted;
   };
   
-  this.isJwtExpired = function() {
-    let jwt = this.getJwt();
-    if (jwt === undefined || jwt === null || !angular.isString(jwt)) {
-      return true;
-    }
-    let now = (Date.now() / 1000);
-    
-    try {  
-      return ((Date.now() / 1000) > this.decodeJwt(jwt).exp );
-    } catch (e) {
-      return true;
-    }
-  };
   
   this.isJwtValid = function() {
     return (false === this.isJwtExpired());
   };
-  
+    
   this.notAuthenticated = () => { return !this.isAuthenticated(); };
   
   this.removeUser = function() {
     return NpolarApiUser.removeUser();
-  };
-
-  this.user = function() {
-    return this.getUser();
   };
   
   this.setUser = function(user) {

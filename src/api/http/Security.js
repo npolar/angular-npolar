@@ -1,14 +1,19 @@
 'use strict';
 
 /**
+ * User and access control via [Gouncer](https://github.com/npolar/gouncer) JWT 
+ *
  * @ngInject
  */
 var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   
+  // Gouncer location
   const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
   
+  // Gouncer system actions
   const actions = ['create', 'read', 'update', 'delete'];
-
+  
+  // @return Authorization header string (either Bearer/JWT or Basic)
   this.authorization = function () {
 
     let user = NpolarApiUser.getUser();
@@ -23,34 +28,55 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     }
   };
 
+  // @return HTTP Basic Authorization header string
   this.basicToken = function(user) {
     return base64.encode(user.username + ':' + user.password);
   };
 
+  //
   this.decodeJwt = function(jwt) {
     return jwtHelper.decodeToken(jwt);
   };
 
+  // @return current user or empty user object
   this.getUser = function() {
     try {
       return NpolarApiUser.getUser();
     } catch (e) {
-      return {};
+      return { name: null, email: null, systems: [] };
     }
   };
   
-  this.hasGroup = function(group) {
-    let user = this.getUser();
-    if (!user.groups) {
-      return false;
-    }
-    return user.groups.includes(group);
-  };
-  
+  // @return JWT string
   this.getJwt = function() {
     return this.getUser().jwt;
   };
   
+  // Return all systems matching current URI (or *)
+  this.systems = function(uri) {
+    return this.getUser().systems.filter(
+      system => {
+        
+        system.uri = system.uri.split('//')[1];
+        
+        if (system.uri === uri) {
+          return true;   
+        } else if (system.uri === npolarApiConfig.base.split('//')[1]+"/*") {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    );
+  };
+  
+  // Check if the user has (any kind) of rights on system (uri)
+  // @return true | false
+  this.hasSystem = function(uri) {
+    return (this.systems(uri).length > 0);
+  };
+  
+  // @return true | false
   this.isAuthenticated = function() {
     return this.isJwtValid();
   };
@@ -65,7 +91,6 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
       return false;
     }
     
-    // @todo support relative URIs
     // @todo support just ngResource or NpolarApiResurce => get path from that
     // @todo fallback to relative application path
     
@@ -74,10 +99,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
       return false;
     }
     
-    if (uri instanceof String && (/^\/[^/]/).test(uri)) {
-    //  uri = npolarApiConfig.base + uri;
-      console.log(uri);
-    }    
+    // @todo // @todo support relative URIs
+    //if (uri instanceof String && (/^\/[^/]/).test(uri)) {
+    //}    
     uri = uri.split('//')[1];
     
     // First, verify login
@@ -88,6 +112,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     return this.isPermitted(action, uri, this.getUser());
   };
   
+  // @return true | false
   this.isJwtExpired = function() {
     let jwt = this.getJwt();
     
@@ -101,54 +126,37 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
       return true;
     }
   };
-  
-  
-  // Check permissions for action on uri for any user
-  // @see isAuthorized()
+    
+  // Check if user is permitted to perform action on uri
   this.isPermitted = function(action, uri, user) {
    
     uri = uri.split('//')[1];
     
-    // 1. Find all systems URIs matching current URI or *
-    let systems = user.systems.filter(
-      system => {
-        
-        system.uri = system.uri.split('//')[1];
-        
-        if (system.uri === uri) {
-          return true;   
-        } else if (system.uri === npolarApiConfig.base.split('//')[1]+"/*") {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    );
-
-    // 3. Does any matching system include the right to perform action?
-    systems = systems.filter(
+    // Get all systems for uri and check if at least one gives right to perform action
+    let systems = this.systems(uri).filter(
       system => {
         return system.rights.includes(action);
       }
     );
     
-     // User is authorized if we are left with at least 1 system
-    let isPermitted = (systems.length > 0);
-    //console.log(`isAuthorized(${action}, ${uri})`, isAuthorized);
-    return isPermitted;
+    // User is authorized if we are left with at least 1 system
+    return (systems.length > 0);
   };
   
-  
+  // @return true | false 
   this.isJwtValid = function() {
     return (false === this.isJwtExpired());
   };
-    
+  
+  // @return true | false  
   this.notAuthenticated = () => { return !this.isAuthenticated(); };
   
+  //
   this.removeUser = function() {
     return NpolarApiUser.removeUser();
   };
   
+  //
   this.setUser = function(user) {
     return NpolarApiUser.setUser(user);
   };

@@ -44,6 +44,7 @@ var LoginController = function ($scope, $http, $route, $location, $rootScope, $t
       jwt: data.token,
       uri: token.uri || '',
       expires: expires,
+      groups: token.groups || [],
       systems: token.systems || []
     };
 

@@ -22,13 +22,15 @@ var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSe
       id += ".json";
     }
     let segments = pathSegments();
-    
+
     // For apps at /something, we just need to link to the id
     if (segments.length === 0) {
       return id;
     
     // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
     } else {
+      segments = segments.filter(s => { return (s !== 'edit'); });
+      segments = segments.filter(s => { return (s !== id); });
       return segments.join("/")+'/'+id;
     }
   };

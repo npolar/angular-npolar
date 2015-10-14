@@ -18,7 +18,7 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
     $mdToast.show({
       controller: 'ToastCtrl',
       templateUrl: 'angular-npolar/src/ui/message/_message_toast.html',
-      hideDelay: 30000,
+      hideDelay: 5000,
       action: "OK",
       locals: { message: message, explanation: explanation },
       position: "top left"
@@ -45,6 +45,13 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
       // noop
     });
   };
+  
+  
+  NpolarApiMessage.on("npolar-info", function(message) {
+    console.log("<- npolar-info", message);
+    flashInfo(message);
+  });
+
 
 
   NpolarApiMessage.on("npolar-api-info", function(response) {
@@ -66,13 +73,28 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   });
 
   NpolarApiMessage.on("npolar-api-error", function(message) {
+    
     console.log("<- npolar-api-error", message);
-    if (404 === message.status) {
+    
+    if (401 === message.status) {
+      flashError("User login failed, please check your username and password");
+      
+    } else if (403 === message.status) {
+      flashError("You are not authorized to access this document");
+      
+    } else if (404 === message.status) {
+      
       flashError("Document does not exist: "+$location.absUrl());
+      
     } else {
       flashError(message, message.body);
     }
   });
+  
+  
+  // 401 username / password failed
+  // 403 forbidden => not permitted
+  // token expired
 
 };
 

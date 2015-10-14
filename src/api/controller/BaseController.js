@@ -10,19 +10,40 @@
 var _ = require('lodash');
 
 // @ngInject
-var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
-  npolarApiConfig, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
+var BaseController = function($scope, $location, $log, $route, $routeParams, $window, $controller, $http,
+  npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
+  
+  const authenticateUri = "https://"+ npolarApiConfig.base.split("//")[1] +"/user/authenticate";
 
   let init = function() {
     $scope.base = npolarApiConfig.base;
-    $scope.environment = npolarApiConfig.environment;
+    //$scope.environment = npolarApiConfig.environment;
     //$scope.lang = npolarApiConfig.lang;
-    $scope.user = NpolarApiSecurity.getUser();
+    //$scope.user = NpolarApiSecurity.getUser();
     $scope.security = NpolarApiSecurity;
+  };
+  
+  $scope.refreshJwt = function() {
+    let request = { method: "GET", url: authenticateUri,
+      headers: { "Authorization": `Bearer ${ $scope.security.getUser().jwt }` }
+    };
+    $log.debug(request);
+    
+    $http(request).success(response => {
+        
+        //$log.debug(response);
+        //NpolarApiMessage.emit("npolar-api-info", 'JWT refreshed');
+        
+      }).error(response => {
+      
+        // NpolarApiMessage.emit("npolar-api-error", 'Session expired, please log in again');
+      }
+    );
   };
 
   // Show action, ie. fetch document and inject into scope
   $scope.show = function() {
+
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
     });

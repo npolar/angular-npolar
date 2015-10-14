@@ -10,12 +10,14 @@ var User = function(base64, npolarApiConfig) {
   let storage = localStorage;
 
   this.getUser = function() {
-    var user = storage.getItem(this.getStorageKey());
-    if (angular.isString(user)) {
-      return JSON.parse(base64.decode(user));
-    } else {
-      return {};
+    let user = {};
+    try {
+      let storedUser = storage.getItem(this.getStorageKey());
+      return JSON.parse(base64.decode(storedUser));
+    } catch (e) { 
+      // noop
     }
+    return user;
   };
 
   this.setUser = function(user) {

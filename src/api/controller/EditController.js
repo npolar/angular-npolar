@@ -24,22 +24,18 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
     language: null,
     validateHidden: true,
     saveHidden: true,
-    onsave: function(model) {
-	  if (angular.isUndefined($scope.document.id)) {
-		$scope.create(model);
-	  } else {
-		$scope.update(model);
-	  }
+    onsave: function () {
+      $scope.save();
     }
   };
 
   // Create action, ie. save document and redirect to new URI
-  $scope.create = function(model) {
-    $scope.resource.save(model, function(document) {
+  $scope.create = function() {
+    $scope.resource.save($scope.document, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/'+document.id+'/edit');
       $scope.document = document;
       $scope.formula.model = document;
-      $location.path(uri);
+      $location.path(uri);      
     });
   };
 
@@ -52,7 +48,7 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
   };
 
   // New action, ie. create new document and edit with formula
-  $scope.newAction = function() {
+  $scope.newAction = function(document) {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
   };
@@ -67,8 +63,8 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
   };
 
   // PUT document, ie resource update
-  $scope.update = function(model) {
-    $scope.resource.update(model, function(document) {
+  $scope.update = function() {
+    $scope.resource.update($scope.document, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
     });
@@ -83,7 +79,14 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
   // Save document action, ie. create or update
   $scope.save = function() {
-	$scope.formula.formula.save();
+    
+    //$scope.refreshJwt();
+    
+    if (angular.isUndefined($scope.document.id)) {
+      $scope.create();
+    } else {
+      $scope.update();
+    }
   };
 };
 

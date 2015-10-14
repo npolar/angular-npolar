@@ -1,7 +1,10 @@
 'use strict';
 
 /**
- * User and access control via [Gouncer](https://github.com/npolar/gouncer) JWT 
+ * NpolarApiSecurity provides JWT Bearer HTTP Authorization header for Npolar API request,
+ * see npolarApiInterceptor
+ *
+ * Also contains method to check decoded JWT objects from [Gouncer](https://github.com/npolar/gouncer) JWT 
  *
  * @ngInject
  */
@@ -33,7 +36,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     return base64.encode(user.username + ':' + user.password);
   };
 
-  //
+  // @return Object
   this.decodeJwt = function(jwt) {
     return jwtHelper.decodeToken(jwt);
   };
@@ -54,6 +57,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   
   // Return all systems matching current URI (or *)
   this.systems = function(uri) {
+    
+    uri = uri.split('//')[1]; // Compare URIs without scheme
+    
     return this.getUser().systems.filter(
       system => {
         
@@ -102,7 +108,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     // @todo // @todo support relative URIs
     //if (uri instanceof String && (/^\/[^/]/).test(uri)) {
     //}    
-    uri = uri.split('//')[1];
+    uri = uri.split('//')[1]; // Compare URIs without scheme
     
     // First, verify login
     if (false === this.isAuthenticated()) {
@@ -130,7 +136,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Check if user is permitted to perform action on uri
   this.isPermitted = function(action, uri, user) {
    
-    uri = uri.split('//')[1];
+    uri = uri.split('//')[1]; // Compare URIs without scheme
     
     // Get all systems for uri and check if at least one gives right to perform action
     let systems = this.systems(uri).filter(
@@ -151,12 +157,12 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // @return true | false  
   this.notAuthenticated = () => { return !this.isAuthenticated(); };
   
-  //
+  // Delete user in local storage
   this.removeUser = function() {
     return NpolarApiUser.removeUser();
   };
   
-  //
+  // Store user in local storage
   this.setUser = function(user) {
     return NpolarApiUser.setUser(user);
   };

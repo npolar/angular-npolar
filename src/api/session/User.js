@@ -10,7 +10,7 @@ var User = function(base64, npolarApiConfig) {
   let storage = localStorage;
 
   this.getUser = function() {
-    let user = {};
+    let user = { name: null, email: null, systems: []};
     try {
       let storedUser = storage.getItem(this.getStorageKey());
       return JSON.parse(base64.decode(storedUser));

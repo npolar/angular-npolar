@@ -9,69 +9,68 @@
  * - delete()
  * - save()
  *
- * Usage example: https://github.com/npolar/npdc-dataset/blob/ae0dc74d33708c76ac88fc8f0f492ac14759cae7/src/edit/DatasetEditController.js  
+ * Usage example: https://github.com/npolar/npdc-dataset/blob/ae0dc74d33708c76ac88fc8f0f492ac14759cae7/src/edit/DatasetEditController.js
  *
  * @ngInject
  */
-var EditController = function ($interval, $scope, $location, $log, $route, $routeParams, $window, $controller,
+var angular = require('angular');
+
+var EditController = function($interval, $scope, $location, $log, $route, $routeParams, $window, $controller,
   Gouncer, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
-  
+
   // Extend NpolarBaseController
-  $controller('NpolarBaseController', {$scope: $scope});
-  
+  $controller('NpolarBaseController', {
+    $scope: $scope
+  });
+
   // Seconds since save
   $scope.i = 0;
-  
+
   $scope.formula = {
     template: npolarApiConfig.formula.template || 'default',
     language: null,
     validateHidden: true,
     saveHidden: true,
     onsave: function(model) {
-        if (angular.isUndefined($scope.document.id)) {
+      if (angular.isUndefined($scope.document.id)) {
         $scope.create(model);
-        } else {
+      } else {
         $scope.update(model);
-        }
+      }
     }
   };
-  
+
   const step = 5; // Interval step (in seconds)
   const autosave = 30; // Autosave every N seconds
-  
+
   $scope.isChanged = function() {
-    return $scope.formula.formula ? $scope.formula.formula.dirty : false ;
+    return $scope.formula.formula ? $scope.formula.formula.dirty : false;
   };
-  
-  let timer = $interval(() => {
+
+  $interval(() => {
     if ($scope.isChanged()) {
-    $scope.i = $scope.i + step;
-    
-    $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
-    
-    
-      
+      $scope.i = $scope.i + step;
+      $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
+
       if (0 === ($scope.i % autosave)) {
-        
         $scope.save();
       }
     }
-  }, step*1000);
-  
-  
+  }, step * 1000);
+
   // Refresh JWT
   let refreshJwt = function() {
     if (NpolarApiSecurity.isAuthenticated()) {
-      Gouncer.authenticate().then(function (response) {
-         NpolarApiSecurity.setJwt(response.data.token);
+      Gouncer.authenticate().then(function(response) {
+        NpolarApiSecurity.setJwt(response.data.token);
       });
     }
   };
-  
+
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
     return $scope.resource.save(model, function(document) {
-      let uri = $location.path().replace(/\/__new(\/edit)?$/, '/'+document.id+'/edit');
+      let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope.document = document;
       $scope.formula.model = document;
       refreshJwt();
@@ -92,7 +91,7 @@ var EditController = function ($interval, $scope, $location, $log, $route, $rout
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
   };
-  
+
   // Edit (or new) action
   $scope.edit = function() {
     if ($routeParams.id === '__new') {
@@ -109,13 +108,15 @@ var EditController = function ($interval, $scope, $location, $log, $route, $rout
       $scope.formula.model = document;
       $scope.i = 0;
       refreshJwt();
-      
+
     });
   };
 
   // DELETE document, ie. resource remove
   $scope.delete = function() {
-    return $scope.resource.remove({id: $scope.document.id }, function() {
+    return $scope.resource.remove({
+      id: $scope.document.id
+    }, function() {
       refreshJwt();
       $location.path('/');
       $route.reload();

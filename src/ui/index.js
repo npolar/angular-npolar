@@ -14,6 +14,10 @@ npolarUi.directive('npolarLoginLogout', require('./auth/loginLogout'));
 npolarUi.controller('NpolarMessageController', require('./message/MessageController'));
 npolarUi.directive('npolarApiMessage', require('./message/message'));
 
+npolarUi.filter('isodate', require('./filters/isodate'));
+npolarUi.filter('year', require('./filters/year'));
+npolarUi.filter('lang', require('./filters/lang'));
+
 npolarUi.controller('ToastCtrl', function($scope, $mdToast, message, explanation) {
 
   $scope.message = message;

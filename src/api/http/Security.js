@@ -13,21 +13,21 @@ let angular = require('angular');
 var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   // Gouncer location
   // secure uri
-  
-  const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
+
+  //const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
 
   // Gouncer system actions
   const actions = ['create', 'read', 'update', 'delete'];
 
   // @return Authorization header string (either Bearer/JWT or Basic)
-  this.authorization = function () {
+  this.authorization = function() {
 
     let user = NpolarApiUser.getUser();
 
     if ('basic' === npolarApiConfig.security.authorization) {
-      return 'Basic '+ this.basicToken(user);
+      return 'Basic ' + this.basicToken(user);
     } else if ('jwt' === npolarApiConfig.security.authorization) {
-      return 'Bearer '+ user.jwt;
+      return 'Bearer ' + user.jwt;
     } else {
       console.error('NpolarApiSecurity authorization not implemented: ' + npolarApiConfig.security.authorization);
       return '';
@@ -39,28 +39,28 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     return base64.encode(username + ':' + password);
   };
 
-  // Normalize shortened URI to absolute URI  
-  this.canonicalUri = function(uri, scheme='https') {
+  // Normalize shortened URI to absolute URI
+  this.canonicalUri = function(uri, scheme = 'https') {
     let canonical;
-    
-    if (uri === undefined || uri === null ) {
+
+    if (uri === undefined || uri === null) {
       return false;
       //throw new Error(`Bad URI: ${uri}`);
     }
-   
+
     if (new RegExp(`^${scheme}:\/\/`).test(uri)) {
       canonical = uri;
-    
+
     } else if ((/^\/\//).test(uri)) {
-      canonical = scheme +':'+ uri;
-    
+      canonical = scheme + ':' + uri;
+
     } else if ((/^\/[^/]/).test(uri)) {
       //throw new Error(`Relative URI: ${uri}`);
-      canonical = scheme +'://'+ npolarApiConfig.base.split("//")[1] + uri;
-    
+      canonical = scheme + '://' + npolarApiConfig.base.split("//")[1] + uri;
+
     } else if ((/^https?:\/\//).test(uri)) {
-      canonical =  uri.replace(/^https?/, scheme);
-    
+      canonical = uri.replace(/^https?/, scheme);
+
     } else {
       throw new Error(`Could not canonicalize URI: ${uri}`);
     }
@@ -77,7 +77,11 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     try {
       return NpolarApiUser.getUser();
     } catch (e) {
-      return { name: null, email: null, systems: [] };
+      return {
+        name: null,
+        email: null,
+        systems: []
+      };
     }
   };
 
@@ -88,20 +92,20 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
 
   // Return all systems matching current URI (or *)
   this.systems = function(uri) {
-    
+
     let systems = this.getUser().systems;
-    
+
     if (uri === undefined) {
       return systems;
     }
     uri = this.canonicalUri(uri);
-    
+
     return this.getUser().systems.filter(
       system => {
-        
+
         if (system.uri === uri) {
-          return true;   
-        } else if (system.uri === this.canonicalUri(npolarApiConfig.base+"/*")) {
+          return true;
+        } else if (system.uri === this.canonicalUri(npolarApiConfig.base + "/*")) {
           return true;
         } else {
           return false;
@@ -125,9 +129,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Checks if the user is authorized *at the current time* - ie. always returns false if not authenticated
   // @param action ["create" | "read" | "update" | "delete"] => actions
   this.isAuthorized = function(action, uri) {
-    
+
     uri = this.canonicalUri(uri);
-    
+
     if (false === actions.includes(action)) {
       $log.error(`isAuthorized(${action}, ${uri}) called with invalid action`);
       return false;
@@ -136,7 +140,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     // @todo support just ngResource or NpolarApiResurce => get path from that
     // @todo fallback to relative application path
 
-    
+
     // First, verify login
     if (false === this.isAuthenticated()) {
       return false;
@@ -154,7 +158,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     }
 
     try {
-      return ((Date.now() / 1000) > this.decodeJwt(jwt).exp );
+      return ((Date.now() / 1000) > this.decodeJwt(jwt).exp);
     } catch (e) {
       return true;
     }
@@ -162,9 +166,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
 
   // Check if user is permitted to perform action on uri
   this.isPermitted = function(action, uri, user) {
-    
+
     uri = this.canonicalUri(uri);
-    
+
     // Get all systems for uri and check if at least one gives right to perform action
     let systems = this.systems(uri).filter(
       system => {
@@ -182,7 +186,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   };
 
   // @return true | false
-  this.notAuthenticated = () => { return !this.isAuthenticated(); };
+  this.notAuthenticated = () => {
+    return !this.isAuthenticated();
+  };
 
   // Delete user in local storage
   this.removeUser = function() {
@@ -193,26 +199,27 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   this.setUser = function(user) {
     return NpolarApiUser.setUser(user);
   };
-  
+
   this.setJwt = function(jwt) {
-    
+
     var token = this.decodeJwt(jwt);
-    
-    var expires = new Date(1000*token.exp).toISOString();
-    
-    
-    let user = { name: token.name || token.email,
+
+    var expires = new Date(1000 * token.exp).toISOString();
+
+
+    let user = {
+      name: token.name || token.email,
       email: token.email,
       jwt,
       uri: token.uri || '',
       expires: expires,
       systems: token.systems || []
     };
-    
+
     this.setUser(user);
-    
+
     $log.debug('New JWT expires: ', expires, jwt);
-    
+
   };
 
 };

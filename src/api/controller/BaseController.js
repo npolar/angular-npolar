@@ -1,13 +1,10 @@
+'use strict';
 /**
 * NpolarBaseController is meant to be the parent of a safe controller,
 * ie. a controller dealing with only with presentation, search, etc.
 * See also NpolarEditController.
 *
-* Usage example: 
 */
-
-'use strict';
-var _ = require('lodash');
 
 // @ngInject
 var BaseController = function($scope, $location, $route, $routeParams, $window, $controller, $http,
@@ -27,10 +24,12 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
       $scope.document = document;
     });
   };
-  
+
   // Search action, ie. fetch feed and inject into scope
   $scope.search = function(query) {
-    return $scope.resource.feed(query, function(response) {
+    let fullQuery = Object.assign($location.search(), query);
+    $location.search(fullQuery);
+    return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;
     });
   };
@@ -56,7 +55,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
     }
     return ($scope.feed.entries.length < $scope.feed.opensearch.totalResults);
   };
-  
+
   $scope.next = function() {
     if (!$scope.feed.links) {
       return;
@@ -70,7 +69,7 @@ var BaseController = function($scope, $location, $route, $routeParams, $window, 
       });
     }
   };
-  
+
 
   init();
 };

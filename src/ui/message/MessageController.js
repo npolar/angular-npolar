@@ -28,11 +28,7 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   //};
 
   var flashInfo = function(message) {
-
-    let explanation = "";
-
-    explanation = message;
-
+    let explanation = message;
 
     $mdToast.show({
       controller: 'ToastCtrl',
@@ -45,16 +41,13 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
       // noop
     });
   };
-  
+
   var flashError = flashInfo;
-  
-  
+
   NpolarApiMessage.on("npolar-info", function(message) {
     console.log("<- npolar-info", message);
     flashInfo(message);
   });
-
-
 
   NpolarApiMessage.on("npolar-api-info", function(response) {
     console.log("<- npolar-api-info", response);
@@ -75,25 +68,22 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   });
 
   NpolarApiMessage.on("npolar-api-error", function(message) {
-    
     console.log("<- npolar-api-error", message);
-    
+
     if (401 === message.status) {
       flashError("Login failed, please check your username and password");
-      
     } else if (403 === message.status) {
       flashError("Not authorized");
-      
     } else if (404 === message.status) {
-      
       flashError("Not found");
-      
     } else {
       flashError(message, message.body);
     }
   });
-  
-  
+
+  $scope.closeToast = function () {
+    $mdToast.hide();
+  };
   // 401 username / password failed
   // 403 forbidden => not permitted
   // token expired

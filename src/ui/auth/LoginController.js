@@ -23,7 +23,6 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
 
   // Login (using username and password)
   $scope.login = function(email, password) {
-    console.log(email, password);
     Gouncer.authenticate(email, password).then(onLogin, onLoginError);
   };
 

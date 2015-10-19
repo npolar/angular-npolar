@@ -13,46 +13,82 @@
  *
  * @ngInject
  */
-var EditController = function ($scope, $location, $route, $routeParams, $window, $controller,
-  npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
+var EditController = function ($interval, $scope, $location, $log, $route, $routeParams, $window, $controller,
+  Gouncer, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
   
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {$scope: $scope});
-
+  
+  // Seconds since save
+  $scope.i = 0;
+  
   $scope.formula = {
     template: npolarApiConfig.formula.template || 'default',
     language: null,
     validateHidden: true,
     saveHidden: true,
     onsave: function(model) {
-	  if (angular.isUndefined($scope.document.id)) {
-		$scope.create(model);
-	  } else {
-		$scope.update(model);
-	  }
+        if (angular.isUndefined($scope.document.id)) {
+        $scope.create(model);
+        } else {
+        $scope.update(model);
+        }
     }
   };
-
+  
+  const step = 5; // Interval step (in seconds)
+  const autosave = 30; // Autosave every N seconds
+  
+  $scope.isChanged = function() {
+    return $scope.formula.formula ? $scope.formula.formula.dirty : false ;
+  };
+  
+  let timer = $interval(() => {
+    if ($scope.isChanged()) {
+    $scope.i = $scope.i + step;
+    
+    $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
+    
+    
+      
+      if (0 === ($scope.i % autosave)) {
+        
+        $scope.save();
+      }
+    }
+  }, step*1000);
+  
+  
+  // Refresh JWT
+  let refreshJwt = function() {
+    if (NpolarApiSecurity.isAuthenticated()) {
+      Gouncer.authenticate().then(function (response) {
+         NpolarApiSecurity.setJwt(response.data.token);
+      });
+    }
+  };
+  
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
-    $scope.resource.save(model, function(document) {
+    return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/'+document.id+'/edit');
       $scope.document = document;
       $scope.formula.model = document;
+      refreshJwt();
       $location.path(uri);
     });
   };
 
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
-    $scope.resource.fetch($routeParams, function(document) {
+    return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
     });
   };
 
   // New action, ie. create new document and edit with formula
-  $scope.newAction = function() {
+  $scope.newAction = function(document) {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
   };
@@ -68,22 +104,27 @@ var EditController = function ($scope, $location, $route, $routeParams, $window,
 
   // PUT document, ie resource update
   $scope.update = function(model) {
-    $scope.resource.update(model, function(document) {
+    return $scope.resource.update(model, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
+      $scope.i = 0;
+      refreshJwt();
+      
     });
   };
 
   // DELETE document, ie. resource remove
   $scope.delete = function() {
-    $scope.resource.remove({id: $scope.document.id }, function() {
+    return $scope.resource.remove({id: $scope.document.id }, function() {
+      refreshJwt();
       $location.path('/');
+      $route.reload();
     });
   };
 
   // Save document action, ie. create or update
   $scope.save = function() {
-	$scope.formula.formula.save();
+    return $scope.formula.formula.save();
   };
 };
 

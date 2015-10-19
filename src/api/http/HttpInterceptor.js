@@ -15,7 +15,7 @@
 /**
  * @ngInject
  */
-var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
+var HttpInterceptor = function ($log, $q, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
 
   var message = NpolarApiMessage;
   
@@ -47,14 +47,21 @@ var HttpInterceptor = function ($q, $rootScope, npolarApiConfig, NpolarApiMessag
         
         config.headers = config.headers || {};
         
+        if (['DELETE','POST','PUT'].includes(config.method)) {
+
+          if ('PUT' === config.method || 'POST' === config.method) {
+            // @todo fire saving event?
+            // Refresh token
+          } else if ('DELETE' === config.method) {
+            // @todo fire deleting event?
+          }
+          
+        } 
+
         if (!config.headers.Authorization) {
           config.headers.Authorization = NpolarApiSecurity.authorization();
         }
-        if ('PUT' === config.method || 'POST' === config.method) {
-          // @todo fire saving event?
-        } else if ('DELETE' === config.method) {
-          // @todo fire deleting event?
-        }
+        
 
       }
       return config;

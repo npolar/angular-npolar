@@ -22,4 +22,6 @@ npolarApi.directive('npolarJsonText', require('./util/jsonText'));
 npolarApi.controller('NpolarBaseController', require('./controller/BaseController'));
 npolarApi.controller('NpolarEditController', require('./controller/EditController'));
 
+npolarApi.service('Gouncer', require('./gouncer/GouncerService'));
+
 module.exports = npolarApi;

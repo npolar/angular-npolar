@@ -12,7 +12,9 @@ let angular = require('angular');
  */
 var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
   // Gouncer location
-  //const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
+  // secure uri
+  
+  const authenticateUri = 'https://'+ npolarApiConfig.base.split("//")[1] +'/user/authenticate';
 
   // Gouncer system actions
   const actions = ['create', 'read', 'update', 'delete'];
@@ -33,8 +35,36 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   };
 
   // @return HTTP Basic Authorization header string
-  this.basicToken = function(user) {
-    return base64.encode(user.username + ':' + user.password);
+  this.basicToken = function(username, password) {
+    return base64.encode(username + ':' + password);
+  };
+
+  // Normalize shortened URI to absolute URI  
+  this.canonicalUri = function(uri, scheme='https') {
+    let canonical;
+    
+    if (uri === undefined || uri === null ) {
+      return false;
+      //throw new Error(`Bad URI: ${uri}`);
+    }
+   
+    if (new RegExp(`^${scheme}:\/\/`).test(uri)) {
+      canonical = uri;
+    
+    } else if ((/^\/\//).test(uri)) {
+      canonical = scheme +':'+ uri;
+    
+    } else if ((/^\/[^/]/).test(uri)) {
+      //throw new Error(`Relative URI: ${uri}`);
+      canonical = scheme +'://'+ npolarApiConfig.base.split("//")[1] + uri;
+    
+    } else if ((/^https?:\/\//).test(uri)) {
+      canonical =  uri.replace(/^https?/, scheme);
+    
+    } else {
+      throw new Error(`Could not canonicalize URI: ${uri}`);
+    }
+    return canonical;
   };
 
   // @return Object
@@ -58,17 +88,20 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
 
   // Return all systems matching current URI (or *)
   this.systems = function(uri) {
-
-    uri = uri.split('//')[1]; // Compare URIs without scheme
-
+    
+    let systems = this.getUser().systems;
+    
+    if (uri === undefined) {
+      return systems;
+    }
+    uri = this.canonicalUri(uri);
+    
     return this.getUser().systems.filter(
       system => {
-
-        system.uri = system.uri.split('//')[1];
-
+        
         if (system.uri === uri) {
-          return true;
-        } else if (system.uri === npolarApiConfig.base.split('//')[1]+"/*") {
+          return true;   
+        } else if (system.uri === this.canonicalUri(npolarApiConfig.base+"/*")) {
           return true;
         } else {
           return false;
@@ -92,7 +125,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Checks if the user is authorized *at the current time* - ie. always returns false if not authenticated
   // @param action ["create" | "read" | "update" | "delete"] => actions
   this.isAuthorized = function(action, uri) {
-
+    
+    uri = this.canonicalUri(uri);
+    
     if (false === actions.includes(action)) {
       $log.error(`isAuthorized(${action}, ${uri}) called with invalid action`);
       return false;
@@ -101,16 +136,7 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     // @todo support just ngResource or NpolarApiResurce => get path from that
     // @todo fallback to relative application path
 
-    if (uri === undefined || false === (/\/\//).test(uri)) {
-      $log.error(`isAuthorized(${action}, ${uri}) called with invalid URI`);
-      return false;
-    }
-
-    // @todo // @todo support relative URIs
-    //if (uri instanceof String && (/^\/[^/]/).test(uri)) {
-    //}
-    uri = uri.split('//')[1] || uri; // Compare URIs without scheme
-
+    
     // First, verify login
     if (false === this.isAuthenticated()) {
       return false;
@@ -136,9 +162,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
 
   // Check if user is permitted to perform action on uri
   this.isPermitted = function(action, uri, user) {
-
-    uri = uri.split('//')[1] || uri; // Compare URIs without scheme
-
+    
+    uri = this.canonicalUri(uri);
+    
     // Get all systems for uri and check if at least one gives right to perform action
     let systems = this.systems(uri).filter(
       system => {
@@ -166,6 +192,27 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Store user in local storage
   this.setUser = function(user) {
     return NpolarApiUser.setUser(user);
+  };
+  
+  this.setJwt = function(jwt) {
+    
+    var token = this.decodeJwt(jwt);
+    
+    var expires = new Date(1000*token.exp).toISOString();
+    
+    
+    let user = { name: token.name || token.email,
+      email: token.email,
+      jwt,
+      uri: token.uri || '',
+      expires: expires,
+      systems: token.systems || []
+    };
+    
+    this.setUser(user);
+    
+    $log.debug('New JWT expires: ', expires, jwt);
+    
   };
 
 };

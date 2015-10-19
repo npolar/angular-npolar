@@ -15,7 +15,7 @@
 /**
  * @ngInject
  */
-var HttpInterceptor = function ($log, $q, $rootScope, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
+var HttpInterceptor = function ($log, $q, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
 
   var message = NpolarApiMessage;
   

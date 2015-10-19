@@ -44,7 +44,8 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     let canonical;
     
     if (uri === undefined || uri === null ) {
-      throw new Error(`Bad URI: ${uri}`);
+      return false;
+      //throw new Error(`Bad URI: ${uri}`);
     }
    
     if (new RegExp(`^${scheme}:\/\/`).test(uri)) {

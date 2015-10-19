@@ -35,8 +35,8 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   };
 
   // @return HTTP Basic Authorization header string
-  this.basicToken = function(user) {
-    return base64.encode(user.username + ':' + user.password);
+  this.basicToken = function(username, password) {
+    return base64.encode(username + ':' + password);
   };
 
   // Normalize shortened URI to absolute URI  
@@ -57,15 +57,12 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
       //throw new Error(`Relative URI: ${uri}`);
       canonical = scheme +'://'+ npolarApiConfig.base.split("//")[1] + uri;
     
-    
     } else if ((/^https?:\/\//).test(uri)) {
       canonical =  uri.replace(/^https?/, scheme);
     
     } else {
       throw new Error(`Could not canonicalize URI: ${uri}`);
     }
-    $log.debug(canonical, 'was', uri);
-
     return canonical;
   };
 
@@ -194,6 +191,27 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Store user in local storage
   this.setUser = function(user) {
     return NpolarApiUser.setUser(user);
+  };
+  
+  this.setJwt = function(jwt) {
+    
+    var token = this.decodeJwt(jwt);
+    
+    var expires = new Date(1000*token.exp).toISOString();
+    
+    
+    let user = { name: token.name || token.email,
+      email: token.email,
+      jwt,
+      uri: token.uri || '',
+      expires: expires,
+      systems: token.systems || []
+    };
+    
+    this.setUser(user);
+    
+    $log.debug('New JWT expires: ', expires, jwt);
+    
   };
 
 };

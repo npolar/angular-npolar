@@ -33,7 +33,7 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
     validateHidden: true,
     saveHidden: true,
     onsave: function(model) {
-      if ($scope.document.id !== undefined) {
+      if (!model._rev) {
         $scope.create(model);
       } else {
         $scope.update(model);

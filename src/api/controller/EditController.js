@@ -13,14 +13,12 @@
  *
  */
 
-var angular = require('angular');
+let angular = require('angular');
 
 // @ngInject
-var EditController = function($interval, $scope, $location, $log, $route, $routeParams, $window, $controller,
+let EditController = function($scope, $location, $log, $route, $routeParams, $window, $controller,
   Gouncer, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
 
-  
-  
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {
     $scope: $scope
@@ -35,7 +33,7 @@ var EditController = function($interval, $scope, $location, $log, $route, $route
     validateHidden: true,
     saveHidden: true,
     onsave: function(model) {
-      if (angular.isUndefined($scope.document.id)) {
+      if ($scope.document.id !== undefined) {
         $scope.create(model);
       } else {
         $scope.update(model);

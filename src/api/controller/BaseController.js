@@ -9,11 +9,11 @@
 // @ngInject
 var BaseController = function($scope, $location, $log, $route, $routeParams, $window, $controller, $http,
   npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiUser, NpolarApiResource) {
-  
+
   let init = function() {
     $scope.security = NpolarApiSecurity;
   };
-  
+
   // Show action, ie. fetch document and inject into scope
   $scope.show = function() {
 
@@ -24,8 +24,7 @@ var BaseController = function($scope, $location, $log, $route, $routeParams, $wi
 
   // Search action, ie. fetch feed and inject into scope
   $scope.search = function(query) {
-    let fullQuery = Object.assign($location.search(), query);
-    $location.search(fullQuery);
+    let fullQuery = Object.assign({}, $location.search(), query);
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;
     });
@@ -54,7 +53,7 @@ var BaseController = function($scope, $location, $log, $route, $routeParams, $wi
 
 
   init();
-  
+
 };
 
 module.exports = BaseController;

@@ -11,13 +11,16 @@
  *
  * Usage example: https://github.com/npolar/npdc-dataset/blob/ae0dc74d33708c76ac88fc8f0f492ac14759cae7/src/edit/DatasetEditController.js
  *
- * @ngInject
  */
+
 var angular = require('angular');
 
+// @ngInject
 var EditController = function($interval, $scope, $location, $log, $route, $routeParams, $window, $controller,
   Gouncer, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
 
+  
+  
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {
     $scope: $scope
@@ -47,16 +50,16 @@ var EditController = function($interval, $scope, $location, $log, $route, $route
     return $scope.formula.formula ? $scope.formula.formula.dirty : false;
   };
 
-  $interval(() => {
-    if ($scope.isChanged()) {
-      $scope.i = $scope.i + step;
-      $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
-
-      if (0 === ($scope.i % autosave)) {
-        $scope.save();
-      }
-    }
-  }, step * 1000);
+  //$interval(() => {
+  //  if ($scope.isChanged()) {
+  //    $scope.i = $scope.i + step;
+  //    $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
+  //
+  //    if (0 === ($scope.i % autosave)) {
+  //      $scope.save();
+  //    }
+  //  }
+  //}, step * 1000);
 
   // Refresh JWT
   let refreshJwt = function() {
@@ -125,6 +128,8 @@ var EditController = function($interval, $scope, $location, $log, $route, $route
 
   // Save document action, ie. create or update
   $scope.save = function() {
+    //console.log('save', $scope.formula.model);
+    //return $scope.update($scope.formula.model);
     return $scope.formula.formula.save();
   };
 };

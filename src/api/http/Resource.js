@@ -5,40 +5,46 @@ var _ = require('lodash'); //@todo eliminate
 /**
  * @ngInject
  */
-var Resource = function($resource, $location, $log, npolarApiConfig, NpolarApiSecurity) {
+var Resource = function($resource, $location, $routeParams, $log, npolarApiConfig, NpolarApiSecurity) {
   
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {
     // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
-    let segments = $location.absUrl().split("//")[1].split("?")[0].split("/").filter(s => { return s !== "";});
-    return segments.slice(2);
+    let segments = $location.absUrl().split("//")[1].split("?")[0].split("/");
+    segments = segments.filter(s => { return (s !== '' && s !== 'show'); });
+    return segments.slice(2); // Removes hostname and /base
   };
   
   // Get href for id [warn:] relative to current application /path/
   // @return href 
   this.href = function(id) { 
     // Add .json if id contains dots, otherwise the API barfs
-    if ((/[.]/).test(id)) {
-      id += ".json";
-    }
-    let segments = pathSegments();
-
+    //if ((/[.]/).test(id)) {
+    //  id += ".json";
+    //}
+    let segments = pathSegments().filter(s => s !== 'show');
+    
     // For apps at /something, we just need to link to the id
     if (segments.length === 0) {
-      return id;
+      return id.replace(/show\//, '');
     
     // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
     } else {
       segments = segments.filter(s => { return (s !== 'edit'); });
+      segments = segments.filter(s => { return (s !== 'show'); });
       segments = segments.filter(s => { return (s !== id); });
       return segments.join("/")+'/'+id;
     }
   };
   
   this.editHref = function(id) {
-    // @todo test that provided id is last segment before edit
-    // @warn now only works if id is in current request URI
-    return pathSegments().join('/')+'/edit';
+    let segments = pathSegments();
+    if (segments.length === 0) {
+      return `${$routeParams.id}/edit`;
+    } else {
+      return segments.join('/')+'/edit';
+    }
+    
   };
     
   // Path to new, relative to /base/ defined in index.html

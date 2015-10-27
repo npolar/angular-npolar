@@ -19,7 +19,7 @@
     "angular-resource": "1.4.7",
     "angular-route": "1.4.7",
     "angular-utf8-base64": "*",
-    "lodash": "^2"
+    "lodash": "^3"
   },
   "author": "",
   "license": "MIT",

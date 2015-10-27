@@ -13,11 +13,9 @@
  *
  */
 
-let angular = require('angular');
-
 // @ngInject
-let EditController = function($scope, $location, $log, $route, $routeParams, $window, $controller,
-  Gouncer, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity, NpolarApiResource) {
+let EditController = function($scope, $location, $route, $rootScope, $routeParams, $controller,
+  Gouncer, npolarApiConfig, NpolarApiSecurity) {
 
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {
@@ -41,8 +39,8 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
     }
   };
 
-  const step = 5; // Interval step (in seconds)
-  const autosave = 30; // Autosave every N seconds
+  // const step = 5; // Interval step (in seconds)
+  // const autosave = 30; // Autosave every N seconds
 
   $scope.isChanged = function() {
     return $scope.formula.formula ? $scope.formula.formula.dirty : false;
@@ -74,6 +72,7 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope.document = document;
       $scope.formula.model = document;
+      $rootScope.$broadcast('npdc-document', document);
       refreshJwt();
       $location.path(uri);
     });
@@ -84,6 +83,7 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
+      $rootScope.$broadcast('npdc-document', document);
     });
   };
 
@@ -91,6 +91,7 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
   $scope.newAction = function(document) {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
+    $rootScope.$broadcast('npdc-document', $scope.document);
   };
 
   // Edit (or new) action
@@ -107,6 +108,7 @@ let EditController = function($scope, $location, $log, $route, $routeParams, $wi
     return $scope.resource.update(model, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
+      $rootScope.$broadcast('npdc-document', document);
       $scope.i = 0;
       refreshJwt();
 

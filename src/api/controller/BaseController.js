@@ -17,7 +17,7 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
   $scope.show = function() {
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
-      $rootScope.$broadcast('npdc-document', document);
+      $rootScope.$broadcast('npolar-document', document);
     });
   };
 
@@ -26,7 +26,7 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
     let fullQuery = Object.assign({}, $location.search(), query);
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;
-      $rootScope.$broadcast('npdc-feed', response.feed);
+      $rootScope.$broadcast('npolar-feed', response.feed);
     });
   };
 
@@ -47,7 +47,7 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
       $http.get(nextLink.href.replace(/^https?:/, '')).success(function(response) {
         response.feed.entries = $scope.feed.entries.concat(response.feed.entries);
         $scope.feed = response.feed;
-        $rootScope.$broadcast('npdc-feed', response.feed);
+        $rootScope.$broadcast('npolar-feed', response.feed);
       });
     }
   };

@@ -72,7 +72,7 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npdc-document', document);
+      $rootScope.$broadcast('npolar-document', document);
       refreshJwt();
       $location.path(uri);
     });
@@ -83,7 +83,7 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npdc-document', document);
+      $rootScope.$broadcast('npolar-document', document);
     });
   };
 
@@ -91,7 +91,7 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
   $scope.newAction = function(document) {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
-    $rootScope.$broadcast('npdc-document', $scope.document);
+    $rootScope.$broadcast('npolar-document', $scope.document);
   };
 
   // Edit (or new) action
@@ -108,7 +108,7 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
     return $scope.resource.update(model, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npdc-document', document);
+      $rootScope.$broadcast('npolar-document', document);
       $scope.i = 0;
       refreshJwt();
 

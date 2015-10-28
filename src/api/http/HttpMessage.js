@@ -17,7 +17,7 @@ var HttpMessage = function() {
     }
     
     if (0 === response.status) {
-      body = { "error": { explanation: `Failed accessing Npolar API ${response.config.url}` } };
+      body = `HTTP ${response.config.method} to Npolar API ${response.config.url} failed with status: 0`;
     }
     
     return { status: response.status,
@@ -25,7 +25,7 @@ var HttpMessage = function() {
       uri: response.config.url,
       headers: response.headers(),
       time: time,
-      body: body
+      body
     };
     
   };

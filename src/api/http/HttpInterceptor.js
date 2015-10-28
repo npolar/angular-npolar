@@ -1,8 +1,8 @@
 /**
  * Npolar API HTTP interceptor:
  * - adds JWT (Bearer token) in the Authorization header
- * - emits Npolar API informational imessages
- * - emits Npolar API errors
+ * - emits "npolar-api-*" messages
+ * 
  * Usage:
  * myApp.config(function($httpProvider) {
  *  $httpProvider.interceptors.push('npolarApiInterceptor');
@@ -29,7 +29,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
 
   var isNpolarApiResponse = function(response) {
     if (0 === response.status) {
-      return true;
+      return true; // Assume it's a crashed API request
     }
     return (isJSON(response.headers('Content-Type')) && isNpolarApiRequest(response.config));
   };
@@ -40,6 +40,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
 
   return {
 
+    // Intercept API requests: add Authorization header (JWT)
     request: function(config) {
 
       // Only intercept Npolar API requests
@@ -47,40 +48,31 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
 
         config.headers = config.headers || {};
 
-        /*if (['DELETE', 'POST', 'PUT'].includes(config.method)) {
-
-          if ('PUT' === config.method || 'POST' === config.method) {
-            // @todo fire saving event?
-            // Refresh token
-          } else if ('DELETE' === config.method) {
-            // @todo fire deleting event?
-          }
-
-        }*/
-
+        //@todo if ( body && ('PUT' === config.method || 'POST' === config.method)) { fire saving event? }          
+        //@todo if ('DELETE' === config.method) { fire deleting event? }
+        
+        // Add Authorization: Bearer [JWT]
         if (!config.headers.Authorization) {
           config.headers.Authorization = NpolarApiSecurity.authorization();
         }
-
-
       }
       return config;
     },
 
+    
     response: function(response) {
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
         message.emit("npolar-api-info", message.getMessage(response, response.body));
       }
-      /*if ('PUT' === response.config.method || 'POST' === response.config.method) {
-        // @todo fire saved event?
-      } else if ('DELETE' === response.config.method) {
-        // @todo fire deleted event?
-      }*/
+      // @todo fire saved event?
+      // @todo fire deleted event?
+      
       return response || $q.when(response);
     },
 
     requestError: function(response) {
+      log.debug('requestError', response);
       message.emit("npolar-api-error", message.getMessage(response, {
         error: {
           explanation: "Request failed"

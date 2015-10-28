@@ -2,7 +2,7 @@
  * Npolar API HTTP interceptor:
  * - adds JWT (Bearer token) in the Authorization header
  * - emits "npolar-api-*" messages
- * 
+ *
  * Usage:
  * myApp.config(function($httpProvider) {
  *  $httpProvider.interceptors.push('npolarApiInterceptor');
@@ -16,8 +16,6 @@
  * @ngInject
  */
 var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
-
-  var message = NpolarApiMessage;
 
   var isNpolarApiRequest = function(config) {
     if (config.url === undefined || false === (/\/\//).test(config.url)) {
@@ -48,9 +46,9 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
 
         config.headers = config.headers || {};
 
-        //@todo if ( body && ('PUT' === config.method || 'POST' === config.method)) { fire saving event? }          
+        //@todo if ( body && ('PUT' === config.method || 'POST' === config.method)) { fire saving event? }
         //@todo if ('DELETE' === config.method) { fire deleting event? }
-        
+
         // Add Authorization: Bearer [JWT]
         if (!config.headers.Authorization) {
           config.headers.Authorization = NpolarApiSecurity.authorization();
@@ -59,31 +57,32 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
       return config;
     },
 
-    
+
     response: function(response) {
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
-        message.emit("npolar-api-info", message.getMessage(response, response.body));
+        NpolarApiMessage.emit("npolar-api-info", NpolarApiMessage.getMessage(response));
       }
       // @todo fire saved event?
       // @todo fire deleted event?
-      
-      return response || $q.when(response);
+
+      return response;
     },
 
     requestError: function(response) {
-      log.debug('requestError', response);
-      message.emit("npolar-api-error", message.getMessage(response, {
+      response.body = {
         error: {
           explanation: "Request failed"
         }
-      }));
+      };
+      NpolarApiMessage.emit("npolar-api-error", NpolarApiMessage.getMessage(response));
       return $q.reject(response);
     },
 
     responseError: function(response) {
+      response.body = response.data;
       if (isNpolarApiResponse(response)) {
-        message.emit("npolar-api-error", message.getMessage(response, response.data));
+        NpolarApiMessage.emit("npolar-api-error", NpolarApiMessage.getMessage(response));
       }
       return $q.reject(response);
     }

@@ -5,7 +5,8 @@
  */
 var message = function () {
   return {
-   controller: 'NpolarMessageController'
+    scope: {},
+    controller: 'NpolarMessageController'
   };
 };
 

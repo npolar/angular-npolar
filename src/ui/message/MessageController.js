@@ -1,48 +1,29 @@
 'use strict';
 
 // @ngInject
-var MessageController = function ($scope, $route, $http, $location, $mdToast, npolarApiConfig, NpolarApiUser, NpolarApiSecurity, NpolarApiMessage) {
+var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) {
 
-  var flashError = function(message) {
-  
-    let explanation = "";
-  
-    if (message.body && message.body.reason) {
-      explanation = message.body.reason;
-    } else if (message.body) {
-      explanation = message.body;
-    } else {
-      explanation = message;
-    }
-  
+  var flashError = function(error) {
     $mdToast.show({
-      controller: 'ToastCtrl',
+      controller: 'NpolarToastController',
       templateUrl: 'angular-npolar/src/ui/message/_message_toast.html',
       hideDelay: 5000,
       action: "OK",
-      locals: { message: message, explanation: explanation },
+      locals: { explanation: error.message || error, msgType: 'error'},
       position: "top left"
-    }).then(function() {
-      //$route.reload();
     });
   };
 
   var flashInfo = function(message) {
-    let explanation = message;
-
     $mdToast.show({
-      controller: 'ToastCtrl',
+      controller: 'NpolarToastController',
       templateUrl: 'angular-npolar/src/ui/message/_message_toast.html',
       hideDelay: 5000,
       action: "OK",
-      locals: { message: message, explanation: explanation },
+      locals: { explanation: message, msgType: message.type || 'info' },
       position: "bottom left"
-    }).then(function() {
-      // noop
     });
   };
-
-  //var flashError = flashInfo;
 
   NpolarApiMessage.on("npolar-info", function(message) {
     console.log("<- npolar-info", message);
@@ -66,29 +47,16 @@ var MessageController = function ($scope, $route, $http, $location, $mdToast, np
   NpolarApiMessage.on("npolar-logout", function(user) {
     flashInfo(`${user.name} logged out`);
   });
-  
-  NpolarApiMessage.on("npolar-error", function(message) {
-    console.log("<- npolar-error", message);
-    flashError(message, message);
+
+  NpolarApiMessage.on("npolar-error", function(error) {
+    console.log("<- npolar-error", error);
+    flashError(error);
   });
 
-  NpolarApiMessage.on("npolar-api-error", function(message) {
-    console.log("<- npolar-api-error", message);
-
-    if (401 === message.status) {
-      flashError("Authentication failed");
-    } else if (403 === message.status) {
-      flashError("Not authorized");
-    } else if (404 === message.status) {
-      flashError("Not found");
-    } else {
-      flashError(message);
-    }
+  NpolarApiMessage.on("npolar-api-error", function(error) {
+    console.log("<- npolar-api-error", error);
+    flashError(error);
   });
-
-  $scope.closeToast = function () {
-    $mdToast.hide();
-  };
 };
 
 module.exports = MessageController;

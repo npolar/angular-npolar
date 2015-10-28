@@ -4,13 +4,21 @@ var task = function(gulp, config) {
   var mocha = require('gulp-mocha');
   var notify = require('gulp-notify');
 
-  gulp.task('test', function () {
-    return gulp.src(config.tests, {read: false})
-      // gulp-mocha needs filepaths so you can't have any plugins before it
+  gulp.task('test', [
+    ], function() {
+    return gulp.src(config.tests, {
+        read: false
+      })
       .pipe(mocha({
         reporter: 'dot'
-        }))
-      .on('error', notify.onError({message: '<%= error.message %>', title: 'Gulp mocha'}));
+      }))
+      .on('error', function(error) {
+        notify({
+          message: '<%= error.message %>',
+          title: 'Gulp mocha'
+        }).write(error);
+        this.emit('end');
+      });
   });
 };
 

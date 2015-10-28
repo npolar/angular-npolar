@@ -12,20 +12,11 @@ npolarUi.controller('NpolarLoginController', require('./auth/LoginController'));
 npolarUi.directive('npolarLoginLogout', require('./auth/loginLogout'));
 
 npolarUi.controller('NpolarMessageController', require('./message/MessageController'));
+npolarUi.controller('NpolarToastController', require('./message/ToastController'));
 npolarUi.directive('npolarApiMessage', require('./message/message'));
 
 npolarUi.filter('isodate', require('./filters/isodate'));
 npolarUi.filter('year', require('./filters/year'));
 npolarUi.filter('lang', require('./filters/lang'));
-
-npolarUi.controller('ToastCtrl', function($scope, $mdToast, message, explanation) {
-
-  $scope.message = message;
-  $scope.explanation = explanation;
-
-  $scope.closeToast = function() {
-    $mdToast.hide();
-  };
-});
 
 module.exports = npolarUi;

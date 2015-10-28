@@ -4,10 +4,11 @@
 
 ## Developing
 NPDC applications depend on angular-npolar. Use npm link to use your local copy during development.
-``sh
-➜  angular-npolar git:(master) ✗ sudo npm link
-``
 
-``sh
-➜  npdc-application git:(master) ✗ npm link angular-npolar
-``
+```sh
+$ sudo npm link
+```
+
+```sh
+$ npm link angular-npolar
+```

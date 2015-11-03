@@ -5,8 +5,14 @@ var _ = require('lodash'); //@todo eliminate
 /**
  * @ngInject
  */
-var Resource = function($resource, $location, $routeParams, $log, npolarApiConfig, NpolarApiSecurity) {
-  
+var Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
+  let resourceCache = $cacheFactory('resourceCache');
+  let bust = function (response) {
+    resourceCache.removeAll();
+    return response;
+  };
+  let bustInterceptor = { response: bust, responseError: bust };
+
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {
     // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
@@ -14,20 +20,20 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
     segments = segments.filter(s => { return (s !== '' && s !== 'show'); });
     return segments.slice(2); // Removes hostname and /base
   };
-  
+
   // Get href for id [warn:] relative to current application /path/
-  // @return href 
-  this.href = function(id) { 
+  // @return href
+  this.href = function(id) {
     // Add .json if id contains dots, otherwise the API barfs
     //if ((/[.]/).test(id)) {
     //  id += ".json";
     //}
     let segments = pathSegments().filter(s => s !== 'show');
-    
+
     // For apps at /something, we just need to link to the id
     if (segments.length === 0) {
       return id.replace(/show\//, '');
-    
+
     // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
     } else {
       segments = segments.filter(s => { return (s !== 'edit'); });
@@ -36,7 +42,7 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
       return segments.join("/")+'/'+id;
     }
   };
-  
+
   this.editHref = function(id) {
     let segments = pathSegments();
     if (segments.length === 0) {
@@ -44,9 +50,9 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
     } else {
       return segments.join('/')+'/edit';
     }
-    
+
   };
-    
+
   // Path to new, relative to /base/ defined in index.html
   this.newHref = function() {
 
@@ -56,7 +62,7 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
     }
     return base +'/__new/edit';
   };
-  
+
   this.base = function(service) {
     return (angular.isString(service.base)) ? service.base : npolarApiConfig.base;
   };
@@ -71,10 +77,7 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
   this.resource = function(service) {
 
     var base = this.base(service);
-    var cache = false;
-    if (service.cache && (true === service.cache)) {
-      cache = true;
-    }
+    var cache = service.cache || resourceCache;
 
     // Default parameters
     var params = { id:null, limit: 100, format: 'json', q: '', variant: 'atom' };
@@ -91,18 +94,18 @@ var Resource = function($resource, $location, $routeParams, $log, npolarApiConfi
       array: { method: 'GET', params: params_query, isArray: true, cache },
       fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache },
       //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
-      update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' } }
+      update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' }, interceptor: bustInterceptor }
     });
-    
+
     resource.path = base+service.path;
-    
+
     resource.href = this.href;
     resource.newHref = this.newHref;
     resource.editHref = this.editHref;
-    
+
     // Extend Npolar API resources (individual documents)
     angular.extend(resource.prototype, {
-      
+
     // Usage: var parameter = timeseries._link({rel: 'parameter', type: 'application/json'});
     _link: function(link) {
       return _.find(this.links, link);

@@ -93,7 +93,8 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
       query: { method: 'GET', params: params_query, isArray: true, cache },
       array: { method: 'GET', params: params_query, isArray: true, cache },
       fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache },
-      //delete: { method:'DELETE', params: {  }, headers: { Accept:'application/json', Authorization: NpolarApiSecurity.authorization() } },
+      remove: {method: 'DELETE', interceptor: bustInterceptor },
+      delete: {method: 'DELETE', interceptor: bustInterceptor },
       update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' }, interceptor: bustInterceptor }
     });
 

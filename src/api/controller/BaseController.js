@@ -30,29 +30,6 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
     });
   };
 
-  $scope.showNext = function() {
-    if (!$scope.feed) {
-      return false;
-    }
-    return ($scope.feed.entries.length < $scope.feed.opensearch.totalResults);
-  };
-
-  $scope.next = function() {
-    if (!$scope.feed.links) {
-      return;
-    }
-
-    let nextLink = $scope.feed.links.find(link => { return (link.rel === "next"); });
-    if (nextLink.href) {
-      $http.get(nextLink.href.replace(/^https?:/, '')).success(function(response) {
-        response.feed.entries = $scope.feed.entries.concat(response.feed.entries);
-        $scope.feed = response.feed;
-        $rootScope.$broadcast('npolar-feed', response.feed);
-      });
-    }
-  };
-
-
   init();
 
 };

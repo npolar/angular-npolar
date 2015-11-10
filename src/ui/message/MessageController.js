@@ -2,11 +2,12 @@
 
 // @ngInject
 var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) {
+  var tmpl = require('./_message_toast.html');
 
   var flashError = function(error) {
     $mdToast.show({
       controller: 'NpolarToastController',
-      templateUrl: 'angular-npolar/src/ui/message/_message_toast.html',
+      template: tmpl,
       hideDelay: 5000,
       action: "OK",
       locals: { explanation: error.message || error, msgType: 'error'},
@@ -17,11 +18,11 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) 
   var flashInfo = function(message) {
     $mdToast.show({
       controller: 'NpolarToastController',
-      templateUrl: 'angular-npolar/src/ui/message/_message_toast.html',
+      template: tmpl,
       hideDelay: 5000,
       action: "OK",
       locals: { explanation: message, msgType: message.type || 'info' },
-      position: "bottom left"
+      position: "top left"
     });
   };
 

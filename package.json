@@ -19,6 +19,7 @@
     "angular-resource": "1.4.7",
     "angular-route": "1.4.7",
     "angular-utf8-base64": "*",
+    "language-tags": "^1.0.3",
     "lodash": "^3"
   },
   "author": "",

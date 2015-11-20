@@ -75,6 +75,9 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       $rootScope.$broadcast('npolar-document', document);
       refreshJwt();
       $location.path(uri);
+      $scope._error = false;
+    }, function(errorData) {
+      $scope._error = errorData.statusText;
     });
   };
 
@@ -84,6 +87,9 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       $scope.document = document;
       $scope.formula.model = document;
       $rootScope.$broadcast('npolar-document', document);
+      $scope._error = false;
+    }, function(errorData) {
+      $scope._error = errorData.statusText;
     });
   };
 
@@ -111,7 +117,9 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       $rootScope.$broadcast('npolar-document', document);
       $scope.i = 0;
       refreshJwt();
-
+      $scope._error = false;
+    }, function(errorData) {
+      $scope._error = errorData.statusText;
     });
   };
 
@@ -123,6 +131,9 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       refreshJwt();
       $location.path('/');
       $route.reload();
+      $scope._error = false;
+    }, function(errorData) {
+      $scope._error = errorData.statusText;
     });
   };
 

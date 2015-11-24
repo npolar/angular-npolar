@@ -76,6 +76,7 @@ Text API response format example
   }
 ]
 ```
+JSON schema: http://api.npolar.no/schema/text-1
 
 
 ### From value object

@@ -47,9 +47,13 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
   
   // Normalize/decorate value
   // @return [String]
-  let normalizeValue = function(value,lang,code) {
+  let normalizeValue = function(value,lang,code,orig) {
     if (isDebug()) {
-      return code+'|'+lang+'='+value;
+      let l = lang;
+      if (lang !== orig) {
+        l = `${lang} for ${orig}`;
+      }
+      return `${code}[${l}]=${value}`;
     }
     return value;
   };
@@ -101,8 +105,7 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
     // If found: get translation value for lang and normalize
     let texts = this.find(code);
     if (texts) {
-      let value = this.value(texts, lang, code);
-      return normalize(value, lang, code);
+      return this.value(texts, lang, code);
     } else {
       // No matches
       if (isDebug()) {
@@ -113,15 +116,32 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
   };
 
   // Reduce array of translation objects to a single value ie. the translated string
+  // Messy signature, but only the 3 first are normlally used by external callers
   // @return [String] Translation
   // @recursive WARNING
-  this.value = function(translations, lang, code, tkey=npolarTranslateKeys, fallbackLang = NpolarLang.getFallback(lang, translations.map(t => t[tkey.language]))) {
+  this.value = function(translations,
+    lang,
+    code, // Only used for debug output
+    originalLang, // Only used for debug
+    tkey=npolarTranslateKeys,
+    normalize=normalizeValue,
+    fallbackLang = NpolarLang.getFallback(lang, translations.map(t => t[tkey.language]))) {
+    
+    if (!translations) {
+      return;
+    }
 
+    if (!originalLang) {
+      originalLang = lang;
+    }
+  
     // First try the provided lang tag
+    // (Notice this may be a fallback language if called in the else block below)
     let exactLangMatch = translations.find(cand => cand[tkey.language].split('-')[0] === lang.split('-')[0]);
     
     if (exactLangMatch) {
-      return exactLangMatch[tkey.value];
+      let value = exactLangMatch[tkey.value];
+      return normalize(value, lang, code, originalLang);
     
     } else {
       // No exact match, get fallback translations, ie. those NOT in the requested lang
@@ -130,9 +150,9 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
         // Just 1 match, deliver
         return fallbacks[0][tkey.value];
       } else {
-        // Multiple callbacks, reduce by calling self requesting fallback language
+        // Multiple callbacks, reduce to one by calling self requesting fallbackLang as new translation language
         // and providing the actual fallbacks as translation array (this blocks infinite recursion)
-        return this.value(fallbacks, fallbackLang, code, tkey);
+        return this.value(fallbacks, fallbackLang, code, originalLang, tkey, normalize);
       }
     }
   };

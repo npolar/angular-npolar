@@ -29,5 +29,3 @@ myAngularApp.run(($http, npolarTranslateDictionary, NpolarLang, NpolarTranslate)
   NpolarLang.setLanguagesFromDictionaryUse({ min: 0.50, force: ['en', 'nb', 'nn']});
   
 });
-
-```

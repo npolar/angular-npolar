@@ -2,7 +2,7 @@
 
 Internationalization (i18n) component
 
-# Fetaures
+## Features
 * Provides translations from an injectable code dictionary
 * Easy-to use translation filter: {{ 'some.prefix.code' | t }}
 * Auto-detection and persistence of application's language
@@ -12,15 +12,15 @@ Internationalization (i18n) component
 * Dictionary may be loaded as array of translation documents (database and JSON schema friendly)
 * JSON-LD style multilingual translation objects
 
-# Use
+## Use
 
-## Translation filter
-Pass text to translate to the `t` filter 
+### Translation filter
+Pass code to translate to the `t` filter 
 ```
   {{ 'npdc.app.Title' | t }}
 ```
-## Language switcher directive
 
+### Language switcher directive
 ```
    <npolar:language-switcher></npolar:language-switcher>
 ```
@@ -54,6 +54,7 @@ myAngularApp.run(($http, NpolarTranslate) => {
   });
 });
 ```
+
 Text API response format example
 ```json
 [

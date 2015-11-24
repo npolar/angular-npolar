@@ -39,17 +39,40 @@ myAngularApp.run(NpolarLang => {
   // NpolarLang.setLanguagesFromDictionaryUse();
   
 });
+```
 
 ## Loading dictionary
 
 ### From Text API
 ```javascript
-myAngularApp.run(($http, NpolarLang, NpolarTranslate) => {
+myAngularApp.run(($http, NpolarTranslate) => {
   $http.get('//api.npolar.no/text/?q=&filter-bundle=npolar|npdc|npdc-myapp&format=json&variant=array&limit=all').then(response => {
     NpolarTranslate.addToDictionary(response.data);
   });
 });
 ```
+Text API response format example
+```json
+[
+  {
+    "id": "c99fc195-792d-43b7-b67d-f1699a6bc9f5",
+    "texts": [
+      {
+        "@value": "Norsk Polarinstitutt",
+        "@language": "nb"
+      },
+      {
+        "@value": "Norwegian Polar Institute",
+        "@language": "en"
+      }
+    ],
+    "_rev": "1-22694754c28e725da609b2032507a3c1",
+    "bundle": "npolar",
+    "code": "organization.npolar.no"
+  }
+]
+```
+
 
 ### From value object
 
@@ -65,9 +88,8 @@ let ldd = { code: 'http://npolar.no', texts: [
 myAngularApp.value('myLinkedDataDictionary', ldd);
 
 
-myAngularApp.run((NpolarLang, NpolarTranslate, myLinkedDataDictionary) => {
+myAngularApp.run((NpolarTranslate, myLinkedDataDictionary) => {
     NpolarTranslate.setDictionary(myLinkedDataDictionary);
-    
   });
 });
 ```

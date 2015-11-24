@@ -25,6 +25,8 @@ Pass text to translate to the `t` filter
    <npolar:language-switcher></npolar:language-switcher>
 ```
 Limit available languages
+
+```javascript
 myAngularApp.run(NpolarLang => {
   
   // Fixed list of languages in the switcher
@@ -44,6 +46,7 @@ myAngularApp.run(NpolarLang => {
 ## Loading dictionary
 
 ### From Text API
+
 ```javascript
 myAngularApp.run(($http, NpolarTranslate) => {
   $http.get('//api.npolar.no/text/?q=&filter-bundle=npolar|npdc|npdc-myapp&format=json&variant=array&limit=all').then(response => {

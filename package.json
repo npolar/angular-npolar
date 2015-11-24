@@ -19,8 +19,7 @@
     "angular-resource": "1.4.7",
     "angular-route": "1.4.7",
     "angular-utf8-base64": "*",
-    "language-tags": "^1.0.3",
-    "lodash": "^3"
+    "language-tags": "^1.0.3"
   },
   "author": "",
   "license": "MIT",
@@ -40,10 +39,8 @@
     "gulp-mocha": "^2.1.3",
     "gulp-notify": "^2.2.0",
     "gulp-util": "^3.0.6",
-    "gulp-watch": "^4.3.5",
     "inquirer": "^0.11.0",
     "jshint-stylish": "^2.0.1",
-    "lodash": "^3.10.1",
     "run-sequence": "^1.1.2",
     "should": "^7.0.2"
   },

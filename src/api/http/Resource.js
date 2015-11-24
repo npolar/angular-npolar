@@ -1,6 +1,5 @@
 'use strict';
 var angular = require('angular');
-var _ = require('lodash'); //@todo eliminate
 
 /**
  * @ngInject
@@ -104,32 +103,6 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     resource.newHref = this.newHref;
     resource.editHref = this.editHref;
 
-    // Extend Npolar API resources (individual documents)
-    angular.extend(resource.prototype, {
-
-    // Usage: var parameter = timeseries._link({rel: 'parameter', type: 'application/json'});
-    _link: function(link) {
-      return _.find(this.links, link);
-    },
-    _links: function(link) {
-      return _.select(this.links, link);
-    },
-    // @todo injectable resoiurce dereferencing...
-    // @tods lambda functions on link/links
-    _filters: function() {
-      var filters = [];
-      angular.forEach($location.search(), function(v,k) {
-      if (k.match(/^filter-\w+/)) {
-        var f = {};
-        f[k]=v;
-        filters.push(f);
-      }
-      });
-      return filters;
-
-    }
-
-    });
     return resource;
 
   };

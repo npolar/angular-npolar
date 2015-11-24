@@ -21,7 +21,7 @@ Pass code to translate to the `t` filter
 ```
 
 ### Language switcher directive
-```
+```xml
    <npolar:language-switcher></npolar:language-switcher>
 ```
 Limit available languages

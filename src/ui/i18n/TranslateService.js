@@ -2,56 +2,80 @@
 
 /**
  * Angular translation service
- *
- * Provides translations from a code dictionary
  */
 
 // @ngInject
-let NpolarTranslate = function($location, $log, npolarTranslateDictionary, NpolarLang) {
-
-  // Normalize array of translations to JSON-LD array of objects with @language and @value keys
-  let normalizeTranslations = function(translations, valuekey = '@value', langkey = '@language') {
+let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys) {
+  
+  // Dictionary object
+  this.dictionary = {};
+  
+  // Normalize array of translations to JSON-LD [string internationalization](http://www.w3.org/TR/json-ld/#string-internationalization):
+  // @return [Array] Array of objects with @language and @value keys
+  let normalizeTranslations = function(translations, tkey = npolarTranslateKeys) { 
     // Any translations?
     if (translations && translations.length > 0) {
-      // Make sure all the matching candidate texts contain the right keys
-      return translations.filter(cand => cand[valuekey] && cand[langkey]).map(
-        text => {
-          return {
-            '@language': text[langkey],
-            '@value': text[valuekey],
-            context: text.context
-          };
-        });
+
+    // Make sure all the matching candidate texts contain the right keys
+    return translations.filter(cand => cand[tkey.value] && cand[tkey.language]).map(
+    text => {
+      return { '@language': text[tkey.language],
+        '@value': text[tkey.value],
+        bundle: text[tkey.bundle] };
+    });
     }
     return false;
   };
 
   // Normalize dictionary array to dictionary object
-  let normalizeDictionary = function(dictionary = npolarTranslateDictionary, lookupkey = 'code', translationskey = 'texts') {
+  // @return [Object]
+  let normalizeDictionary = function(dictionary, tkey = npolarTranslateKeys) {
     let dict = {};
 
     dictionary.forEach(t => {
-      dict[t[lookupkey]] = normalizeTranslations(t[translationskey]);
+      let code = t[tkey.lookup];
+      let value = normalizeTranslations(t[tkey.translations]);
+      // @todo Warn on duplicate codes?
+      dict[code] = value; 
     });
-
     return dict;
   };
-
+    
+  let isDebug = function() {
+    return ($location.search().debug === '1');
+  };
+  
   // Normalize/decorate value
-  this.normalizeValue = function(value, lang, code) {
-    if ($location.search().debug === '1') {
-      return code + '|' + lang + '=' + value;
+  // @return [String]
+  let normalizeValue = function(value,lang,code) {
+    if (isDebug()) {
+      return code+'|'+lang+'='+value;
     }
     return value;
   };
-
-  // Normalized dictionary
+  
+  // Get normalized dictionary (object with JSON-LD style translations) 
   this.getDictionary = function() {
     return this.dictionary;
   };
 
-  this.setDictionaryArray = function(dictionary) {
-    this.dictionary = normalizeDictionary(dictionary);
+  // Set dictionary (auto-detects type and normalizes Array to Object)
+  // @param [Array|Object]
+  this.setDictionary = function(dictionary) {
+    if (dictionary instanceof Array) {
+      this.dictionary = normalizeDictionary(dictionary);
+    } else {
+      this.dictionary = dictionary;
+    }
+  };
+  
+  // Append to dictionary
+  // @param [Array|Object]
+  this.appendToDictionary = function(dictionary) {
+    if (dictionary instanceof Array) {
+      dictionary = normalizeDictionary(dictionary);
+    }
+    this.dictionary = Object.assign(this.dictionary, dictionary);
   };
 
   // Find first translation document, by looking up code in dictionary
@@ -68,17 +92,22 @@ let NpolarTranslate = function($location, $log, npolarTranslateDictionary, Npola
   // Sibling languages (sharing the same macrolanguage) is used if the there is match for code but not the exact language.
   // This function *always* returns a string, even if the code is not found, see #missing
   // @param [String] code
-  //
+  // @
+  // @
   // @return [String] Translation of code into language identified by subtag lang (context)
-  this.translate = function(code, lang = NpolarLang.getLang(), normalize = this.normalizeValue) {
-    // Find texts by code, get translations by language, normalize
+  this.translate = function(code, lang = NpolarLang.getLang(), normalize = normalizeValue) {
+
+    // Find texts by code
+    // If found: get translation value for lang and normalize
     let texts = this.find(code);
     if (texts) {
       let value = this.value(texts, lang, code);
       return normalize(value, lang, code);
     } else {
       // No matches
-      $log.warn('NpolarTranslate', '0 translations:', code);
+      if (isDebug()) {
+        $log.warn('NpolarTranslate', '0 translations:', code);
+      }
       return code;
     }
   };
@@ -86,23 +115,24 @@ let NpolarTranslate = function($location, $log, npolarTranslateDictionary, Npola
   // Reduce array of translation objects to a single value ie. the translated string
   // @return [String] Translation
   // @recursive WARNING
-  this.value = function(translations, lang, code, fallbackLang = NpolarLang.getFallback(lang, translations.map(t => t['@language']))) {
+  this.value = function(translations, lang, code, tkey=npolarTranslateKeys, fallbackLang = NpolarLang.getFallback(lang, translations.map(t => t[tkey.language]))) {
 
     // First try the provided lang tag
-    let exactLangMatch = translations.find(cand => cand['@language'].split('-')[0] === lang.split('-')[0]);
+    let exactLangMatch = translations.find(cand => cand[tkey.language].split('-')[0] === lang.split('-')[0]);
+    
     if (exactLangMatch) {
-      return exactLangMatch['@value'];
+      return exactLangMatch[tkey.value];
+    
     } else {
       // No exact match, get fallback translations, ie. those NOT in the requested lang
-      let fallbacks = translations.filter(cand => cand['@language'].split('-')[0] !== lang.split('-')[0]);
+      let fallbacks = translations.filter(cand => cand[tkey.language].split('-')[0] !== lang.split('-')[0]);
       if (fallbacks.length === 1) {
         // Just 1 match, deliver
-        return fallbacks[0]['@value'];
-      } else if (fallbackLang !== false) {
-        // Multiple callbacks, reduce by calling self
-        return this.value(fallbacks, fallbackLang, code);
+        return fallbacks[0][tkey.value];
       } else {
-        throw new Error("No translation found translation array:", translations);
+        // Multiple callbacks, reduce by calling self requesting fallback language
+        // and providing the actual fallbacks as translation array (this blocks infinite recursion)
+        return this.value(fallbacks, fallbackLang, code, tkey);
       }
     }
   };

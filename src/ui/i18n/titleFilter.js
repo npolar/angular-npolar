@@ -1,12 +1,18 @@
 'use strict';
 
 // @ngInject
-// FIXME Does not work, #value needs to specify key
-//let titleFilter = function(NpolarTranslate, NpolarLang) {
-//  let filter = function(titles, lang=NpolarLang.getLang()) {
-//    return NpolarTranslate.value(titles,lang);
-//  };
-//  filter.$stateful=true;
-//  return filter;
-//};
-// module.exports = titleFilter;
+let titleFilter = function(NpolarTranslate, NpolarLang) {
+  
+  let filter =  function(titles, tkey = { value: 'title', language: 'lang' }) {
+    if (!titles || titles.length === 0) {
+      return;
+    }
+    // @todo Autodetect keys
+    return NpolarTranslate.value(titles, NpolarLang.getLang(), null, null, tkey);
+  };
+  
+  //filter.$stateful=true;
+  return filter;
+
+};
+module.exports = titleFilter;

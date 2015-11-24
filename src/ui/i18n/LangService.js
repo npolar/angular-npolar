@@ -146,7 +146,7 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateDictionary
   this.getNativeName = function(lang, names = this.getLanguageNames()) {
     lang = lang.split('-')[0];
     if (names && names[lang]) {
-      return names[lang].nativeName;
+      return names[lang].name;
     } else {
       return lang;
     }

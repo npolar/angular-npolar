@@ -11,6 +11,7 @@ Internationalization (i18n) component
 * Language switcher directive
 * Dictionary may be loaded as array of translation documents (database and JSON schema friendly)
 * JSON-LD style multilingual translation objects
+* Debug mode: reveals translation code inside app (triggered by query parameter debug=1)
 
 ## Use
 
@@ -38,8 +39,7 @@ myAngularApp.run(NpolarLang => {
   // NpolarLang.setLanguagesFromDictionaryUse({ min: 0.50, force: ['en', 'nb', 'nn']});
   
   // Allow all languages in the dictionary
-  // NpolarLang.setLanguagesFromDictionaryUse();
-  
+  // NpolarLang.setLanguagesFromDictionaryUse();  
 });
 ```
 
@@ -78,7 +78,6 @@ Text API response format example
 ```
 JSON schema: http://api.npolar.no/schema/text-1
 
-
 ### From value object
 
 Supports JSON-LD style multilingual translation object
@@ -92,9 +91,14 @@ let ldd = { code: 'http://npolar.no', texts: [
 }
 myAngularApp.value('myLinkedDataDictionary', ldd);
 
-
 myAngularApp.run((NpolarTranslate, myLinkedDataDictionary) => {
     NpolarTranslate.setDictionary(myLinkedDataDictionary);
   });
 });
+```
+
+### Default application language
+Set html@lang in the app's index.html file
+```xml
+<html lang="en" ng-app="myApp" ng-cloak ng-strict-di>
 ```

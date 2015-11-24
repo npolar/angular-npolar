@@ -28,7 +28,7 @@ myAngularApp.run(($http, NpolarLang, NpolarTranslate) => {
 ## From value object
 
 ```javascript
-myAngularApp.run(($http, NpolarLang, NpolarTranslate, myLinkedDataDictionary) => {
+myAngularApp.run((NpolarLang, NpolarTranslate, myLinkedDataDictionary) => {
     NpolarTranslate.setDictionary(myLinkedDataDictionary);
     NpolarLang.setLanguagesFromDictionaryUse();
   });

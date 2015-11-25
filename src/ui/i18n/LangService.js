@@ -8,7 +8,7 @@ let tags = require('language-tags');
  *
  * @ngInject
  */
-let NpolarLang = function($location, $log, $rootScope, npolarTranslateDictionary) {
+let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
 
   this.langName = require('./lang-name.json');
 
@@ -37,16 +37,20 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateDictionary
 
   // Counts number of texts in a given language in the current dictionary
   // @return [Object] Example: {"nb":7,"en":7,"ru":1,"eo":1,"nn":1}
-  this.getLanguageCounts = function() {
+  this.getLanguageCounts = function(dictionary, tkey=npolarTranslateKeys) {
+    if (!dictionary) {
+      throw new Error("No dictionary provided");  
+    }
     var l = {};
 
-    npolarTranslateDictionary.forEach(d => {
-      d.texts.forEach(text => {
-
-        if (!l[text['@language']]) {
-          l[text['@language']] = 1;
+    dictionary.forEach(d => {
+      let translations = d[tkey['translations']];
+      translations.forEach(d => {
+        let language = d[tkey['language']];
+        if (!l[language]) {
+          l[language] = 1;
         } else {
-          l[text['@language']]++;
+          l[language]++;
         }
       });
     });
@@ -83,24 +87,28 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateDictionary
     }
   };
 
+  // Set available languages
+  // Currently only used byu the language switcher
   this.setLanguages = function(arr) {
     this.languages = arr;
   };
 
   // setLanguagesFromDictionaryUse({ min: 0.25, force: ['en', 'nb', 'nn']);
-  this.setLanguagesFromDictionaryUse = function(opt) {
-    if (!opt) {
-      opt = {};
+  this.setLanguagesFromDictionaryUse = function(opt = {min: 0, dictionary: null, force: []}) {
+    if (!opt.dictionary || !dictionary instanceof Array) {
+      // @todo support JSON-LD dictionary object
+      throw new Error("No dictionary array provided");  
     }
-    let min = opt.min || 0;
-    let force = opt.force || [];
+    let dictionary = opt.dictionary;
+    let min = opt.min;
+    let force = opt.force;
 
-    let langCount = this.getLanguageCounts();
+    let langCount = this.getLanguageCounts(dictionary);
     let languages = Object.keys(langCount).sort().filter(l => {
       if (force.includes(l)) {
         return false; // filter out forced to avoid duplicates (we add forced below)
       }
-      return (langCount[l] / npolarTranslateDictionary.length > min);
+      return (langCount[l] / dictionary.length > min);
     });
     languages = force.concat(languages).sort();
     this.setLanguages(languages);

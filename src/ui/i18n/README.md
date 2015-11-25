@@ -36,12 +36,25 @@ myAngularApp.run(NpolarLang => {
   // Advanced alternatives
   
   // Require minimum 50% of texts translated, but provide some fixed languages no matter
-  // NpolarLang.setLanguagesFromDictionaryUse({ min: 0.50, force: ['en', 'nb', 'nn']});
+  // NpolarLang.setLanguagesFromDictionaryUse({ min: 0.50, force: ['en', 'nb', 'nn'], dictionary });
   
   // Allow all languages in the dictionary
-  // NpolarLang.setLanguagesFromDictionaryUse();  
+  // NpolarLang.setLanguagesFromDictionaryUse(dictionary);
+  
+  NpolarTranslate.appendToDictionary(response.data);
+  NpolarLang.setLanguagesFromDictionaryUse({ min: 0.50, force: ['en', 'nb', 'nn'], dictionary });
+  
 });
 ```
+
+Language counts
+
+```javascript
+console.debug(NpolarLang.getLanguageCounts(response.data));
+Object {no: 4, en: 47, nb: 7, nn: 3, ru: 1}
+
+```
+
 
 ## Loading dictionary
 

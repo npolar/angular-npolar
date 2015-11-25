@@ -21,11 +21,10 @@ npolarUi.filter('lang', require('./filters/lang'));
 // i18n
 npolarUi.service('NpolarLang', require('./i18n/LangService'));
 npolarUi.service('NpolarTranslate', require('./i18n/TranslateService'));
-//npolarUi.value('npolarTranslateDictionary', require('./i18n/translateDictionary'));
 npolarUi.value('npolarTranslateKeys', require('./i18n/translateKeys'));
 npolarUi.filter('t', require('./i18n/translateFilter'));
 npolarUi.filter('title', require('./i18n/titleFilter'));
-npolarUi.directive('npolarLangMenu', require('./i18n/langMenuDirective'));
+npolarUi.directive('npolarLanguageSwitcher', require('./i18n/langMenuDirective'));
 
 module.exports = npolarUi;
 

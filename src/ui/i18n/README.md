@@ -6,11 +6,11 @@ Internationalization (i18n) component
 * Provides translations from an injectable code dictionary
 * Easy-to use translation filter: {{ 'some.prefix.code' | t }}
 * Auto-detection and persistence of application's language
-* Automatic fallback to alternative language if translation is missing
-* Supports any official IANA language (subtag)
+* Always fallback to alternative language if requested language is missing a translation
+* Supports any official [IANA language](http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry) (subtag)
 * Language switcher directive
 * Dictionary may be loaded as array of translation documents (database and JSON schema friendly)
-* JSON-LD style multilingual translation objects
+* [JSON-LD](http://www.w3.org/TR/json-ld/) style [multilingual translation objects](http://www.w3.org/TR/json-ld/#string-internationalization)
 * Debug mode: reveals translation code inside app (triggered by query parameter debug=1)
 
 ## Use
@@ -50,7 +50,7 @@ myAngularApp.run(NpolarLang => {
 Language counts
 
 ```javascript
-console.debug(NpolarLang.getLanguageCounts(response.data));
+console.debug(NpolarLang.getLanguageCounts(dictionary));
 Object {no: 4, en: 47, nb: 7, nn: 3, ru: 1}
 
 ```
@@ -111,6 +111,7 @@ myAngularApp.run((NpolarTranslate, myLinkedDataDictionary) => {
 ```
 
 ### Default application language
+
 Set html@lang in the app's index.html file
 ```xml
 <html lang="en" ng-app="myApp" ng-cloak ng-strict-di>

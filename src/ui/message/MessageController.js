@@ -33,7 +33,7 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) 
 
   NpolarApiMessage.on("npolar-api-info", function(response) {
     console.log("<- npolar-api-info", response);
-    if ("POST" === response.method || "PUT" === response.method) {
+    if ("PUT" === response.method) { // "POST" === response.method || 
       let time = new Date(response.time);
       flashInfo(`Saved at ${ time.toISOString() }`);
     } else if ("DELETE" === response.method) {

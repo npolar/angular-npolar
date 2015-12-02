@@ -8,21 +8,20 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
   $scope.security = NpolarApiSecurity;
 
   // After login: store user and JWT in local storage
-  let onLogin = function(response) {
+  $scope.onLogin = function(response) {
 
     NpolarApiSecurity.setJwt(response.data.token);
     NpolarApiMessage.emit("npolar-login", NpolarApiSecurity.getUser());
-    $route.reload();
-
+   
   };
 
-  let onLoginError = function(response) {
+  $scope.onLoginError = function(response) {
     $route.reload();
   };
 
   // Login (using username and password)
   $scope.login = function(email, password) {
-    Gouncer.authenticate(email, password).then(onLogin, onLoginError);
+    Gouncer.authenticate(email, password).then($scope.onLogin, $scope.onLoginError);
   };
 
   $scope.logout = function() {

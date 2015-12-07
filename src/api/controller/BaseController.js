@@ -7,7 +7,7 @@
 */
 
 // @ngInject
-var BaseController = function($scope, $location, $rootScope, $routeParams, $http, NpolarApiSecurity) {
+var BaseController = function($scope, $location, $routeParams, $http, NpolarApiSecurity) {
 
   $scope._error = false;
   $scope.security = NpolarApiSecurity;
@@ -18,7 +18,6 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
   $scope.show = function() {
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
-      $rootScope.$broadcast('npolar-document', document);
       $scope._error = false;
     }, function(errorData) {
       if (errorData.status === 404) {
@@ -38,7 +37,6 @@ var BaseController = function($scope, $location, $rootScope, $routeParams, $http
     let fullQuery = Object.assign({}, $location.search(), query, {facets});
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;
-      $rootScope.$broadcast('npolar-feed', response.feed);
       $scope._error = false;
     }, function(errorData) {
       $scope._error = "Couldn't load search results :(";

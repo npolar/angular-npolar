@@ -1,7 +1,7 @@
 'use strict';
 
 // @ngInject
-var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) {
+var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
   var tmpl = require('./_message_toast.html');
 
   var flashError = function(error) {
@@ -26,12 +26,12 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) 
     });
   };
 
-  NpolarApiMessage.on("npolar-info", function(message) {
+  NpolarMessage.on("npolar-info", function(message) {
     console.log("<- npolar-info", message);
     flashInfo(message);
   });
 
-  NpolarApiMessage.on("npolar-api-info", function(response) {
+  NpolarMessage.on("npolar-api-info", function(response) {
     console.log("<- npolar-api-info", response);
     if ("PUT" === response.method) { // "POST" === response.method || 
       let time = new Date(response.time);
@@ -41,20 +41,20 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarApiMessage) 
     }
   });
 
-  NpolarApiMessage.on("npolar-login", function(user) {
+  NpolarMessage.on("npolar-login", function(user) {
     flashInfo(`${user.name} logged in`);
   });
 
-  NpolarApiMessage.on("npolar-logout", function(user) {
+  NpolarMessage.on("npolar-logout", function(user) {
     flashInfo(`${user.name} logged out`);
   });
 
-  NpolarApiMessage.on("npolar-error", function(error) {
+  NpolarMessage.on("npolar-error", function(error) {
     console.log("<- npolar-error", error);
     flashError(error);
   });
 
-  NpolarApiMessage.on("npolar-api-error", function(error) {
+  NpolarMessage.on("npolar-api-error", function(error) {
     console.log("<- npolar-api-error", error);
     flashError(error);
   });

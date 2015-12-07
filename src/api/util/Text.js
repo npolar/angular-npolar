@@ -1,7 +1,10 @@
 'use strict';
-var _ = require('lodash');
 
-var Texxt = function () {
+var Texxt = function() {
+
+  function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
 
   // Extract the first capture (1) for all regex matches in text
   this.extract = function(text, regex, capture_capture) {
@@ -16,7 +19,7 @@ var Texxt = function () {
       }
       extracted.push(m[capture_which_capture]);
     }
-    return _.uniq(extracted);
+    return extracted.filter(onlyUnique);
   };
 
 };

@@ -5,7 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 /**
  * @ngInject
  */
-var HttpMessage = function() {
+var Message = function() {
 
   let washError = function (error) {
     if (error) {
@@ -49,8 +49,33 @@ var HttpMessage = function() {
 
   };
 
+  this.info = function (data) {
+    this.emit('npolar-info', data);
+  };
+
+  this.error = function (data) {
+    this.emit('npolar-error', data);
+  };
+
+  this.apiInfo = function (data) {
+    this.emit('npolar-api-info', data);
+  };
+
+  this.apiError = function (data) {
+    this.emit('npolar-api-error', data);
+  };
+
+  this.login = function (data) {
+    this.emit('npolar-login', data);
+  };
+
+  this.logout = function (data) {
+    this.emit('npolar-logout', data);
+  };
+
+
   return Object.assign(new EventEmitter(), this);
 
 };
 
-module.exports = HttpMessage;
+module.exports = Message;

@@ -14,8 +14,8 @@
  */
 
 // @ngInject
-let EditController = function($scope, $location, $route, $rootScope, $routeParams, $controller,
-  Gouncer, npolarApiConfig, NpolarApiSecurity) {
+let EditController = function($scope, $location, $route, $routeParams, $controller,
+  Gouncer, npolarApiConfig, NpolarApiSecurity, NpolarMessage) {
 
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {
@@ -72,7 +72,6 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npolar-document', document);
       refreshJwt();
       $location.path(uri);
       $scope._error = false;
@@ -86,7 +85,6 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npolar-document', document);
       $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
@@ -97,7 +95,6 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
   $scope.newAction = function(document) {
     $scope.document = new $scope.resource();
     $scope.formula.model = $scope.document;
-    $rootScope.$broadcast('npolar-document', $scope.document);
   };
 
   // Edit (or new) action
@@ -114,7 +111,6 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
     return $scope.resource.update(model, function(document) {
       $scope.document = document;
       $scope.formula.model = document;
-      $rootScope.$broadcast('npolar-document', document);
       $scope.i = 0;
       refreshJwt();
       $scope._error = false;
@@ -139,9 +135,13 @@ let EditController = function($scope, $location, $route, $rootScope, $routeParam
 
   // Save document action, ie. create or update
   $scope.save = function() {
-    //console.log('save', $scope.formula.model);
-    //return $scope.update($scope.formula.model);
-    return $scope.formula.formula.save();
+    try {
+      $scope._error = false;
+      return $scope.formula.formula.save();
+    } catch (e) {
+      $scope._error = e;
+      NpolarMessage.error(e);
+    }
   };
 };
 

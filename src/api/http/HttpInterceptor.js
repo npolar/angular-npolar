@@ -15,7 +15,7 @@
 /**
  * @ngInject
  */
-var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, NpolarApiSecurity) {
+var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarMessage, NpolarApiSecurity) {
 
   var isNpolarApiRequest = function(config) {
     if (config.url === undefined || false === (/\/\//).test(config.url)) {
@@ -61,7 +61,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
     response: function(response) {
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
-        NpolarApiMessage.emit("npolar-api-info", NpolarApiMessage.getMessage(response));
+        NpolarMessage.apiInfo(NpolarMessage.getMessage(response));
       }
       // @todo fire saved event?
       // @todo fire deleted event?
@@ -75,14 +75,14 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarApiMessage, Npol
           explanation: "Request failed"
         }
       };
-      NpolarApiMessage.emit("npolar-api-error", NpolarApiMessage.getMessage(response));
+      NpolarMessage.apiError(NpolarMessage.getMessage(response));
       return $q.reject(response);
     },
 
     responseError: function(response) {
       response.body = response.data;
       if (isNpolarApiResponse(response)) {
-        NpolarApiMessage.emit("npolar-api-error", NpolarApiMessage.getMessage(response));
+        NpolarMessage.apiError(NpolarMessage.getMessage(response));
       }
       return $q.reject(response);
     }

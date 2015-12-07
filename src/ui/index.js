@@ -1,30 +1,23 @@
 'use strict';
 var angular = require('angular');
-require('angular-animate');
-require('angular-aria');
-require('angular-material');
-require('angular-route');
 
-var npolarUi = angular.module('npolarUi', ['ngMaterial', 'ngRoute']);
+var ngNpolar = angular.module('ngNpolar');
 
-npolarUi.controller('NpolarLoginController', require('./auth/LoginController'));
-npolarUi.directive('npolarLoginLogout', require('./auth/loginLogout'));
+ngNpolar.controller('NpolarLoginController', require('./auth/LoginController'));
+ngNpolar.directive('npolarLoginLogout', require('./auth/loginLogoutDirective'));
 
-npolarUi.controller('NpolarMessageController', require('./message/MessageController'));
-npolarUi.controller('NpolarToastController', require('./message/ToastController'));
-npolarUi.directive('npolarApiMessage', require('./message/message'));
+ngNpolar.controller('NpolarMessageController', require('./message/MessageController'));
+ngNpolar.controller('NpolarToastController', require('./message/ToastController'));
+ngNpolar.directive('npolarMessage', require('./message/messageDirective'));
 
-npolarUi.filter('isodate', require('./filters/isodate'));
-npolarUi.filter('year', require('./filters/year'));
-npolarUi.filter('lang', require('./filters/lang'));
+ngNpolar.filter('isodate', require('./filters/isodate'));
+ngNpolar.filter('year', require('./filters/year'));
+ngNpolar.filter('lang', require('./filters/lang'));
 
 // i18n
-npolarUi.service('NpolarLang', require('./i18n/LangService'));
-npolarUi.service('NpolarTranslate', require('./i18n/TranslateService'));
-npolarUi.value('npolarTranslateKeys', require('./i18n/translateKeys'));
-npolarUi.filter('t', require('./i18n/translateFilter'));
-npolarUi.filter('title', require('./i18n/titleFilter'));
-npolarUi.directive('npolarLanguageSwitcher', require('./i18n/langMenuDirective'));
-
-module.exports = npolarUi;
-
+ngNpolar.service('NpolarLang', require('./i18n/LangService'));
+ngNpolar.service('NpolarTranslate', require('./i18n/TranslateService'));
+ngNpolar.value('npolarTranslateKeys', require('./i18n/translateKeys'));
+ngNpolar.filter('t', require('./i18n/translateFilter'));
+ngNpolar.filter('title', require('./i18n/titleFilter'));
+ngNpolar.directive('npolarLanguageSwitcher', require('./i18n/langMenuDirective'));

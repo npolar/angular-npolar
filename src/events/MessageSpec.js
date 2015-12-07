@@ -1,9 +1,9 @@
 'use strict';
 
-let HttpMessage = require('./HttpMessage');
+let Message = require('./Message');
 require('should');
 
-describe("HttpMessage", () => {
+describe("Message", () => {
   let httpMessage;
   let response = {
     status: 1,
@@ -12,7 +12,7 @@ describe("HttpMessage", () => {
   };
 
   beforeEach(() => {
-    httpMessage = new HttpMessage();
+    httpMessage = new Message();
     response.body = undefined;
   });
 

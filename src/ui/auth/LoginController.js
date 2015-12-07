@@ -3,7 +3,7 @@
 /**
  * @ngInject
  */
-var LoginController = function ($rootScope, $scope, $http, $route, $log, $location, Gouncer, NpolarApiMessage, NpolarApiSecurity) {
+var LoginController = function ($rootScope, $scope, $http, $route, $log, $location, Gouncer, NpolarMessage, NpolarApiSecurity) {
 
   $scope.security = NpolarApiSecurity;
 
@@ -11,8 +11,8 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
   $scope.onLogin = function(response) {
 
     NpolarApiSecurity.setJwt(response.data.token);
-    NpolarApiMessage.emit("npolar-login", NpolarApiSecurity.getUser());
-   
+    NpolarMessage.login(NpolarApiSecurity.getUser());
+
   };
 
   $scope.onLoginError = function(response) {
@@ -26,7 +26,7 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
 
   $scope.logout = function() {
     var who = NpolarApiSecurity.getUser();
-    NpolarApiMessage.emit("npolar-logout", who);
+    NpolarMessage.logout(who);
 
     NpolarApiSecurity.removeUser();
     $location.path('/');

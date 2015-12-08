@@ -6,17 +6,22 @@ var angular = require('angular');
  */
 var Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
   let resourceCache = $cacheFactory('resourceCache');
-  let bust = function (response) {
+  let bust = function(response) {
     resourceCache.removeAll();
     return response;
   };
-  let bustInterceptor = { response: bust, responseError: bust };
+  let bustInterceptor = {
+    response: bust,
+    responseError: bust
+  };
 
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {
     // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
     let segments = $location.absUrl().split("//")[1].split("?")[0].split("/");
-    segments = segments.filter(s => { return (s !== '' && s !== 'show'); });
+    segments = segments.filter(s => {
+      return (s !== '' && s !== 'show');
+    });
     return segments.slice(2); // Removes hostname and /base
   };
 
@@ -33,12 +38,18 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     if (segments.length === 0) {
       return id.replace(/show\//, '');
 
-    // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
+      // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
     } else {
-      segments = segments.filter(s => { return (s !== 'edit'); });
-      segments = segments.filter(s => { return (s !== 'show'); });
-      segments = segments.filter(s => { return (s !== id); });
-      return segments.join("/")+'/'+id;
+      segments = segments.filter(s => {
+        return (s !== 'edit');
+      });
+      segments = segments.filter(s => {
+        return (s !== 'show');
+      });
+      segments = segments.filter(s => {
+        return (s !== id);
+      });
+      return segments.join("/") + '/' + id;
     }
   };
 
@@ -47,7 +58,7 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     if (segments.length === 0) {
       return `${$routeParams.id}/edit`;
     } else {
-      return segments.join('/')+'/edit';
+      return segments.join('/') + '/edit';
     }
 
   };
@@ -59,7 +70,7 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     if ('' === base) {
       base = '.';
     }
-    return base +'/__new/edit';
+    return base + '/__new/edit';
   };
 
   this.base = function(service) {
@@ -79,25 +90,83 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     var cache = service.cache || resourceCache;
 
     // Default parameters
-    var params = { id:null, limit: 100, format: 'json', q: '', variant: 'atom' };
+    var params = {
+      id: null,
+      limit: 100,
+      format: 'json',
+      q: '',
+      variant: 'atom'
+    };
 
     //var fields_feed = (angular.isString(service.fields)) ? service.fields : null ;
-    var fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated' ;
+    var fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated';
 
     //var params_feed = angular.extend({}, params, { fields: fields_feed });
-    var params_query = angular.extend({}, params, { variant: 'array', limit: 1000, fields: fields_query });
-
-    var resource = $resource(base+service.path+'/:id', {  }, {
-      feed: { method: 'GET', params: params, headers: { Accept:'application/json, application/vnd.geo+json' }, cache },
-      query: { method: 'GET', params: params_query, isArray: true, cache },
-      array: { method: 'GET', params: params_query, isArray: true, cache },
-      fetch: { method: 'GET', params: { }, headers: { Accept:'application/json' }, cache },
-      remove: {method: 'DELETE', interceptor: bustInterceptor },
-      delete: {method: 'DELETE', interceptor: bustInterceptor },
-      update: { method:'PUT', params: { id: '@id' }, headers: { Accept:'application/json' }, interceptor: bustInterceptor }
+    var params_query = angular.extend({}, params, {
+      variant: 'array',
+      limit: 1000,
+      fields: fields_query
     });
 
-    resource.path = base+service.path;
+    const TIMEOUT = 20000;
+
+    var resource = $resource(base + service.path + '/:id', {}, {
+      feed: {
+        method: 'GET',
+        params: params,
+        headers: {
+          Accept: 'application/json, application/vnd.geo+json'
+        },
+        cache,
+        timeout: TIMEOUT
+      },
+      query: {
+        method: 'GET',
+        params: params_query,
+        isArray: true,
+        cache,
+        timeout: TIMEOUT
+      },
+      array: {
+        method: 'GET',
+        params: params_query,
+        isArray: true,
+        cache,
+        timeout: TIMEOUT
+      },
+      fetch: {
+        method: 'GET',
+        params: {},
+        headers: {
+          Accept: 'application/json'
+        },
+        cache,
+        timeout: TIMEOUT
+      },
+      remove: {
+        method: 'DELETE',
+        timeout: TIMEOUT,
+        interceptor: bustInterceptor
+      },
+      delete: {
+        method: 'DELETE',
+        timeout: TIMEOUT,
+        interceptor: bustInterceptor
+      },
+      update: {
+        method: 'PUT',
+        params: {
+          id: '@id'
+        },
+        headers: {
+          Accept: 'application/json'
+        },
+        timeout: TIMEOUT,
+        interceptor: bustInterceptor
+      }
+    });
+
+    resource.path = base + service.path;
 
     resource.href = this.href;
     resource.newHref = this.newHref;

@@ -113,6 +113,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       $scope.formula.model = document;
       $scope.i = 0;
       refreshJwt();
+      $route.reload();
       $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;

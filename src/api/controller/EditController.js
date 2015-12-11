@@ -28,8 +28,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   $scope.formula = {
     template: npolarApiConfig.formula.template || 'default',
     language: null,
-    validateHidden: true,
-    saveHidden: true,
+    hideButtons: true,
     onsave: function(model) {
       if (!model._rev) {
         $scope.create(model);

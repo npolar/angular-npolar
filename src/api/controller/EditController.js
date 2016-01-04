@@ -35,7 +35,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       } else {
         $scope.update(model);
       }
-    }
+    },
+    model: {}
   };
 
   // const step = 5; // Interval step (in seconds)
@@ -69,8 +70,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   $scope.create = function(model) {
     return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
-      $scope.document = document;
       $scope.formula.model = document;
+      $scope.document = document;
       refreshJwt();
       $location.path(uri);
       $scope._error = false;
@@ -82,8 +83,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
     return $scope.resource.fetch($routeParams, function(document) {
-      $scope.document = document;
       $scope.formula.model = document;
+      $scope.document = document;
       $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
@@ -92,8 +93,9 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // New action, ie. create new document and edit with formula
   $scope.newAction = function(document) {
-    $scope.document = new $scope.resource();
-    $scope.formula.model = $scope.document;
+    var doc = new $scope.resource();
+    $scope.formula.model = doc;
+    $scope.document = doc;
   };
 
   // Edit (or new) action
@@ -108,8 +110,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // PUT document, ie resource update
   $scope.update = function(model) {
     return $scope.resource.update(model, function(document) {
-      $scope.document = document;
       $scope.formula.model = document;
+      $scope.document = document;
       $scope.i = 0;
       refreshJwt();
       $route.reload();

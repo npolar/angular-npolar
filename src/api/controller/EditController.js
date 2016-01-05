@@ -92,8 +92,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   // New action, ie. create new document and edit with formula
-  $scope.newAction = function(document) {
-    var doc = new $scope.resource();
+  $scope.newAction = function(document={}) {
+    var doc = new $scope.resource(document);
     $scope.formula.model = doc;
     $scope.document = doc;
   };

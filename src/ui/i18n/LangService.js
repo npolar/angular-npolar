@@ -136,7 +136,13 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
   // @todo handle language hierarchy (macrolanguage) and fallback hierarchy based on that
   this.getFallback = function(lang, alternatives) {
     let fallback = this.fallback;
-    alternatives = alternatives.map(a => a.split('-')[0].toLowerCase());
+    
+    if (!alternatives instanceof Array) {
+      alternatives = [fallback];
+    }
+    // @todo normalise both lang and alterntives array
+    // was: alternatives = alternatives.map(a => a.split('-')[0].toLowerCase());
+
     if (/^n(o|b|n)/i.test(lang)) {
       if (alternatives.includes('nn')) {
         return 'nn';

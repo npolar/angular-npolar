@@ -39,6 +39,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     model: {}
   };
 
+  $scope.document = null;
+
   // const step = 5; // Interval step (in seconds)
   // const autosave = 30; // Autosave every N seconds
 
@@ -68,6 +70,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
+    $scope.document = null;
     return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope.formula.model = document;
@@ -109,6 +112,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // PUT document, ie resource update
   $scope.update = function(model) {
+    $scope.document = null;
     return $scope.resource.update(model, function(document) {
       $scope.formula.model = document;
       $scope.document = document;
@@ -123,6 +127,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // DELETE document, ie. resource remove
   $scope.delete = function() {
+    $scope.document = null;
     return $scope.resource.remove({
       id: $scope.document.id
     }, function() {

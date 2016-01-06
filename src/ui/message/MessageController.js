@@ -11,7 +11,8 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
       hideDelay: 5000,
       action: "OK",
       locals: { explanation: error.message || error, msgType: 'error'},
-      position: "top left"
+      position: "top left",
+      autoWrap: false
     });
   };
 
@@ -22,7 +23,8 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
       hideDelay: 5000,
       action: "OK",
       locals: { explanation: message, msgType: message.type || 'info' },
-      position: "top left"
+      position: "top left",
+      autoWrap: false
     });
   };
 
@@ -33,7 +35,7 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
 
   NpolarMessage.on("npolar-api-info", function(response) {
     console.log("<- npolar-api-info", response);
-    if ("PUT" === response.method) { // "POST" === response.method || 
+    if ("PUT" === response.method) { // "POST" === response.method ||
       let time = new Date(response.time);
       flashInfo(`Saved at ${ time.toISOString() }`);
     } else if ("DELETE" === response.method) {

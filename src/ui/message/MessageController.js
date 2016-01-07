@@ -3,16 +3,13 @@
 // @ngInject
 var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
   var tmpl = require('./_message_toast.html');
-
   var flashError = function(error) {
     $mdToast.show({
       controller: 'NpolarToastController',
       template: tmpl,
       hideDelay: 5000,
-      action: "OK",
       locals: { explanation: error.message || error, msgType: 'error'},
-      position: "top left",
-      autoWrap: false
+      position: "top left"
     });
   };
 
@@ -21,10 +18,8 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
       controller: 'NpolarToastController',
       template: tmpl,
       hideDelay: 5000,
-      action: "OK",
       locals: { explanation: message, msgType: message.type || 'info' },
-      position: "top left",
-      autoWrap: false
+      position: "top left"
     });
   };
 

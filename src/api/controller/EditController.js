@@ -40,6 +40,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   $scope.document = null;
+  $scope._error = false;
 
   // const step = 5; // Interval step (in seconds)
   // const autosave = 30; // Autosave every N seconds
@@ -73,11 +74,11 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     $scope.document = null;
     return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
+      $scope._error = false;
       $scope.formula.model = document;
       $scope.document = document;
       refreshJwt();
       $location.path(uri);
-      $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
@@ -85,10 +86,10 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
+    $scope._error = false;
     return $scope.resource.fetch($routeParams, function(document) {
       $scope.formula.model = document;
       $scope.document = document;
-      $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
@@ -113,13 +114,13 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // PUT document, ie resource update
   $scope.update = function(model) {
     $scope.document = null;
+    $scope._error = false;
     return $scope.resource.update(model, function(document) {
       $scope.formula.model = document;
       $scope.document = document;
       $scope.i = 0;
       refreshJwt();
       $route.reload();
-      $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
@@ -128,13 +129,13 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // DELETE document, ie. resource remove
   $scope.delete = function() {
     $scope.document = null;
+    $scope._error = false;
     return $scope.resource.remove({
       id: $scope.document.id
     }, function() {
       refreshJwt();
       $location.path('/');
       $route.reload();
-      $scope._error = false;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });

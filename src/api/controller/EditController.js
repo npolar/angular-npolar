@@ -35,8 +35,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       } else {
         $scope.update(model);
       }
-    },
-    model: {}
+    }
   };
 
   $scope.document = null;
@@ -87,12 +86,13 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
     $scope._error = false;
-    return $scope.resource.fetch($routeParams, function(document) {
-      $scope.formula.model = document;
+    let docDeferred = $scope.resource.fetch($routeParams, function(document) {
       $scope.document = document;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
+    $scope.formula.model = docDeferred.$promise;
+    return docDeferred;
   };
 
   // New action, ie. create new document and edit with formula
@@ -105,9 +105,9 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit (or new) action
   $scope.edit = function() {
     if ($routeParams.id === '__new') {
-      $scope.newAction();
+      return $scope.newAction();
     } else {
-      $scope.editAction();
+      return $scope.editAction();
     }
   };
 

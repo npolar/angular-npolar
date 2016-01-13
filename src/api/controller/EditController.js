@@ -76,6 +76,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       $scope._error = false;
       $scope.formula.model = document;
       $scope.document = document;
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path(uri);
     }, function(errorData) {
@@ -119,6 +120,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       $scope.formula.model = document;
       $scope.document = document;
       $scope.i = 0;
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $route.reload();
     }, function(errorData) {
@@ -133,6 +135,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     return $scope.resource.remove({
       id: $scope.document.id
     }, function() {
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path('/');
       $route.reload();

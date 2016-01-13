@@ -1,19 +1,10 @@
 'use strict';
-var angular = require('angular');
+let angular = require('angular');
 
 /**
  * @ngInject
  */
-var Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
-  let resourceCache = $cacheFactory('resourceCache');
-  let bust = function(response) {
-    resourceCache.removeAll();
-    return response;
-  };
-  let bustInterceptor = {
-    response: bust,
-    responseError: bust
-  };
+let Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
 
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {
@@ -85,12 +76,12 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
   // @todo Support user-supplied extending
   // @todo Support non-search engine query/array/fetch
   this.resource = function(service) {
-
-    var base = this.base(service);
-    var cache = service.cache || resourceCache;
+    let resourceCache = $cacheFactory('resourceCache:'+service.path);
+    let base = this.base(service);
+    let cache = service.cache || resourceCache;
 
     // Default parameters
-    var params = {
+    let params = {
       id: null,
       limit: 100,
       format: 'json',
@@ -98,11 +89,11 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
       variant: 'atom'
     };
 
-    //var fields_feed = (angular.isString(service.fields)) ? service.fields : null ;
-    var fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated';
+    //let fields_feed = (angular.isString(service.fields)) ? service.fields : null ;
+    let fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated';
 
-    //var params_feed = angular.extend({}, params, { fields: fields_feed });
-    var params_query = angular.extend({}, params, {
+    //let params_feed = angular.extend({}, params, { fields: fields_feed });
+    let params_query = angular.extend({}, params, {
       variant: 'array',
       limit: 1000,
       fields: fields_query
@@ -110,7 +101,7 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
 
     const TIMEOUT = 20000;
 
-    var resource = $resource(base + service.path + '/:id', {}, {
+    let resource = $resource(base + service.path + '/:id', {}, {
       feed: {
         method: 'GET',
         params: params,
@@ -141,17 +132,15 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
           Accept: 'application/json'
         },
         cache,
-        timeout: TIMEOUT
+        timeout: TIMEOUT,
       },
       remove: {
         method: 'DELETE',
         timeout: TIMEOUT,
-        interceptor: bustInterceptor
       },
       delete: {
         method: 'DELETE',
         timeout: TIMEOUT,
-        interceptor: bustInterceptor
       },
       update: {
         method: 'PUT',
@@ -162,12 +151,11 @@ var Resource = function($resource, $location, $routeParams, $cacheFactory, npola
           Accept: 'application/json'
         },
         timeout: TIMEOUT,
-        interceptor: bustInterceptor
       }
     });
 
     resource.path = base + service.path;
-
+    resource.cache = resourceCache;
     resource.href = this.href;
     resource.newHref = this.newHref;
     resource.editHref = this.editHref;

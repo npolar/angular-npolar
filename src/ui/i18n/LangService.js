@@ -39,14 +39,14 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
   // @return [Object] Example: {"nb":7,"en":7,"ru":1,"eo":1,"nn":1}
   this.getLanguageCounts = function(dictionary, tkey=npolarTranslateKeys) {
     if (!dictionary) {
-      throw new Error("No dictionary provided");  
+      throw new Error("No dictionary provided");
     }
     var l = {};
 
     dictionary.forEach(d => {
-      let translations = d[tkey['translations']];
+      let translations = d[tkey.translations];
       translations.forEach(d => {
-        let language = d[tkey['language']];
+        let language = d[tkey.language];
         if (!l[language]) {
           l[language] = 1;
         } else {
@@ -95,9 +95,9 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
 
   // setLanguagesFromDictionaryUse({ min: 0.25, force: ['en', 'nb', 'nn']);
   this.setLanguagesFromDictionaryUse = function(opt = {min: 0, dictionary: null, force: []}) {
-    if (!opt.dictionary || !dictionary instanceof Array) {
+    if (!opt.dictionary || !(opt.dictionary instanceof Array)) {
       // @todo support JSON-LD dictionary object
-      throw new Error("No dictionary array provided");  
+      throw new Error("No dictionary array provided");
     }
     let dictionary = opt.dictionary;
     let min = opt.min;
@@ -136,8 +136,8 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
   // @todo handle language hierarchy (macrolanguage) and fallback hierarchy based on that
   this.getFallback = function(lang, alternatives) {
     let fallback = this.fallback;
-    
-    if (!alternatives instanceof Array) {
+
+    if (!(alternatives instanceof Array)) {
       alternatives = [fallback];
     }
     // @todo normalise both lang and alterntives array

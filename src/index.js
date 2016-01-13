@@ -13,5 +13,6 @@ var ngNpolar = angular.module('ngNpolar', ['ngResource', 'ngMaterial', 'ngRoute'
 
 require('./api');
 require('./ui');
+require('./service');
 
 ngNpolar.factory('NpolarMessage', require('./events/Message'));

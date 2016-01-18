@@ -44,6 +44,10 @@ describe('countryService', function () {
       countryService.countriesByQuery('U.S').length.should.eql(2);
     });
 
+    it('should get correct country objects', function () {
+      countryService.countriesByQuery('').length.should.eql(250);
+    });
+
     it('should return empry array for miss', function () {
       countryService.countriesByQuery('yolo').length.should.eql(0);
     });

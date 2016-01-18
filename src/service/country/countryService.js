@@ -1258,6 +1258,12 @@ const COUNTRIES = {
 module.exports = function() {
 
   return {
+    countriesByQuery(query) {
+      query = query || '';
+      let codes = Object.keys(COUNTRIES).filter(code =>
+        (COUNTRIES[code].name + ',' + COUNTRIES[code].native).toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return codes.map(code => this.countryByCode(code));
+    },
     countryByCode(code) {
       let country;
       if (code) {

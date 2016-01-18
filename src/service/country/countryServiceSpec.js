@@ -34,4 +34,18 @@ describe('countryService', function () {
       should.equal(countryService.countryByNativeName('yolo'), undefined);
     });
   });
+
+  describe('#countriesByQuery', function () {
+    it('should get correct country objects', function () {
+      countryService.countriesByQuery('Norway')[0].code.should.eql('NO');
+    });
+
+    it('should get correct country objects', function () {
+      countryService.countriesByQuery('U.S').length.should.eql(2);
+    });
+
+    it('should return empry array for miss', function () {
+      countryService.countriesByQuery('yolo').length.should.eql(0);
+    });
+  });
 });

@@ -130,11 +130,10 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // DELETE document, ie. resource remove
   $scope.delete = function() {
+    let id = $scope.document.id;
     $scope.document = null;
     $scope._error = false;
-    return $scope.resource.remove({
-      id: $scope.document.id
-    }, function() {
+    return $scope.resource.remove({id}, function() {
       $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path('/');

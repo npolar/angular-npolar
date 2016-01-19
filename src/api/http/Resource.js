@@ -76,9 +76,9 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
   // @todo Support user-supplied extending
   // @todo Support non-search engine query/array/fetch
   this.resource = function(service) {
-    let resourceCache = $cacheFactory('resourceCache:'+service.path);
+   
     let base = this.base(service);
-    let cache = service.cache || resourceCache;
+    let cache = service.cache;
 
     // Default parameters
     let params = {
@@ -132,17 +132,20 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
           Accept: 'application/json'
         },
         cache,
-        timeout: TIMEOUT,
+        timeout: TIMEOUT
       },
       remove: {
+        cache,
         method: 'DELETE',
-        timeout: TIMEOUT,
+        timeout: TIMEOUT
       },
       delete: {
+        cache,
         method: 'DELETE',
-        timeout: TIMEOUT,
+        timeout: TIMEOUT
       },
       update: {
+        cache,
         method: 'PUT',
         params: {
           id: '@id'
@@ -150,12 +153,11 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
         headers: {
           Accept: 'application/json'
         },
-        timeout: TIMEOUT,
+        timeout: TIMEOUT
       }
     });
 
     resource.path = base + service.path;
-    resource.cache = resourceCache;
     resource.href = this.href;
     resource.newHref = this.newHref;
     resource.editHref = this.editHref;

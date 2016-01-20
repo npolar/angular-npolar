@@ -76,7 +76,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
   // @todo Support user-supplied extending
   // @todo Support non-search engine query/array/fetch
   this.resource = function(service) {
-   
+
     let base = this.base(service);
     let cache = service.cache;
 
@@ -93,7 +93,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     let fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated';
 
     //let params_feed = angular.extend({}, params, { fields: fields_feed });
-    let params_query = angular.extend({}, params, {
+    let params_query = Object.assign({}, params, {
       variant: 'array',
       limit: 1000,
       fields: fields_query
@@ -124,6 +124,22 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
         isArray: true,
         cache,
         timeout: TIMEOUT
+      },
+      facets: {
+        method: 'GET',
+        params: Object.assign({}, params, { limit: 0 }),
+        isArray: true,
+        cache,
+        timeout: TIMEOUT,
+        transformResponse(data) {
+          return angular.fromJson(data).feed.facets.map(facet => {
+            let key = Object.keys(facet)[0];
+            return {
+              facet: key,
+              terms: facet[key]
+            };
+          });
+        }
       },
       fetch: {
         method: 'GET',

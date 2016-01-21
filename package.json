@@ -11,13 +11,13 @@
     "url": "git+https://github.com/npolar/angular-npolar.git"
   },
   "dependencies": {
-    "angular": "^1.4.8",
-    "angular-animate": "^1.4.8",
-    "angular-aria": "^1.4.8",
+    "angular": "^1.4.9",
+    "angular": "^1.4.9",
+    "angular": "^1.4.9",
     "angular-jwt": "*",
     "angular-material": "1.0.1",
-    "angular-resource": "^1.4.8",
-    "angular-route": "^1.4.8",
+    "angular": "^1.4.9",
+    "angular": "^1.4.9",
     "angular-utf8-base64": "*",
     "language-tags": "^1.0.3"
   },
@@ -47,14 +47,7 @@
   },
   "browserify": {
     "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ],
+      ["babelify",{"presets": ["es2015"]}],
       "partialify",
       "browserify-ngannotate"
     ]

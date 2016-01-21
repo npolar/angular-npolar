@@ -1,6 +1,6 @@
 {
   "name": "angular-npolar",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "[angular-npolar](https://github.com/npolar/angular-npolar) simplifies development of Angular web apps driven by the [Npolar API](http://api.npolar.no/).",
   "main": "src/index.js",
   "scripts": {
@@ -12,12 +12,8 @@
   },
   "dependencies": {
     "angular": "^1.4.9",
-    "angular": "^1.4.9",
-    "angular": "^1.4.9",
     "angular-jwt": "*",
     "angular-material": "1.0.1",
-    "angular": "^1.4.9",
-    "angular": "^1.4.9",
     "angular-utf8-base64": "*",
     "language-tags": "^1.0.3"
   },
@@ -47,7 +43,14 @@
   },
   "browserify": {
     "transform": [
-      ["babelify",{"presets": ["es2015"]}],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ],
       "partialify",
       "browserify-ngannotate"
     ]

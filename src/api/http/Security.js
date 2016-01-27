@@ -129,7 +129,9 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   // Checks if the user is authorized *at the current time* - ie. always returns false if not authenticated
   // @param action ["create" | "read" | "update" | "delete"] => actions
   this.isAuthorized = function(action, uri) {
-
+    if (!uri) {
+      return false; // Called without uri to check against, just say no.
+    }
     uri = this.canonicalUri(uri);
 
     if (false === actions.includes(action)) {

@@ -10,9 +10,6 @@ var config = {
   base: '//api.npolar.no',
   security: {
     authorization: 'jwt'
-  },
-  formula: {
-    template: 'default'
   }
 };
 

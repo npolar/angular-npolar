@@ -34,9 +34,24 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     }
   };
 
+  // Formula compatible save
+  // SHOULD NOT BE CALLED DIRECTLY, FORMULA DOES THE VALIDATION!!
+  let save = function (model) {
+    try {
+      $scope._error = false;
+      if (!model._rev) {
+        return $scope.create(model);
+      } else {
+        return $scope.update(model);
+      }
+    } catch (e) {
+      $scope._error = e;
+      NpolarMessage.error(e);
+    }
+  };
+
   // Set formula model
   let updateFormulaInstance = function (model) {
-    $scope.formula.setOnSave(save);
     $scope.formula.setModel(model);
   };
 
@@ -113,23 +128,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   $scope.save = function () {
-    console.error("Not implemented, save must be done via formula!");
-  };
-
-  // Formula compatible save
-  // SHOULD NOT BE CALLED DIRECTLY, FORMULA DOES THE VALIDATION!!
-  let save = function (model) {
-    try {
-      $scope._error = false;
-      if (!model._rev) {
-        return $scope.create(model);
-      } else {
-        return $scope.update(model);
-      }
-    } catch (e) {
-      $scope._error = e;
-      NpolarMessage.error(e);
-    }
+    $scope.formula.setOnSave(save);
+    $scope.formula.save();
   };
 
 };

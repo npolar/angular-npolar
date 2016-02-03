@@ -22,42 +22,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     $scope: $scope
   });
 
-  // Seconds since save
-  $scope.i = 0;
-
-  $scope.formula = {
-    template: npolarApiConfig.formula.template || 'default',
-    language: null,
-    hideButtons: true,
-    onsave: function(model) {
-      if (!model._rev) {
-        $scope.create(model);
-      } else {
-        $scope.update(model);
-      }
-    }
-  };
-
   $scope.document = null;
   $scope._error = false;
-
-  // const step = 5; // Interval step (in seconds)
-  // const autosave = 30; // Autosave every N seconds
-
-  $scope.isChanged = function() {
-    return $scope.formula.formula ? $scope.formula.formula.dirty : false;
-  };
-
-  //$interval(() => {
-  //  if ($scope.isChanged()) {
-  //    $scope.i = $scope.i + step;
-  //    $log.debug($scope.i, $scope.isChanged(), $scope.i % autosave);
-  //
-  //    if (0 === ($scope.i % autosave)) {
-  //      $scope.save();
-  //    }
-  //  }
-  //}, step * 1000);
 
   // Refresh JWT
   let refreshJwt = function() {
@@ -68,13 +34,19 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     }
   };
 
+  // Set formula model
+  let updateFormulaInstance = function (model) {
+    $scope.formula.setOnSave(save);
+    $scope.formula.setModel(model);
+  };
+
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
     $scope.document = null;
     return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       $scope._error = false;
-      $scope.formula.model = document;
+      updateFormulaInstance(document);
       $scope.document = document;
       refreshJwt();
       $location.path(uri);
@@ -87,18 +59,18 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   $scope.editAction = function() {
     $scope._error = false;
     let docDeferred = $scope.resource.fetch($routeParams, function(document) {
+      updateFormulaInstance(document);
       $scope.document = document;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
-    $scope.formula.model = docDeferred.$promise;
     return docDeferred;
   };
 
   // New action, ie. create new document and edit with formula
   $scope.newAction = function(document={}) {
     var doc = new $scope.resource(document);
-    $scope.formula.model = doc;
+    updateFormulaInstance(doc);
     $scope.document = doc;
   };
 
@@ -116,7 +88,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     $scope.document = null;
     $scope._error = false;
     return $scope.resource.update(model, function(document) {
-      $scope.formula.model = document;
+      updateFormulaInstance(document);
       $scope.document = document;
       $scope.i = 0;
       refreshJwt();
@@ -140,16 +112,26 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     });
   };
 
-  // Save document action, ie. create or update
-  $scope.save = function() {
+  $scope.save = function () {
+    console.error("Not implemented, save must be done via formula!");
+  };
+
+  // Formula compatible save
+  // SHOULD NOT BE CALLED DIRECTLY, FORMULA DOES THE VALIDATION!!
+  let save = function (model) {
     try {
       $scope._error = false;
-      return $scope.formula.formula.save();
+      if (!model._rev) {
+        return $scope.create(model);
+      } else {
+        return $scope.update(model);
+      }
     } catch (e) {
       $scope._error = e;
       NpolarMessage.error(e);
     }
   };
+
 };
 
 module.exports = EditController;

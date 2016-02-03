@@ -3,10 +3,10 @@
  *
  */
 'use strict';
-/**
- * @ngInject
- */
+
 var jsonText = function() {
+  'ngInject';
+
   return {
     restrict: 'A',
     require: 'ngModel',

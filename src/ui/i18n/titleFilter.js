@@ -1,8 +1,8 @@
 'use strict';
 
-// @ngInject
 let titleFilter = function(NpolarTranslate, NpolarLang) {
-  
+  'ngInject';
+
   let filter =  function(titles, tkey = { value: 'title', language: 'lang' }) {
     if (!titles || titles.length === 0) {
       return;
@@ -10,7 +10,7 @@ let titleFilter = function(NpolarTranslate, NpolarLang) {
     // @todo Autodetect keys
     return NpolarTranslate.value(titles, NpolarLang.getLang(), null, null, tkey);
   };
-  
+
   //filter.$stateful=true;
   return filter;
 

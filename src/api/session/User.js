@@ -1,10 +1,8 @@
 // FIXME This service is misnamed and will probably die (it's just a thin session storage wrapper)
 'use strict';
 
-/**
- * @ngInject
- */
 var User = function(base64, npolarApiConfig) {
+  'ngInject';
 
   let storage = localStorage;
 

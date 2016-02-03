@@ -1,7 +1,8 @@
 'use strict';
 
-// @ngInject
 module.exports = ($log) => {
+  'ngInject';
+
   return function(texts, prop) {
   if (texts === undefined) {
     return '';

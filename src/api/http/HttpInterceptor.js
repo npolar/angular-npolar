@@ -12,10 +12,8 @@
 
 'use strict';
 
-/**
- * @ngInject
- */
 var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarMessage, NpolarApiSecurity) {
+  'ngInject';
 
   var isNpolarApiRequest = function(config) {
     if (config.url === undefined || false === (/\/\//).test(config.url)) {

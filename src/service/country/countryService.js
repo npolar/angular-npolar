@@ -1256,6 +1256,7 @@ const COUNTRIES = {
 
 
 module.exports = function() {
+  'ngInject';
 
   return {
     countriesByQuery(query) {

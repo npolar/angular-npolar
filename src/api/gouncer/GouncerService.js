@@ -3,18 +3,18 @@
  */
 'use strict';
 
-// @ngInject
 let Gouncer = function($log, $http, NpolarApiSecurity) {
+  'ngInject';
 
   const base = NpolarApiSecurity.canonicalUri('/user');
-  
+
   let forceNpolarEmailIfAtDomainIsMissing = function(email) {
     if (false === (/[@]/).test(email)) {
       email = email + '@npolar.no';
     }
     return email;
   };
-  
+
   // Authenticate
   this.authenticate = function(email,password) {
 

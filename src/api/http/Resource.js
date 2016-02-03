@@ -1,10 +1,9 @@
 'use strict';
 let angular = require('angular');
 
-/**
- * @ngInject
- */
+
 let Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
+  'ngInject';
 
   // @return Array of path segments "under" the current request URI
   let pathSegments = function() {

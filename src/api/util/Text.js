@@ -1,6 +1,7 @@
 'use strict';
 
 var Texxt = function() {
+  'ngInject';
 
   function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;

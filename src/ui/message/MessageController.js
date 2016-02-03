@@ -1,7 +1,8 @@
 'use strict';
 
-// @ngInject
 var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
+  'ngInject';
+  
   var tmpl = require('./_message_toast.html');
   var flashError = function(error) {
     $mdToast.show({

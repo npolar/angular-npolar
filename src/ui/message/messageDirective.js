@@ -1,9 +1,8 @@
 'use strict';
 
-/**
- * @ngInject
- */
 var message = function () {
+  'ngInject';
+
   return {
     scope: {},
     controller: 'NpolarMessageController'

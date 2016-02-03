@@ -2,10 +2,8 @@
 
 var EventEmitter = require('events').EventEmitter;
 
-/**
- * @ngInject
- */
 var Message = function() {
+  'ngInject';
 
   let washError = function (error) {
     if (error) {

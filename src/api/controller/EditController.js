@@ -13,9 +13,9 @@
  *
  */
 
-// @ngInject
 let EditController = function($scope, $location, $route, $routeParams, $controller,
   Gouncer, npolarApiConfig, NpolarApiSecurity, NpolarMessage) {
+    'ngInject';
 
   // Extend NpolarBaseController
   $controller('NpolarBaseController', {

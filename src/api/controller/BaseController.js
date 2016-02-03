@@ -6,8 +6,8 @@
 *
 */
 
-// @ngInject
 var BaseController = function($scope, $location, $routeParams, $http, NpolarApiSecurity) {
+  'ngInject';
 
   $scope._error = false;
   $scope.security = NpolarApiSecurity;
@@ -34,9 +34,9 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
   // Search action, ie. fetch feed and inject into scope
   $scope.search = function(query, invariants) {
     let facets = (query.facets ? query.facets + "," : "") + $location.search().facets;
-    
+
     let fullQuery = Object.assign({}, query, $location.search(), {facets});
-    
+
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;
       $scope._error = false;

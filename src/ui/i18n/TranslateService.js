@@ -4,15 +4,15 @@
  * Angular translation service
  */
 
-// @ngInject
 let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys) {
-  
+  'ngInject';
+
   // Dictionary object
   this.dictionary = {};
-  
+
   // Normalize array of translations to JSON-LD [string internationalization](http://www.w3.org/TR/json-ld/#string-internationalization):
   // @return [Array] Array of objects with @language and @value keys
-  let normalizeTranslations = function(translations, tkey = npolarTranslateKeys) { 
+  let normalizeTranslations = function(translations, tkey = npolarTranslateKeys) {
     // Any translations?
     if (translations && translations.length > 0) {
 
@@ -36,15 +36,15 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
       let code = t[tkey.lookup];
       let value = normalizeTranslations(t[tkey.translations]);
       // @todo Warn on duplicate codes?
-      dict[code] = value; 
+      dict[code] = value;
     });
     return dict;
   };
-    
+
   let isDebug = function() {
     return ($location.search().debug === '1');
   };
-  
+
   // Normalize/decorate value
   // @return [String]
   let normalizeValue = function(value,lang,code,orig) {
@@ -57,8 +57,8 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
     }
     return value;
   };
-  
-  // Get normalized dictionary (object with JSON-LD style translations) 
+
+  // Get normalized dictionary (object with JSON-LD style translations)
   this.getDictionary = function() {
     return this.dictionary;
   };
@@ -72,7 +72,7 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
       this.dictionary = dictionary;
     }
   };
-  
+
   // Append to dictionary
   // @param [Array|Object]
   this.appendToDictionary = function(dictionary) {
@@ -126,7 +126,7 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
     tkey=npolarTranslateKeys,
     normalize=normalizeValue,
     fallbackLang = NpolarLang.getFallback(lang, translations.map(t => t[tkey.language]))) {
-    
+
     if (!translations) {
       return;
     }
@@ -134,15 +134,15 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
     if (!originalLang) {
       originalLang = lang;
     }
-  
+
     // First try the provided lang tag
     // (Notice this may be a fallback language if called in the else block below)
     let exactLangMatch = translations.find(cand => cand[tkey.language].split('-')[0] === lang.split('-')[0]);
-    
+
     if (exactLangMatch) {
       let value = exactLangMatch[tkey.value];
       return normalize(value, lang, code, originalLang);
-    
+
     } else {
       // No exact match, get fallback translations, ie. those NOT in the requested lang
       let fallbacks = translations.filter(cand => cand[tkey.language].split('-')[0] !== lang.split('-')[0]);

@@ -8,9 +8,9 @@ let angular = require('angular');
  *
  * Also contains method to check decoded JWT objects from [Gouncer](https://github.com/npolar/gouncer) JWT
  *
- * @ngInject
  */
 var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
+  'ngInject';
   // Gouncer location
   // secure uri
 

@@ -1,9 +1,8 @@
 'use strict';
 
-/**
- * @ngInject
- */
 let langMenuDirective = function (NpolarLang) {
+  'ngInject';
+
   return {
     //scope: {},
     //controller: '',

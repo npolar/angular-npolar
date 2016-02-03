@@ -6,9 +6,9 @@ let tags = require('language-tags');
  *
  * For language tags, see
  *
- * @ngInject
  */
 let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
+  'ngInject';
 
   this.langName = require('./lang-name.json');
 

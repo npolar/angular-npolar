@@ -1,9 +1,7 @@
 'use strict';
 
-/**
- * @ngInject
- */
 var LoginController = function ($rootScope, $scope, $http, $route, $log, $location, Gouncer, NpolarMessage, NpolarApiSecurity) {
+  'ngInject';
 
   $scope.security = NpolarApiSecurity;
 

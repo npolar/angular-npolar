@@ -9,6 +9,7 @@ ngNpolar.service('NpolarApiResource', require('./http/Resource'));
 ngNpolar.factory('npolarApiInterceptor', require('./http/HttpInterceptor'));
 
 ngNpolar.service('NpolarApiText', require('./util/Text'));
+ngNpolar.service('npolarDocumentUtil', require('./util/document'));
 ngNpolar.directive('npolarJsonText', require('./util/jsonText'));
 
 ngNpolar.controller('NpolarBaseController', require('./controller/BaseController'));

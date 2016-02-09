@@ -16,3 +16,23 @@ require('./ui');
 require('./service');
 
 ngNpolar.factory('NpolarMessage', require('./events/Message'));
+
+// change-a-path-without-reloading-the-controller
+// http://stackoverflow.com/a/24102139/1357822
+ngNpolar.run(['$route', '$rootScope', '$location', function($route, $rootScope, $location) {
+  var original = $location.search;
+  $location.search = function(params, reload) {
+    if (reload === false) {
+      var lastRoute = $route.current;
+      var un = $rootScope.$on('$locationChangeSuccess', function() {
+        $route.current = lastRoute;
+        un();
+      });
+    }
+    if (params) {
+      return original.call($location, params);
+    } else {
+      return original.call($location);
+    }
+  };
+}]);

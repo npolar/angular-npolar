@@ -63,23 +63,22 @@ let NpolarLang = function($location, $log, $rootScope, npolarTranslateKeys) {
   };
 
   // Set new language, this involves
-  // * broadcast "npolar-lang" to root scope
   // * persisting "NpolarLang" key to local storage
   // * updating location search parameter (?lang={lang})
   // * updating HTML@lang
+  // * broadcast "npolar-lang" to root scope
   this.setLang = function(lang, was = null) {
     if (lang !== this.getLang()) {
       if (tags.language(lang.split('-')[0])) {
 
-        $rootScope.$broadcast('npolar-lang', {
-          lang, name: this.getNativeName(lang)
-        });
         localStorage.setItem('NpolarLang', lang);
         $location.search(Object.assign($location.search(), {
           lang
-        }));
+        }), false /* prevent reload */);
         document.documentElement.setAttribute('lang', lang);
-
+        $rootScope.$broadcast('npolar-lang', {
+          lang, name: this.getNativeName(lang)
+        });
       } else {
         $log.warn(`Invalid language: ${lang}`);
       }

@@ -5,6 +5,8 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
 
   $scope.security = NpolarApiSecurity;
 
+  $scope.error = () => $scope._error;
+
   // After login: store user and JWT in local storage
   $scope.onLogin = function(response) {
 

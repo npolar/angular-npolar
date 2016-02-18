@@ -6,7 +6,7 @@
 *
 */
 
-var BaseController = function($scope, $location, $routeParams, $http, NpolarApiSecurity) {
+var BaseController = function($scope, $location, $routeParams, $http, NpolarApiSecurity, NpolarTranslate) {
   'ngInject';
 
   $scope._error = false;
@@ -21,9 +21,9 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
       $scope._error = false;
     }, function(errorData) {
       if (errorData.status === 404) {
-        $scope._error = "Couldn't find document \"" + $routeParams.id + "\"";
+        $scope._error = NpolarTranslate.translate('document.no_document') + "\"" + $routeParams.id + "\"";
       } else {
-        $scope._error = "Couldn't load document :(";
+        $scope._error = NpolarTranslate.translate('document.error');
         if (errorData.statusText && errorData.statusText.length > 0) {
           $scope._error += ". Status: " + errorData.status + ", Message: " + errorData.statusText;
         }
@@ -41,7 +41,7 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
       $scope.feed = response.feed;
       $scope._error = false;
     }, function(errorData) {
-      $scope._error = "Couldn't load search results :(";
+      $scope._error = NpolarTranslate.translate('search.error');
       if (errorData.statusText && errorData.statusText.length > 0) {
         $scope._error += ". Status: " + errorData.status + ", Message: " + errorData.statusText;
       }

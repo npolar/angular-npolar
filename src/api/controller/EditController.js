@@ -37,22 +37,30 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Formula compatible save
   // SHOULD NOT BE CALLED DIRECTLY, FORMULA DOES THE VALIDATION!!
   let save = function (model) {
-    try {
-      $scope._error = false;
-      if (!model._rev) {
-        return $scope.create(model);
-      } else {
-        return $scope.update(model);
-      }
-    } catch (e) {
-      $scope._error = e;
-      NpolarMessage.error(e);
+    if (!model._rev) {
+      return $scope.create(model);
+    } else {
+      return $scope.update(model);
     }
   };
 
   // Set formula model
   let updateFormulaInstance = function (model) {
     $scope.formula.setModel(model);
+  };
+
+  // jshint -W016, -W116
+  let generateUUID = function (){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+        d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c == 'x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
   };
 
   // Create action, ie. save document and redirect to new URI
@@ -90,9 +98,17 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   // Edit (or new) action
-  $scope.edit = function() {
+  $scope.edit = function(generateId) {
+    $scope.formula.setOnSave(save);
+
     if ($routeParams.id === '__new') {
-      return $scope.newAction();
+      let doc;
+      if (generateId) {
+        doc = {
+          id: generateUUID()
+        };
+      }
+      return $scope.newAction(doc);
     } else {
       return $scope.editAction();
     }
@@ -128,8 +144,11 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   $scope.save = function () {
-    $scope.formula.setOnSave(save);
-    $scope.formula.save();
+    try {
+      $scope.formula.save();
+    } catch (e) {
+      NpolarMessage.error("Document not valid, please review " + (e || []).join(", "));
+    }
   };
 
 };

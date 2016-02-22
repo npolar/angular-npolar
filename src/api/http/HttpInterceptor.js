@@ -57,6 +57,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarMessage, NpolarA
 
 
     response: function(response) {
+
       // Only intercept non-GET Npolar API responses
       if (response.config.method !== "GET" && isNpolarApiResponse(response)) {
         NpolarMessage.apiInfo(NpolarMessage.getMessage(response));
@@ -68,6 +69,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarMessage, NpolarA
     },
 
     requestError: function(response) {
+
       response.body = {
         error: {
           explanation: "Request failed"
@@ -78,6 +80,7 @@ var HttpInterceptor = function($log, $q, npolarApiConfig, NpolarMessage, NpolarA
     },
 
     responseError: function(response) {
+
       response.body = response.data;
       if (isNpolarApiResponse(response)) {
         NpolarMessage.apiError(NpolarMessage.getMessage(response));

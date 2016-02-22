@@ -65,10 +65,9 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
-    $scope.document = null;
+    $scope._error = false;
     return $scope.resource.save(model, function(document) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
-      $scope._error = false;
       updateFormulaInstance(document);
       $scope.document = document;
       refreshJwt();
@@ -81,13 +80,12 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
     $scope._error = false;
-    let docDeferred = $scope.resource.fetch($routeParams, function(document) {
+    return $scope.resource.fetch($routeParams, function(document) {
       updateFormulaInstance(document);
       $scope.document = document;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
-    return docDeferred;
   };
 
   // New action, ie. create new document and edit with formula
@@ -100,6 +98,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit (or new) action
   $scope.edit = function(generateId) {
     $scope.formula.setOnSave(save);
+    $scope._error = false;
 
     if ($routeParams.id === '__new') {
       let doc;
@@ -116,7 +115,6 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
 
   // PUT document, ie resource update
   $scope.update = function(model) {
-    $scope.document = null;
     $scope._error = false;
     return $scope.resource.update(model, function(document) {
       updateFormulaInstance(document);
@@ -132,7 +130,6 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // DELETE document, ie. resource remove
   $scope.delete = function() {
     let id = $scope.document.id;
-    $scope.document = null;
     $scope._error = false;
     return $scope.resource.remove({id}, function() {
       refreshJwt();

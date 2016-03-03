@@ -13,6 +13,7 @@ ngNpolar.directive('npolarMessage', require('./message/messageDirective'));
 ngNpolar.filter('isodate', require('./filters/isodate'));
 ngNpolar.filter('year', require('./filters/year'));
 ngNpolar.filter('lang', require('./filters/lang'));
+ngNpolar.filter('bytes', require('./filters/bytes'));
 
 // i18n
 ngNpolar.service('NpolarLang', require('./i18n/LangService'));

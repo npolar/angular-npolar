@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = ($log) => {
+module.exports = () => {
   'ngInject';
 
   return function(texts, prop) {

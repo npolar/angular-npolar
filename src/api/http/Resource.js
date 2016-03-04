@@ -148,6 +148,9 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
         cache,
         timeout: TIMEOUT,
         transformResponse(data) {
+          if (!data) {
+            return [];
+          }
           return angular.fromJson(data).feed.facets.map(facet => {
             let key = Object.keys(facet)[0];
             return {

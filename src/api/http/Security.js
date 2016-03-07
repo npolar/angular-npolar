@@ -9,7 +9,7 @@ let angular = require('angular');
  * Also contains method to check decoded JWT objects from [Gouncer](https://github.com/npolar/gouncer) JWT
  *
  */
-var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser) {
+var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, NpolarApiUser, NpolarMessage) {
   'ngInject';
   // Gouncer location
   // secure uri
@@ -205,7 +205,6 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
   this.setJwt = function(jwt) {
 
     var token = this.decodeJwt(jwt);
-
     var expires = new Date(1000 * token.exp).toISOString();
 
 
@@ -221,8 +220,17 @@ var Security = function($log, base64, jwtHelper, npolarApiConfig, NpolarApiUser)
     this.setUser(user);
 
     $log.debug('New JWT expires: ', expires, jwt);
-
   };
+
+  this.logout = function(reason) {
+    var who = this.getUser();
+    who.reason = reason;
+    NpolarMessage.logout(who);
+
+    this.removeUser();
+    $location.path('/');
+  };
+
 
 };
 

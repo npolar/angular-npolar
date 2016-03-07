@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let Gouncer = function($log, $http, NpolarApiSecurity) {
+let Gouncer = function($http, NpolarApiSecurity) {
   'ngInject';
 
   const base = NpolarApiSecurity.canonicalUri('/user');
@@ -16,8 +16,7 @@ let Gouncer = function($log, $http, NpolarApiSecurity) {
   };
 
   // Authenticate
-  this.authenticate = function(email,password) {
-
+  this.authenticate = function(email, password) {
     // Use HTTP Basic if email and password is passed
     if (email !== undefined && password !== undefined) {
 

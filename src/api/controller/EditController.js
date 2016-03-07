@@ -30,6 +30,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     if (NpolarApiSecurity.isAuthenticated()) {
       Gouncer.authenticate().then(function(response) {
         NpolarApiSecurity.setJwt(response.data.token);
+      }, function (reason) {
+        NpolarApiSecurity.logout("Could not refresh jwt");
       });
     }
   };
@@ -78,23 +80,18 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // New document templates may be provided as an argument,
   // otherwise the create() function on the resource is called
   $scope.newAction = function(document={}) {
-    
     if (Object.keys(document).length === 0) {
-      console.log($scope.resource );
       if (typeof $scope.resource.create === "function") {
         document = $scope.resource.create();
-        console.log("create()", document);
       }
     }
     var doc = new $scope.resource(document);
-    console.log("doc", doc);
-    
     $scope.document = doc;
     updateFormulaInstance(doc);
   };
 
   // Edit (or new) action
-  $scope.edit = function(generateId) {
+  $scope.edit = function() {
     $scope.formula.setOnSave(save);
     $scope._error = false;
 

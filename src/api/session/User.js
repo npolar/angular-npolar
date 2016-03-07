@@ -22,7 +22,7 @@ var User = function(base64, npolarApiConfig) {
   };
 
   this.setUser = function(user) {
-    var key = this.getStorageKey(user);
+    var key = this.getStorageKey();
     storage.setItem(key, base64.encode(JSON.stringify(user)));
   };
 
@@ -33,7 +33,6 @@ var User = function(base64, npolarApiConfig) {
   this.getStorageKey = function() {
     return 'NpolarApiUser-' + npolarApiConfig.base.split("//")[1];
   };
-
 };
 
 module.exports = User;

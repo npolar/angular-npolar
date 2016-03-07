@@ -1,6 +1,6 @@
 'use strict';
 
-var LoginController = function ($rootScope, $scope, $http, $route, $log, $location, Gouncer, NpolarMessage, NpolarApiSecurity) {
+var LoginController = function ($scope, $route, Gouncer, NpolarMessage, NpolarApiSecurity) {
   'ngInject';
 
   $scope.security = NpolarApiSecurity;
@@ -25,13 +25,8 @@ var LoginController = function ($rootScope, $scope, $http, $route, $log, $locati
   };
 
   $scope.logout = function() {
-    var who = NpolarApiSecurity.getUser();
-    NpolarMessage.logout(who);
-
-    NpolarApiSecurity.removeUser();
-    $location.path('/');
+    NpolarApiSecurity.logout();
     $route.reload();
-
   };
 
 };

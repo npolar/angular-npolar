@@ -2,7 +2,7 @@
 
 var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
   'ngInject';
-  
+
   var tmpl = require('./_message_toast.html');
   var flashError = function(error) {
     $mdToast.show({
@@ -44,7 +44,7 @@ var MessageController = function ($scope, $mdToast, $timeout, NpolarMessage) {
   });
 
   NpolarMessage.on("npolar-logout", function(user) {
-    flashInfo(`${user.name} logged out`);
+    flashInfo(user.name + ' logged out.' + (user.reason || ''));
   });
 
   NpolarMessage.on("npolar-error", function(error) {

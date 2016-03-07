@@ -74,15 +74,7 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, Npo
 
   // @return current user or empty user object
   this.getUser = function() {
-    try {
-      return NpolarApiUser.getUser();
-    } catch (e) {
-      return {
-        name: null,
-        email: null,
-        systems: []
-      };
-    }
+    return NpolarApiUser.getUser();
   };
 
   // @return JWT string
@@ -206,7 +198,6 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, Npo
 
     var token = this.decodeJwt(jwt);
     var expires = new Date(1000 * token.exp).toISOString();
-
 
     let user = {
       name: token.name || token.email,

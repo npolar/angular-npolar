@@ -14,7 +14,7 @@ var User = function(base64, npolarApiConfig) {
     };
     try {
       let storedUser = storage.getItem(this.getStorageKey());
-      return JSON.parse(base64.decode(storedUser));
+      return JSON.parse(base64.urldecode(storedUser));
     } catch (e) {
       // noop
     }
@@ -23,7 +23,7 @@ var User = function(base64, npolarApiConfig) {
 
   this.setUser = function(user) {
     var key = this.getStorageKey();
-    storage.setItem(key, base64.encode(JSON.stringify(user)));
+    storage.setItem(key, base64.urlencode(JSON.stringify(user)));
   };
 
   this.removeUser = function() {

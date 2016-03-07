@@ -49,20 +49,6 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     $scope.formula.setModel(model);
   };
 
-  // jshint -W016, -W116
-  let generateUUID = function (){
-    var d = new Date().getTime();
-    if(window.performance && typeof window.performance.now === "function"){
-        d += performance.now(); //use high-precision timer if available
-    }
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c == 'x' ? r : (r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-  };
-
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
     $scope._error = false;
@@ -89,10 +75,22 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   // New action, ie. create new document and edit with formula
+  // New document templates may be provided as an argument,
+  // otherwise the create() function on the resource is called
   $scope.newAction = function(document={}) {
+    
+    if (Object.keys(document).length === 0) {
+      console.log($scope.resource );
+      if (typeof $scope.resource.create === "function") {
+        document = $scope.resource.create();
+        console.log("create()", document);
+      }
+    }
     var doc = new $scope.resource(document);
-    updateFormulaInstance(doc);
+    console.log("doc", doc);
+    
     $scope.document = doc;
+    updateFormulaInstance(doc);
   };
 
   // Edit (or new) action
@@ -101,13 +99,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     $scope._error = false;
 
     if ($routeParams.id === '__new') {
-      let doc;
-      if (generateId) {
-        doc = {
-          id: generateUUID()
-        };
-      }
-      return $scope.newAction(doc);
+      return $scope.newAction();
     } else {
       return $scope.editAction();
     }

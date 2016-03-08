@@ -2,7 +2,7 @@
 var angular = require('angular');
 
 var ngNpolar = angular.module('ngNpolar');
-ngNpolar.value('npolarApiConfig', require('./config'));
+ngNpolar.constant('npolarApiConfig', require('./config'));
 ngNpolar.service('NpolarApiUser', require('./session/User'));
 ngNpolar.service('NpolarApiSecurity', require('./http/Security'));
 ngNpolar.service('NpolarApiResource', require('./http/Resource'));

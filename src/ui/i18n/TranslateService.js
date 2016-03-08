@@ -4,7 +4,7 @@
  * Angular translation service
  */
 
-let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys) {
+let NpolarTranslate = function($location, $log, $http, NpolarLang, npolarTranslateKeys, npolarApiConfig) {
   'ngInject';
 
   // Dictionary object
@@ -156,6 +156,20 @@ let NpolarTranslate = function($location, $log, NpolarLang, npolarTranslateKeys)
       }
     }
   };
+
+  this.loadBundles = function (bundles) {
+    let NpolarTranslate = this;
+    let query = bundles;
+    if (bundles instanceof Array) {
+      query = bundles.join('|');
+    }
+    console.debug("npolarApiConfig", npolarApiConfig);
+    
+    $http.get(npolarApiConfig.base+'/text/?q=&filter-bundle='+query+'&format=json&variant=array&limit=all').then(response => {
+      NpolarTranslate.appendToDictionary(response.data);
+    });
+  };
+
   return this;
 };
 

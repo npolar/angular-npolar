@@ -13,7 +13,7 @@
  *
  */
 
-let EditController = function($scope, $location, $route, $routeParams, $controller,
+let EditController = function($scope, $location, $route, $routeParams, $controller, $q,
   Gouncer, npolarApiConfig, NpolarApiSecurity, NpolarMessage) {
     'ngInject';
 
@@ -80,14 +80,18 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // New document templates may be provided as an argument,
   // otherwise the create() function on the resource is called
   $scope.newAction = function(document={}) {
+    let deferred = $q.defer();
     if (Object.keys(document).length === 0) {
       if (typeof $scope.resource.create === "function") {
         document = $scope.resource.create();
       }
     }
-    var doc = new $scope.resource(document);
+    let doc = new $scope.resource(document);
     $scope.document = doc;
     updateFormulaInstance(doc);
+    doc.$promise = deferred.promise; // for consistency with editAction api..
+    deferred.resolve(doc);
+    return doc;
   };
 
   // Edit (or new) action

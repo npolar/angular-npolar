@@ -54,10 +54,10 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
     $scope._error = false;
-    return $scope.resource.save(model, function(document) {
+    return $scope.resource.save(model, function(doc) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
-      updateFormulaInstance(document);
-      $scope.document = document;
+      updateFormulaInstance(doc);
+      $scope.document = doc;
       refreshJwt();
       $location.path(uri);
     }, function(errorData) {
@@ -68,9 +68,9 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
     $scope._error = false;
-    return $scope.resource.fetch($routeParams, function(document) {
-      updateFormulaInstance(document);
-      $scope.document = document;
+    return $scope.resource.fetch($routeParams, function(doc) {
+      updateFormulaInstance(doc);
+      $scope.document = doc;
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });
@@ -79,19 +79,19 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // New action, ie. create new document and edit with formula
   // New document templates may be provided as an argument,
   // otherwise the create() function on the resource is called
-  $scope.newAction = function(document={}) {
+  $scope.newAction = function(doc={}) {
     let deferred = $q.defer();
     if (Object.keys(document).length === 0) {
       if (typeof $scope.resource.create === "function") {
-        document = $scope.resource.create();
+        doc = $scope.resource.create();
       }
     }
-    let doc = new $scope.resource(document);
-    $scope.document = doc;
-    updateFormulaInstance(doc);
-    doc.$promise = deferred.promise; // for consistency with editAction api..
-    deferred.resolve(doc);
-    return doc;
+    let resource = new $scope.resource(doc);
+    $scope.document = resource;
+    updateFormulaInstance(resource);
+    deferred.resolve(resource);
+    resource.$promise = deferred.promise; // for consistency with editAction api..
+    return resource;
   };
 
   // Edit (or new) action
@@ -109,9 +109,9 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // PUT document, ie resource update
   $scope.update = function(model) {
     $scope._error = false;
-    return $scope.resource.update(model, function(document) {
-      updateFormulaInstance(document);
-      $scope.document = document;
+    return $scope.resource.update(model, function(doc) {
+      updateFormulaInstance(doc);
+      $scope.document = doc;
       $scope.i = 0;
       refreshJwt();
       $route.reload();

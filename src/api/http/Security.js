@@ -120,7 +120,7 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, Npo
   // Is current user authorized to perform action on the provided uri?
   // Checks if the user is authorized *at the current time* - ie. always returns false if not authenticated
   // @param action ["create" | "read" | "update" | "delete"] => actions
-  this.isAuthorized = function(action, uri) {
+  this.isAuthorized = function(action, uri, user=this.getUser()) {
     if (!uri) {
       return false; // Called without uri to check against, just say no.
     }
@@ -140,7 +140,7 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, Npo
       return false;
     }
     // Then check permissions
-    return this.isPermitted(action, uri, this.getUser());
+    return this.isPermitted(action, uri, user);
   };
 
   // @return true | false
@@ -157,21 +157,41 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, Npo
       return true;
     }
   };
-
+  
   // Check if user is permitted to perform action on uri
-  this.isPermitted = function(action, uri, user) {
+  this.getSystem = function(action, uri, user=this.getUser()) {
 
     uri = this.canonicalUri(uri);
-
+    if (false === uri) {
+      return false;
+    }
+    
     // Get all systems for uri and check if at least one gives right to perform action
     let systems = this.systems(uri).filter(
       system => {
         return system.rights.includes(action);
       }
     );
-
-    // User is authorized if we are left with at least 1 system
-    return (systems.length > 0);
+    
+    // If we have at least 1 system, it does not matter which is returned
+    // (More than 1 is probably caused by *)
+    if (systems.length > 0) {
+      return systems[0];
+    } else {
+      return false;
+    }
+    
+  };
+  
+  // Check if user is permitted to perform action on uri
+  // => ie. if we are left with at least 1 system
+  this.isPermitted = function(action, uri, user=this.getUser()) {
+    let system = this.getSystem(action, uri, user);
+    if (false === system) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
   // @return true | false

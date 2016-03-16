@@ -163,8 +163,7 @@ let NpolarTranslate = function($location, $log, $http, NpolarLang, npolarTransla
     if (bundles instanceof Array) {
       query = bundles.join('|');
     }
-    console.debug("npolarApiConfig", npolarApiConfig);
-    
+
     $http.get(npolarApiConfig.base+'/text/?q=&filter-bundle='+query+'&format=json&variant=array&limit=all').then(response => {
       NpolarTranslate.appendToDictionary(response.data);
     });

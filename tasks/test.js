@@ -14,7 +14,7 @@ var task = function(gulp, config) {
       }))
       .on('error', function(error) {
         notify({
-          message: '<%= error.message %>',
+          message: '<%= error %>',
           title: 'Gulp mocha'
         }).write(error);
         this.emit('end');

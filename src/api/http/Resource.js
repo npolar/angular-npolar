@@ -1,78 +1,34 @@
 'use strict';
-let angular = require('angular');
 
-
-let Resource = function($resource, $location, $routeParams, $cacheFactory, npolarApiConfig, NpolarApiSecurity) {
+let Resource = function($document, $resource, $cacheFactory, $window, npolarApiConfig) {
   'ngInject';
-
-  // @return Array of path segments "under" the current request URI
-  let pathSegments = function() {
-    // Split request URI into parts and remove hostname & appname from array [via the slice(2)]
-    let segments = $location.absUrl().split("//")[1].split("?")[0].split("/");
-    segments = segments.filter(s => {
-      return (s !== '' && s !== 'show');
-    });
-    return segments.slice(2); // Removes hostname and /base
+  // ['url', 'scheme', 'slash', 'host', 'port', 'path', 'query', 'hash']
+  const PARSE_URL = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
+  let appBase = PARSE_URL.exec($document[0].getElementsByTagName('base')[0].href)[5].replace(/^\//, '').replace(/\/$/, '');
+  // Path to resource, relative to /base/ defined in index.html
+  let href = function (id) {
+    let hrefBase = this.uiBase.replace(appBase, '').replace(/^\/+/, '');
+    return (hrefBase ? hrefBase + '/': '') + id;
   };
 
-  // Get href for id [warn:] relative to current application /path/
-  // @return href
-  this.href = function(id) {
-    // Add .json if id contains dots, otherwise the API barfs
-    //if ((/[.]/).test(id)) {
-    //  id += ".json";
-    //}
-    let segments = pathSegments().filter(s => s !== 'show');
-
-    // For apps at /something, we just need to link to the id
-    if (segments.length === 0) {
-      return id.replace(/show\//, '');
-
-      // For /cat app with children like /cat/lynx we need to link to `lynx/${id}`
-    } else {
-      segments = segments.filter(s => {
-        return (s !== 'edit');
-      });
-      segments = segments.filter(s => {
-        return (s !== 'show');
-      });
-      segments = segments.filter(s => {
-        return (s !== id);
-      });
-      return segments.join("/") + '/' + id;
-    }
+  let editHref = function(id) {
+    return this.href(id) + '/edit';
   };
 
-  this.editHref = function(id) {
-    let segments = pathSegments();
-    if (segments.length === 0) {
-      return `${$routeParams.id}/edit`;
-    } else {
-      return segments.join('/') + '/edit';
-    }
-
+  let newHref = function() {
+    return this.editHref('__new');
   };
 
-  // Path to new, relative to /base/ defined in index.html
-  this.newHref = function() {
-
-    let base = pathSegments().join('/');
-    if ('' === base) {
-      base = '.';
-    }
-    return base + '/__new/edit';
-  };
-
-  this.base = function(service) {
+  let _base = function(service) {
     // @todo canonicalUri?
-    return (angular.isString(service.base)) ? service.base : npolarApiConfig.base;
+    return (typeof service.base === "string") ? service.base : npolarApiConfig.base;
   };
-  
+
   // Generate random UUID, from http://stackoverflow.com/a/8809472
   // jshint -W016, -W116
   this.randomUUID = function () {
     var d = new Date().getTime();
-    if(window.performance && typeof window.performance.now === "function"){
+    if($window.performance && typeof $window.performance.now === "function"){
         d += performance.now(); //use high-precision timer if available
     }
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -82,7 +38,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     });
     return uuid;
   };
-  
+
 
   // NpolarApiResource factory
   // @param service e.g. { path: '/dataset', 'resource': 'Dataset'}
@@ -93,7 +49,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
   // @todo Support non-search engine query/array/fetch
   this.resource = function(service) {
 
-    let base = this.base(service);
+    let base = _base(service);
     let cache = service.cache;
 
     // Default parameters
@@ -106,7 +62,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
     };
 
     //let fields_feed = (angular.isString(service.fields)) ? service.fields : null ;
-    let fields_query = (angular.isString(service.fields)) ? service.fields : 'id,title,name,code,titles,links,created,updated';
+    let fields_query = (typeof service.fields === 'string') ? service.fields : 'id,title,name,code,titles,links,created,updated';
 
     //let params_feed = angular.extend({}, params, { fields: fields_feed });
     let params_query = Object.assign({}, params, {
@@ -151,7 +107,7 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
           if (!data) {
             return [];
           }
-          return angular.fromJson(data).feed.facets.map(facet => {
+          return JSON.parse(data).feed.facets.map(facet => {
             let key = Object.keys(facet)[0];
             return {
               facet: key,
@@ -192,12 +148,13 @@ let Resource = function($resource, $location, $routeParams, $cacheFactory, npola
       }
     });
 
+    resource.uiBase = service.uiBase || service.path;
     resource.path = base + service.path;
-    resource.href = this.href;
-    resource.newHref = this.newHref;
-    resource.editHref = this.editHref;
+    resource.href = href;
+    resource.newHref = newHref;
+    resource.editHref = editHref;
     resource.randomUUID = this.randomUUID;
-    
+
     return resource;
 
   };

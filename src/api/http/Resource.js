@@ -4,7 +4,8 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
   'ngInject';
   // ['url', 'scheme', 'slash', 'host', 'port', 'path', 'query', 'hash']
   const PARSE_URL = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
-  let appBase = PARSE_URL.exec($document[0].getElementsByTagName('base')[0].href)[5].replace(/^\//, '').replace(/\/$/, '');
+  let base = $document[0].getElementsByTagName('base')[0];
+  let appBase = base ? PARSE_URL.exec(base.href)[5].replace(/^\//, '').replace(/\/$/, '') : '';
   // Path to resource, relative to /base/ defined in index.html
   let href = function (id) {
     let hrefBase = this.uiBase.replace(appBase, '').replace(/^\/+/, '');

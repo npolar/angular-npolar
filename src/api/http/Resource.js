@@ -6,6 +6,7 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
   const PARSE_URL = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
   let base = $document[0].getElementsByTagName('base')[0];
   let appBase = base ? PARSE_URL.exec(base.href)[5].replace(/^\//, '').replace(/\/$/, '') : '';
+
   // Path to resource, relative to /base/ defined in index.html
   let href = function (id) {
     let hrefBase = this.uiBase.replace(appBase, '').replace(/^\/+/, '');
@@ -51,7 +52,7 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
   this.resource = function(service) {
 
     let base = _base(service);
-    let cache = service.cache;
+    let cache = service.cache || $cacheFactory('resourceCache:'+service.path+this.randomUUID().slice(-4));
 
     // Default parameters
     let params = {
@@ -149,6 +150,7 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
       }
     });
 
+    resource.cache = cache;
     resource.uiBase = service.uiBase || service.path;
     resource.path = base + service.path;
     resource.href = href;

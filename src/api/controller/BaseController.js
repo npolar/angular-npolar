@@ -32,10 +32,10 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
   };
 
   // Search action, ie. fetch feed and inject into scope
-  $scope.search = function(query, invariants) {
+  $scope.search = function(query) {
     let facets = (query.facets ? query.facets + "," : "") + ($location.search().facets || '');
 
-    let fullQuery = Object.assign({}, query, $location.search(), {facets});
+    let fullQuery = Object.assign({}, $location.search(), query, {facets});
 
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;

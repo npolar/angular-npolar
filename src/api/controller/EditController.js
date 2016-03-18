@@ -58,6 +58,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
       updateFormulaInstance(doc);
       $scope.document = doc;
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path(uri);
     }, function(errorData) {
@@ -113,6 +114,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
       updateFormulaInstance(doc);
       $scope.document = doc;
       $scope.i = 0;
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $route.reload();
     }, function(errorData) {
@@ -125,6 +127,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     let id = $scope.document.id;
     $scope._error = false;
     return $scope.resource.remove({id}, function() {
+      $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path('/');
       $route.reload();

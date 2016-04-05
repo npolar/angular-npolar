@@ -20,7 +20,13 @@
     "angular-aria": "^1.4.9",
     "angular-utf8-base64": "*",
     "language-tags": "^1.0.3",
-    "special-entities": "^1.0.2"
+    "special-entities": "^1.0.2",
+    "leaflet": "^0",
+    "leaflet-draw": "^0.2.3",
+    "leaflet-fullscreen": "^1.0.1",
+    "esri-leaflet": "^1",
+    "proj4leaflet": "^0"
+
   },
   "author": "",
   "license": "MIT",

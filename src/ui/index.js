@@ -15,6 +15,9 @@ ngNpolar.filter('year', require('./filters/year'));
 ngNpolar.filter('lang', require('./filters/lang'));
 ngNpolar.filter('bytes', require('./filters/bytes'));
 
+//map
+ngNpolar.service('NpolarEsriLeaflet', require('./map/esri/NpolarEsriLeaflet'));
+
 // i18n
 ngNpolar.service('NpolarLang', require('./i18n/LangService'));
 ngNpolar.service('NpolarTranslate', require('./i18n/TranslateService'));

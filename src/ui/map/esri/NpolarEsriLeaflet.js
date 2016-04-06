@@ -11,10 +11,12 @@ L.Proj = Proj4Leaflet;
 require('leaflet-fullscreen');
 L.Icon.Default.imagePath = '/assets/images';
 
-let NpolarEsriLeaflet = function() {
+let NpolarEsriLeaflet = function($http) {
   'ngInject';
   
   let self = this;
+  
+  this.element = 'npolar-esri-leaflet-map'; // The map's html element @id 
   
   this.base = '//geodata.npolar.no/arcgis/rest/services';
   
@@ -34,6 +36,12 @@ let NpolarEsriLeaflet = function() {
       crs = new L.Proj.CRS("EPSG:4326","+proj=longlat +datum=WGS84 +no_defs");
     }
     console.debug(crs);
+    $http.get(this.base + path).then(r =>  {
+      console.log(r);
+    }, error => {
+      crs = null;
+      console.log(error);
+    });
     return crs;
   };
     
@@ -100,7 +108,7 @@ let NpolarEsriLeaflet = function() {
       crs: self.crsFactory(esriBase)
     }, tileLayerConfig) {
     
-    let map = new L.Map('map', mapConfig);
+    let map = new L.Map(self.element, mapConfig);
     map.addLayer(self.tileLayerFactory(esriBase, tileLayerConfig));
     map.setView([80, 0], 3);
     

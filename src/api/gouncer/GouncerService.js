@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let Gouncer = function($http, NpolarApiSecurity) {
+let Gouncer = function($http, NpolarApiSecurity, NpolarMessage, npolarApiConfig) {
   'ngInject';
 
   const base = NpolarApiSecurity.canonicalUri('/user');
@@ -43,6 +43,19 @@ let Gouncer = function($http, NpolarApiSecurity) {
     }
     return $http.post(`${base}/onetime`, param);
   };
+
+  this.reset = function(user) {
+    return $http({
+      method: 'POST',
+      url: base + '/reset',
+      data: { password: user.password },
+    }).then(() => {
+      NpolarMessage.info("Your password was successfully updated.");
+    }, () => {
+      NpolarMessage.error("Your password could not be updated.");
+    });
+  };
+
 
   return this;
 };

@@ -15,8 +15,9 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
   $scope.error = () => $scope._error;
 
   // Show action, ie. fetch document and inject into scope
-  $scope.show = function() {
-    return $scope.resource.fetch($routeParams, function(document) {
+  $scope.show = function(query = {}) {
+    return $scope.resource.fetch(Object.assign({}, $routeParams, query), function(document) {
+      console.log('doc', document);
       $scope.document = document;
       $scope._error = false;
     }, function(errorData) {
@@ -32,10 +33,13 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
   };
 
   // Search action, ie. fetch feed and inject into scope
-  $scope.search = function(query) {
-    let facets = (query.facets ? query.facets + "," : "") + ($location.search().facets || '');
+  $scope.search = function(query = {}) {
+    let facets = {};
+    if (query.facets || $location.search().facets) {
+      facets.facets = (query.facets ? query.facets + "," : "") + ($location.search().facets || '');
+    }
 
-    let fullQuery = Object.assign({}, $location.search(), query, {facets});
+    let fullQuery = Object.assign({}, $location.search(), query, facets);
 
     return $scope.resource.feed(fullQuery, function(response) {
       $scope.feed = response.feed;

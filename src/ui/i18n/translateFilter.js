@@ -1,11 +1,10 @@
 'use strict';
 
-// A simple translation filter (t)
+// A simple (but stateful) translation filter (t)
 let translateFilter = function(NpolarTranslate, NpolarLang) {
   'ngInject';
 
   let tFilter = function(code, lang=NpolarLang.getLang()) {
-    //console.debug('t', code, lang, NpolarTranslate.translate(code, lang));
     return NpolarTranslate.translate(code, lang);
   };
 

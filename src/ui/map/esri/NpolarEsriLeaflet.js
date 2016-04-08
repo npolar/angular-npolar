@@ -1,14 +1,15 @@
 'use strict';
+// globals L
 
 let L = require('leaflet');
 let EsriLeaflet = require('esri-leaflet');
 let Proj4Leaflet = require('proj4leaflet');
+require('leaflet-fullscreen');
 
 // Injects esri and Proj4Leaflet plugins into Leaflet's L
 L.esri = EsriLeaflet;
 L.Proj = Proj4Leaflet;
 
-require('leaflet-fullscreen');
 L.Icon.Default.imagePath = '/assets/images';
 
 let NpolarEsriLeaflet = function($http) {
@@ -37,7 +38,7 @@ let NpolarEsriLeaflet = function($http) {
     }
     console.debug(crs);
     $http.get(this.base + path).then(r =>  {
-      console.log(r);
+      // noop
     }, error => {
       crs = null;
       console.log(error);

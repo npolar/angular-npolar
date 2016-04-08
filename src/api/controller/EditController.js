@@ -55,7 +55,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   $scope.create = function(model) {
     $scope._error = false;
     return $scope.resource.save(model, function(doc) {
-      let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + document.id + '/edit');
+      let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + doc.id + '/edit');
       updateFormulaInstance(doc);
       $scope.document = doc;
       $scope.resource.cache.removeAll();
@@ -82,7 +82,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   // otherwise the create() function on the resource is called
   $scope.newAction = function(doc={}) {
     let deferred = $q.defer();
-    if (Object.keys(document).length === 0) {
+    if (Object.keys(doc).length === 0) {
       if (typeof $scope.resource.create === "function") {
         doc = $scope.resource.create();
       }

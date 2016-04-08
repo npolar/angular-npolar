@@ -5,7 +5,8 @@ let translateFilter = function(NpolarTranslate, NpolarLang) {
   'ngInject';
 
   let tFilter = function(code, lang=NpolarLang.getLang()) {
-  return NpolarTranslate.translate(code, lang);
+    //console.debug('t', code, lang, NpolarTranslate.translate(code, lang));
+    return NpolarTranslate.translate(code, lang);
   };
 
   tFilter.$stateful = true;

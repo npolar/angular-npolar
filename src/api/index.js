@@ -1,9 +1,30 @@
 'use strict';
-var angular = require('angular');
+let angular = require('angular');
 
-var ngNpolar = angular.module('ngNpolar');
+let ngNpolar = angular.module('ngNpolar');
 ngNpolar.constant('npolarApiConfig', require('./config'));
+
+
+let people = require('./people');
+
+let aliases = require('./aliases');
+
+let idx;
+aliases.forEach(a => {
+  idx = people.findIndex(p => p.email === a.email);
+  if (idx >= 0) {
+    people[idx].alias = a.alias;
+  } else {
+    people.push(a);
+  }
+  
+});
+
+ngNpolar.constant('npolarPeople', people);
+
 ngNpolar.service('NpolarApiUser', require('./session/User'));
+ngNpolar.service('NpolarApiRequest', require('./http/Request'));
+
 ngNpolar.service('NpolarApiSecurity', require('./http/Security'));
 ngNpolar.service('NpolarApiResource', require('./http/Resource'));
 ngNpolar.factory('npolarApiInterceptor', require('./http/HttpInterceptor'));

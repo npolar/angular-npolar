@@ -72,6 +72,8 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     return $scope.resource.fetch($routeParams, function(doc) {
       updateFormulaInstance(doc);
       $scope.document = doc;
+      console.log('edit', doc._rev);
+      
     }, function(errorData) {
       $scope._error = errorData.statusText;
     });

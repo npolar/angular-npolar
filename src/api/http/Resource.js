@@ -158,8 +158,9 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
     resource.editHref = editHref;
     resource.randomUUID = this.randomUUID;
     
-    resource.facetTerms = function(facet) {
-      return resource.facets({q:'', facets: facet, 'size-facet': 10000}).$promise.then(r => {
+    resource.facetTerms = function(facet, params={}) {
+      params = Object.assign({q:'', facets: facet, 'size-facet': 1000}, params);
+      return resource.facets(params).$promise.then(r => {
         return r.find(f => f.facet === facet).terms;
       });
     }

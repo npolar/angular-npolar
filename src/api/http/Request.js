@@ -6,13 +6,17 @@ function Request(NpolarApiSecurity) {
   
   let self = this;
   
-  self.factory = () => new XMLHttpRequest();
+  this.factory = () => new XMLHttpRequest();
   
-  self.head = (request, uri, listener, event='load') => {
+  this.head = (request, uri, listener, event='load') => {
     request.addEventListener(event, listener);
     request.open('HEAD', uri);
     request.setRequestHeader('Authorization', NpolarApiSecurity.authorization());
     request.send();
-  }; 
+  };
+  
+  this.request = (verb, uri, headers=self.headers(), listeners=[{ event: 'load', handler: null}]) => {
+    
+  };
 }
 module.exports = Request;

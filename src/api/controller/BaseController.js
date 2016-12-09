@@ -11,13 +11,13 @@ var BaseController = function($scope, $location, $routeParams, $http, NpolarApiS
 
   $scope._error = false;
   $scope.security = NpolarApiSecurity;
-
+  $scope.appBase = "archive";
+  
   $scope.error = () => $scope._error;
 
   // Show action, ie. fetch document and inject into scope
   $scope.show = function(query = {}) {
     return $scope.resource.fetch(Object.assign({}, $routeParams, query), function(document) {
-      console.log('doc', document);
       $scope.document = document;
       $scope._error = false;
     }, function(errorData) {

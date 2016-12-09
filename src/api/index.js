@@ -6,11 +6,9 @@ ngNpolar.constant('npolarApiConfig', require('./config'));
 
 
 let people = require('./people');
-
-/*
-Disable IE
 let aliases = require('./aliases');
 
+/*
 let idx;
 aliases.forEach(a => {
   idx = people.findIndex(p => p.email === a.email);
@@ -24,6 +22,7 @@ aliases.forEach(a => {
 });
 */
 ngNpolar.constant('npolarPeople', people);
+ngNpolar.constant('npolarAliases', aliases);
 
 ngNpolar.service('NpolarApiUser', require('./session/User'));
 ngNpolar.service('NpolarApiRequest', require('./http/Request'));

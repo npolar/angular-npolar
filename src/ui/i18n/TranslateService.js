@@ -109,7 +109,7 @@ let NpolarTranslate = function($location, $log, $http, NpolarLang, npolarTransla
     } else {
       // No matches
       if (isDebug()) {
-        $log.warn('NpolarTranslate', '0 translations:', code);
+        $log.warn('0 translations:', code, `https://data.npolar.no/text/__new?code=${code}`);
       }
       return code;
     }

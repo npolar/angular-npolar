@@ -68,14 +68,13 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       });    
     }
     
-
     if (path === `/Basisdata_Intern/NP_Nordomraadene_WMTS_25833/MapServer`) {
       crs = self.UTM_33N_CRSFactory();
 
     } else if (path === `/inspire1/NP_TopoArktis_UPSN_CLX/MapServer`) {
       crs = self.UPSN_CRSFactory();
     
-    } else if (path === `/Basisdata_Intern/NP_Verden_WMTS_53032/MapServer`) {
+    } else if (path === `/Basisdata_Intern/NP_Verden_WMTS_53032_test/MapServer`) {
       crs = self.WMTS_53032_CRSFactory();
       
     } else if (/102016/.test(path)) {
@@ -146,7 +145,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
   // Sphere Azimuthal Equidistant
   this.WMTS_53032_CRSFactory = function () {
     let resolutions = [173397.6801286936, 86698.8400643468, 43349.4200321734, 21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547];
-    //let scales = [327680000, 163840000, 81920000, 40960000, 20480000, 10240000, 5120000, 2560000, 1280000];
+    // let scales = [327680000, 163840000, 81920000, 40960000, 20480000, 10240000, 5120000, 2560000, 1280000];
     let origin = [-21986016.870795302, 21986016.870795317];
     
     return new L.Proj.CRS(

@@ -157,7 +157,7 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
       return true;
     }
   };
-  
+
   // Check if user is permitted to perform action on uri
   this.getSystem = function(action, uri, user=this.getUser()) {
 
@@ -165,14 +165,14 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
     if (false === uri) {
       return false;
     }
-    
+
     // Get all systems for uri and check if at least one gives right to perform action
     let systems = this.systems(uri).filter(
       system => {
         return system.rights.includes(action);
       }
     );
-    
+
     // If we have at least 1 system, it does not matter which is returned
     // (More than 1 is probably caused by *)
     if (systems.length > 0) {
@@ -180,9 +180,9 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
     } else {
       return false;
     }
-    
+
   };
-  
+
   // Check if user is permitted to perform action on uri
   // => ie. if we are left with at least 1 system
   this.isPermitted = function(action, uri, user=this.getUser()) {
@@ -214,17 +214,18 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
     return NpolarApiUser.setUser(user);
   };
 
-  // Set JWT (*and* user metadata) in local storage 
+  // Set JWT (*and* user metadata) in local storage
   this.setJwt = function(jwt) {
 
     let token = this.decodeJwt(jwt);
     let expires = new Date(1000 * token.exp).toISOString();
     let orgtree;
     let cached = npolarPeople.people.find(p => p.email === token.email);
-    if (cached.orgtree) {
+    // find alias
+    if (cached && cached.orgtree) {
       orgtree = cached.orgtree;
     }
-    
+
     let user = {
       name: token.name || token.email,
       email: token.email,

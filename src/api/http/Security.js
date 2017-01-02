@@ -219,7 +219,7 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
 
     let token = this.decodeJwt(jwt);
     let expires = new Date(1000 * token.exp).toISOString();
-    let orgtree;
+    let orgtree = [];
     let cached = npolarPeople.people.find(p => p.email === token.email);
     // find alias
     if (cached && cached.orgtree) {

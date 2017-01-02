@@ -4,7 +4,7 @@ module.exports = function() {
   'ngInject';
 
   return function(input) {
-    if ((/^\d{4}\-\d{2}\d{2}T/).test(input)) {
+    if (input && (/^[0-9]{4}[-][0-9]{2}[-][0-9]{2}T/).test(input)) {
       return input.split("T")[0];
     } else {
       return input;

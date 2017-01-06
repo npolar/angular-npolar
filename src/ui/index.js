@@ -14,6 +14,7 @@ ngNpolar.filter('isodate', require('./filters/isodate'));
 ngNpolar.filter('year', require('./filters/year'));
 ngNpolar.filter('lang', require('./filters/lang'));
 ngNpolar.filter('bytes', require('./filters/bytes'));
+ngNpolar.filter('name', require('./filters/name'));
 
 //map
 ngNpolar.service('NpolarEsriLeaflet', require('./map/esri/NpolarEsriLeaflet'));
@@ -25,5 +26,3 @@ ngNpolar.value('npolarTranslateKeys', require('./i18n/translateKeys'));
 ngNpolar.filter('t', require('./i18n/translateFilter'));
 ngNpolar.filter('title', require('./i18n/titleFilter'));
 ngNpolar.directive('npolarLanguageSwitcher', require('./i18n/langMenuDirective'));
-
-//ngNpolar.service('NpolarCitation', require('./citation/NpolarCitation'));

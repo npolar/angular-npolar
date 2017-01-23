@@ -2,6 +2,8 @@
 
 // hudson
 // lydersen
+// Alias to official email address
+// Use name property for people/entities without official email (ie. not in npolarPeople)
 
 let aliases = [
   { email: 'external@data.npolar.no', alias: ['external@data.npolar.no'], name: 'System'},
@@ -12,7 +14,8 @@ let aliases = [
   { email: 'conrad.helgeland@npolar.no', alias: ['conrad@npolar.no', 'conrad']},
   { email: 'ruben.dens@npolar.no', alias: ['ruben@npolar.no', 'ruben']},
   { email: 'dag.vongraven@npolar.no', alias: ['vongraven@npolar.no']},
-  { email: 'trevor.lovett@npolar.no', first_name: 'Trevor', last_name: 'Lovett', alias: ['trevor@npolar.no', 'trevor']}
+  { email: 'trevor.lovett@npolar.no', name: 'Trevor Lovett', alias: ['trevor@npolar.no', 'trevor']},
+  { email: 'cesar.deschamps.berger@npolar.no', name: 'César Deschamps-Berger', alias: ['cesar@npolar.no', 'cesar']}
 ];
 
 module.exports = aliases;

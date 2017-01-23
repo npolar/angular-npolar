@@ -157,13 +157,13 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
     resource.newHref = newHref;
     resource.editHref = editHref;
     resource.randomUUID = this.randomUUID;
-    
+
     resource.facetTerms = function(facet, params={}) {
       params = Object.assign({q:'', facets: facet, 'size-facet': 1000}, params);
       return resource.facets(params).$promise.then(r => {
         return r.find(f => f.facet === facet).terms;
       });
-    }
+    };
 
     return resource;
 

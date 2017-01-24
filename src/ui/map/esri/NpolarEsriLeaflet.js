@@ -24,7 +24,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   this.element = 'npolar-esri-leaflet-map'; // The map's html element @id
 
-  this.base = '//geodata.npolar.no/arcgis/rest/services';
+  this.base = 'http://geodata.npolar.no/arcgis/rest/services';
 
   this.uri = function(arg={ epsg: EPSG }) {
     let uri = self.base.replace(/\/$/, '');

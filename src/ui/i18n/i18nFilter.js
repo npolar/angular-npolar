@@ -9,6 +9,7 @@ let i18nFilter = function(NpolarTranslate, NpolarLang) {
     }
 
     if (text instanceof Array) {
+      // FIXME
       return text[0][key.value];
     } else if (text instanceof Object){
       if (text[language]) {

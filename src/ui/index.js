@@ -25,4 +25,5 @@ ngNpolar.service('NpolarTranslate', require('./i18n/TranslateService'));
 ngNpolar.value('npolarTranslateKeys', require('./i18n/translateKeys'));
 ngNpolar.filter('t', require('./i18n/translateFilter'));
 ngNpolar.filter('title', require('./i18n/titleFilter'));
+ngNpolar.filter('i18n', require('./i18n/i18nFilter'));
 ngNpolar.directive('npolarLanguageSwitcher', require('./i18n/langMenuDirective'));

@@ -6,6 +6,7 @@
 let aliases = [
   { email: 'external@data.npolar.no', alias: ['external@data.npolar.no'], name: 'System'},
   { email: 'stein.tronstad@npolar.no', alias: ['stein@npolar.no', 'steint@npolar.no', 'stein', 'steint', 'st', 's']},
+  { email: 'stein.orjan.nilsen@npolar.no', alias: ['steinnilsen@npolar.no', 'steinnilsen']},
   { email: 'are.bjordal@npolar.no', alias: ['are@npolar.no', 'are']},
   { email: 'polona.itkin@npolar.no', alias: ['polona@npolar.no', 'polona']},
   { email: 'ermias.beyene.tesfamariam@npolar.no', alias: ['ermias@npolar.no', 'ermias.tesfamariam@npolar.no', 'ermias']},

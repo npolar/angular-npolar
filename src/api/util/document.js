@@ -10,8 +10,16 @@ let documentUtil = function($filter) {
   };
 
   let title = function(entry) {
-    let t = entry.title || entry.name || entry.code || $filter('lang')(entry.titles, 'title') || entry.id;
-    t = t.split('_').join('');
+
+    if (!entry) {
+      return;
+    }
+    let t;
+    if (entry.title instanceof Object) {
+      t = $filter('i18n')(entry.title);
+    } else {
+      t = entry.title || entry.name || entry.code || entry.id;
+    }
     return unescape(t);
   };
 

@@ -1,5 +1,5 @@
 'use strict';
-// Use |i18n to get a string from JSON-LD style i18n Array or Object
+// Use the i18n filter to get a string from JSON-LD style i18n Array or Object
 let i18nFilter = function(NpolarTranslate, NpolarLang) {
   'ngInject';
 
@@ -8,9 +8,15 @@ let i18nFilter = function(NpolarTranslate, NpolarLang) {
       return;
     }
 
-    if (text instanceof Array) {
-      // FIXME
-      return text[0][key.value];
+    if (text instanceof Array && text.length > 0) {
+      if (text.length > 0) {
+        if (text[0][key.value]) {
+          return text[0][key.value];
+        } else {
+          return JSON.stringify(text[0]);
+        }
+      }
+
     } else if (text instanceof Object){
       if (text[language]) {
         return text[language];
@@ -20,12 +26,12 @@ let i18nFilter = function(NpolarTranslate, NpolarLang) {
           return text[k[0]];
         }
       }
-    } else if (text instanceof String) {
+    } else if (typeof(text) === 'string') {
       return NpolarTranslate.translate(text, NpolarLang.getLang());
     }
   };
 
-  filter.$stateful=true;
+  //filter.$stateful=true;
   return filter;
 
 };

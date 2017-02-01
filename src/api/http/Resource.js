@@ -80,7 +80,7 @@ let Resource = function($document, $resource, $cacheFactory, $window, npolarApiC
         method: 'GET',
         params: params,
         headers: {
-          Accept: 'application/json, application/vnd.geo+json'
+          Accept: 'application/json, application/geo+json'
         },
         cache,
         timeout: TIMEOUT

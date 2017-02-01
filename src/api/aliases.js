@@ -19,6 +19,7 @@ let aliases = [
   { email: 'cesar.deschamps.berger@npolar.no', name: 'César Deschamps-Berger', alias: ['cesar@npolar.no', 'cesar']},
   { email: 'external@data.npolar.no', alias: ['external@data.npolar.no'], name: 'System'},
   { email: 'kkjaer@online.no', name: 'Kjell-G. Kjær', alias: ['kkjaer@online.no']},
+  { email: 'ssf@npolar.no', name: 'Svalbard Science Forum', alias: ['ssf@npolar.no', 'ssf']},
   { email: 'trevor.lovett@npolar.no', name: 'Trevor Lovett', alias: ['trevor@npolar.no', 'trevor']}
 ];
 

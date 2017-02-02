@@ -23,15 +23,14 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   });
 
   $scope.document = null;
-  $scope._error = false;
-
+  
   // Refresh JWT
   let refreshJwt = function() {
     if (NpolarApiSecurity.isAuthenticated()) {
       Gouncer.authenticate().then(function(response) {
         NpolarApiSecurity.setJwt(response.data.token);
       }, function (reason) {
-        NpolarApiSecurity.logout("Could not refresh jwt");
+        NpolarApiSecurity.logout("Authentication failed: could not refresh JWT");
       });
     }
   };
@@ -46,36 +45,23 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     }
   };
 
-  // Set formula model
-  let updateFormulaInstance = function (model) {
-    $scope.formula.setModel(model);
-  };
-
   // Create action, ie. save document and redirect to new URI
   $scope.create = function(model) {
-    $scope._error = false;
     return $scope.resource.save(model, function(doc) {
       let uri = $location.path().replace(/\/__new(\/edit)?$/, '/' + doc.id + '/edit');
-      updateFormulaInstance(doc);
+      $scope.formula.setModel(doc);
       $scope.document = doc;
       $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path(uri);
-    }, function(errorData) {
-      $scope._error = errorData.statusText;
     });
   };
 
   // Edit action, ie. fetch document and edit with formula
   $scope.editAction = function() {
-    $scope._error = false;
     return $scope.resource.fetch($routeParams, function(doc) {
-      updateFormulaInstance(doc);
+      $scope.formula.setModel(doc);
       $scope.document = doc;
-      console.log('edit', doc._rev);
-      
-    }, function(errorData) {
-      $scope._error = errorData.statusText;
     });
   };
 
@@ -91,16 +77,15 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     }
     let resource = new $scope.resource(doc);
     $scope.document = resource;
-    updateFormulaInstance(resource);
+    $scope.formula.setModel(resource);
     deferred.resolve(resource);
-    resource.$promise = deferred.promise; // for consistency with editAction api..
+    resource.$promise = deferred.promise; // for consistency with editAction
     return resource;
   };
 
   // Edit (or new) action
   $scope.edit = function() {
     $scope.formula.setOnSave(save);
-    $scope._error = false;
 
     if ($routeParams.id === '__new') {
       return $scope.newAction();
@@ -109,33 +94,53 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     }
   };
 
-  // PUT document, ie resource update
+  // PUT document, ie resource.update
   $scope.update = function(model) {
-    $scope._error = false;
     return $scope.resource.update(model, function(doc) {
-      updateFormulaInstance(doc);
-      $scope.document = doc;
-      $scope.i = 0;
       $scope.resource.cache.removeAll();
       refreshJwt();
-      $route.reload();
-    }, function(errorData) {
-      $scope._error = errorData.statusText;
+      $location.path($scope.resource.href(doc.id));
     });
   };
 
   // DELETE document, ie. resource remove
   $scope.delete = function() {
     let id = $scope.document.id;
-    $scope._error = false;
     return $scope.resource.remove({id}, function() {
       $scope.resource.cache.removeAll();
       refreshJwt();
       $location.path('/');
       $route.reload();
-    }, function(errorData) {
-      $scope._error = errorData.statusText;
     });
+  };
+
+  // Create a duplicate of the current document
+  $scope.duplicate = function(d = $scope.document, save=false) {
+    let dup = JSON.parse(JSON.stringify(d));
+    let href = $scope.resource.href(d.id);
+
+    ["_id","_rev","created","created_by","id","updated","updated_by"].forEach(del => {
+      delete dup[del];
+    });
+    if (dup.title) {
+      if (typeof(dup.title) === 'string') {
+        dup.title = `|${dup.title}|⇠${href}`;
+      } else if (dup.title instanceof Object) {
+        let k = Object.keys(dup.title);
+        k.forEach(language => {
+          dup.title[language] = `|${dup.title[language]}|⇠${href}`;
+        });
+      }
+    }
+    let duplicate = new $scope.resource(dup);
+
+    if (save === true) {
+      return duplicate.$save((r) => {
+        $location.path($scope.resource.href(r.id));
+      });
+    } else {
+      return duplicate;
+    }
   };
 
   $scope.save = function () {

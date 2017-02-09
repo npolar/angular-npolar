@@ -23,7 +23,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   });
 
   $scope.document = null;
-  
+
   // Refresh JWT
   let refreshJwt = function() {
     if (NpolarApiSecurity.isAuthenticated()) {
@@ -115,11 +115,11 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
   };
 
   // Create a duplicate of the current document
-  $scope.duplicate = function(d = $scope.document, save=false) {
+  $scope.duplicate = function(d = $scope.document, save=false, removeFields=["_id","_rev","created","created_by","id","updated","updated_by", "doi"]) {
     let dup = JSON.parse(JSON.stringify(d));
     let href = $scope.resource.href(d.id);
 
-    ["_id","_rev","created","created_by","id","updated","updated_by"].forEach(del => {
+    removeFields.forEach(del => {
       delete dup[del];
     });
     if (dup.title) {

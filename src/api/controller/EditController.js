@@ -135,6 +135,7 @@ let EditController = function($scope, $location, $route, $routeParams, $controll
     let duplicate = new $scope.resource(dup);
 
     if (save === true) {
+      NpolarMessage.info(`Commencing duplication of ${d.id}`);
       return duplicate.$save((r) => {
         $location.path($scope.resource.href(r.id));
       });

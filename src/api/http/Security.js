@@ -244,11 +244,8 @@ var Security = function($location, $log, base64, jwtHelper, npolarApiConfig, npo
     var who = this.getUser();
     who.reason = reason;
     NpolarMessage.logout(who);
-
     this.removeUser();
-    $location.path('/');
   };
-
 
 };
 

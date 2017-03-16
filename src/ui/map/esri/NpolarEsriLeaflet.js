@@ -20,7 +20,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   let self = this;
 
-  const EPSG = 53032;
+  const EPSG = 4326;
 
   this.element = 'npolar-esri-leaflet-map'; // The map's html element @id
 
@@ -40,79 +40,49 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
         uri += `/Basisdata_Intern/NP_Verden_WMTS_53032/MapServer`;
       } else if (epsg === 4326) {
         // FIXME Use ESRI?
-        uri += '';
+        uri += `/Basisdata_Intern/NP_Verden_WMTS_4326/MapServer`;
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
-      //console.log('epsg', epsg, '->', uri);
+      console.log('epsg', epsg, '->', uri);
     }
-
     return uri;
   };
 
   // @return instance of Proj4Leaflet CRS (L.Proj.CRS)
   this.crsFactory = function(uri) {
-
     let crs;
     let path = uri.split(`${self.base}`)[1];
 
-    if ($location.search().debug) {
-      console.log(`${this.base}${path} debug info`);
-      $http.get(`${this.base}${path}?f=json`).then(r => {
-        console.log('spatialReference', r.data.spatialReference.wkid);
-        let lods = r.data.tileInfo.lods;
-        console.log('resolutions', lods.map(l => l.resolution));
-        console.log('scales', lods.map(l => l.scale));
-        console.log('levels', lods.map(l => l.level));
-      });
-    }
-
-    if ((/(NP_Basiskart_Svalbard_WMTS_25833|NP_Nordomraadene_WMTS_25833|25833)/).test(path)) {
+    if ((/(WMTS_25833|25833)/).test(path)) {
       crs = self.UTM_33N_CRSFactory();
 
-    } else if ((/(NP_Arktis_WMTS_32661|NP_TopoArktis_UPSN_CLX|32661)/).test(path)) {
+    } else if ((/(WMTS_32661|UPSN|32661)/).test(path)) {
       crs = self.UPSN_CRSFactory();
 
-    } else if ((/NP_Verden_WMTS_53032|53032/).test(path)) {
+    } else if ((/53032/).test(path)) {
       crs = self.WMTS_53032_CRSFactory();
 
-    } else if (/102016/.test(path)) {
-      crs = self.EPSG_102016_CRSFactory();
-
     } else {
-      crs = new L.Proj.CRS("EPSG:4326","+proj=longlat +datum=WGS84 +no_defs");
+      crs = null; //new L.Proj.CRS("EPSG:4326","+proj=longlat +datum=WGS84 +no_defs");
     }
-
     return crs;
   };
 
   // Polar stereographic north / WGS84
   // Projection definition for EPSG:32661 from http://epsg.io/32661.js
+  // http://jsfiddle.net/12c9vheh/22/
   this.UPSN_CRSFactory = function() {
-
-    return new L.Proj.CRS(
-      'EPSG:32661',
-      '+proj=stere +lat_0=90 +lat_ts=90 +lon_0=0 +k=0.994 +x_0=2000000 +y_0=2000000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs ',
-      {
-        transformation: new L.Transformation(1, 5120900, -1, 9998100),
-        resolutions: [
-          21674.7100160867,
-          10837.35500804335,
-          5418.677504021675,
-          2709.3387520108377,
-          1354.6693760054188,
-          677.3346880027094,
-          338.6673440013547,
-          169.33367200067735,
-          84.66683600033868,
-          42.33341800016934
-        ]
-      }
-    );
+    console.log("EPSG:32661 CRS factory");
+    let resolutions = [21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547, 169.33367200067735, 84.66683600033868, 42.33341800016934];
+    let transformation = new L.Transformation(1, 28567900, -1, 32567900);
+    return new L.Proj.CRS('EPSG:32661','+proj=stere +lat_0=90 +lat_ts=90 +lon_0=0 +k=0.994 +x_0=2000000 +y_0=2000000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
+      {transformation, resolutions});
   };
 
   // UTM zone 33N / ETRS89
   // Projection definition for EPSG:25833 from http://epsg.io/25833.js
+  // http://jsfiddle.net/9ozgfLg7/125/
   this.UTM_33N_CRSFactory = function() {
     return new L.Proj.CRS(
       'EPSG:25833',
@@ -137,23 +107,6 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
         transformation: new L.Transformation(1, -21986016.870795302, -1, 21986016.870795317),
         resolutions,
         origin
-      }
-    );
-  };
-
-  this.EPSG_102016_CRSFactory = function () {
-    let resolutions = [43349.4200321734, 21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377];
-    let levels = [0, 1, 2, 3, 4];
-    let origin = [-20004100, 20004100];
-
-    return new L.Proj.CRS(
-      'EPSG:102016', //http://epsg.io/102016.js
-      '+proj=aeqd +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
-      {
-        transformation: new L.Transformation(1, -20004100, -1, 20004100),
-        resolutions,
-        origin,
-        levels
       }
     );
   };

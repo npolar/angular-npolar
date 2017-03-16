@@ -39,8 +39,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       } else if (epsg === 53032) {
         uri += `/Basisdata_Intern/NP_Verden_WMTS_53032/MapServer`;
       } else if (epsg === 4326) {
-        // FIXME Use ESRI?
-        uri += `/Basisdata_Intern/NP_Verden_WMTS_4326/MapServer`;
+        uri = '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
@@ -73,7 +72,6 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
   // Projection definition for EPSG:32661 from http://epsg.io/32661.js
   // http://jsfiddle.net/12c9vheh/22/
   this.UPSN_CRSFactory = function() {
-    console.log("EPSG:32661 CRS factory");
     let resolutions = [21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547, 169.33367200067735, 84.66683600033868, 42.33341800016934];
     let transformation = new L.Transformation(1, 28567900, -1, 32567900);
     return new L.Proj.CRS('EPSG:32661','+proj=stere +lat_0=90 +lat_ts=90 +lon_0=0 +k=0.994 +x_0=2000000 +y_0=2000000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs',
@@ -130,7 +128,9 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     //minZoom: 2,
     continuousWorld: true,
     attribution: null }) {
-
+    if ((/server\.arcgisonline\.com/).test(esriBase)) {
+      config.attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    }
     return new L.esri.tiledMapLayer(config);
   };
 
@@ -141,6 +141,10 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       crs: self.crsFactory(esriBase)
     }, tileLayerConfig = undefined) {
 
+    if (!(mapConfig.crs instanceof L.Proj.CRS)) {
+      delete mapConfig.crs;
+    }
+
     let map = new L.Map(self.element, mapConfig);
     map.addLayer(self.tileLayerFactory(esriBase, tileLayerConfig));
     map.setView([80, 0], 0);
@@ -150,7 +154,6 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
     map.keyboard.disable();
-
 
     return map;
   };

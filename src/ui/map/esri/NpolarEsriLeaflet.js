@@ -1,8 +1,8 @@
 'use strict';
-
 let L = require('leaflet');
-let EsriLeaflet = require('esri-leaflet');
-let Proj4Leaflet = require('proj4leaflet');
+let esri = require('esri-leaflet');
+
+require('proj4leaflet');
 require('leaflet-fullscreen');
 require('leaflet.heat/dist/leaflet-heat');
 
@@ -10,9 +10,8 @@ require('leaflet.heat/dist/leaflet-heat');
 // http://kartena.github.io/Proj4Leaflet/examples/wmts/script.js
 // Using-LDS-XYZ-tile-services-in-Leaflet-and-OpenLayers.pdf
 
-// Inject esri and Proj4Leaflet plugins into Leaflet's L
-L.esri = EsriLeaflet;
-L.Proj = Proj4Leaflet;
+// Inject esri into Leaflet's L
+L.esri = esri;
 L.Icon.Default.imagePath = '/assets/images';
 
 let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
@@ -94,7 +93,9 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   // ESRI:53032
   // Sphere Azimuthal Equidistant
+  // WARNING
   this.WMTS_53032_CRSFactory = function () {
+    console.warn('Do not use, will offset positions, see: https://osgeo-org.atlassian.net/browse/GEOS-7778');
     let resolutions = [173397.6801286936, 86698.8400643468, 43349.4200321734, 21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547];
     let origin = [-21986016.870795302, 21986016.870795317];
 
@@ -154,6 +155,8 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
     map.keyboard.disable();
+
+    console.log('NpolarEsriLeaflet.mapFactory L.version', L.version);
 
     return map;
   };

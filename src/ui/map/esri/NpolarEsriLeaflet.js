@@ -111,7 +111,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
-      console.log('epsg', epsg, '->', uri);
+      console.debug('epsg', epsg, '->', uri);
     }
     return uri;
   };
@@ -235,7 +235,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     map.scrollWheelZoom.disable();
     map.keyboard.disable();
 
-    console.log('NpolarEsriLeaflet.mapFactory L.version', L.version);
+    console.debug('NpolarEsriLeaflet.mapFactory L.version', L.version);
 
     return map;
   };

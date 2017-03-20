@@ -25,20 +25,89 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   this.base = '//geodata.npolar.no/arcgis/rest/services';
 
-  this.uri = function(arg={ epsg: EPSG }) {
+  this.configFor = (area='Svalbard', epsg, zoom, view, element='npolar-esri-leaflet-map') => {
+
+    switch (area) {
+      case 'Arktis':
+        epsg = 32661;
+        zoom = 2;
+        area = null;
+        view = [75, 0];
+        break;
+
+      case 'Svalbard':
+        epsg = 25833;
+        zoom = 9;
+        area = 'Svalbard';
+        view = [77.98455, 18.477247];
+        break;
+
+      case 'Jan Mayen':
+        epsg = 25833;
+        zoom = 9;
+        area = 'Jan Mayen';
+        view = [70.98455, -8.477247];
+        break;
+
+      case 'Antarktis':
+      case 'Dronning Maud Land':
+        epsg = 3031;
+        zoom = 1;
+        area = 'Dronning Maud Land';
+        view = [-90, 0];
+        break;
+
+      case 'Peter I Øy':
+        epsg = 4326;
+        zoom = 12;
+        area = 'Peter I Øy';
+        view = [-68.82667, -90.721664];
+        break;
+
+      case 'Bouvetøya':
+        epsg = 4326;
+        zoom = 10;
+        area = 'Bouvetøya';
+        view = [-54.407, 3.3033333];
+        break;
+
+      default:
+        epsg = 4326;
+        zoom = 3;
+        area = 'World';
+        view = [0,0];
+    }
+    let config = { area, epsg, zoom, view, element };
+    return config;
+  };
+
+  self.mapFor = (area, config=self.configFor(area)) => {
+    return self.mapFactory(self.uri(config));
+  };
+
+  this.uri = function(arg={ epsg: EPSG, area: "Svalbard" }) {
     let uri = self.base.replace(/\/$/, '');
 
     if (arg && arg.epsg) {
       let epsg = parseInt(arg.epsg);
+      let area = arg.area;
 
       if (epsg === 25833) {
-        uri += `/Basisdata/NP_Basiskart_Svalbard_WMTS_25833/MapServer`;
+        if (area === "Svalbard") {
+          uri += `/Basisdata/NP_Basiskart_Svalbard_WMTS_25833/MapServer`;
+        } else if (area === "Jan Mayen") {
+          uri += `/Basisdata/NP_Basiskart_JanMayen_WMTS_25833/MapServer`;
+        }
       } else if (epsg === 32661) {
         uri += `/Basisdata_Intern/NP_Arktis_WMTS_32661/MapServer`;
       } else if (epsg === 53032) {
         uri += `/Basisdata_Intern/NP_Verden_WMTS_53032/MapServer`;
       } else if (epsg === 4326) {
         uri = '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+      } else if (epsg === 3031) {
+        uri += '/Basisdata_Intern/NP_Antarktis_WMTS_3031/MapServer';
+        //uri = '//maps.ngdc.noaa.gov/arcgis/rest/services/antarctic/antarctic_basemap/MapServer';
+        //uri = '//services.arcgisonline.com/arcgis/rest/services/Polar/Antarctic_Imagery/MapServer';
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
@@ -60,6 +129,16 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
     } else if ((/53032/).test(path)) {
       crs = self.WMTS_53032_CRSFactory();
+
+    } else if (/Antarctic_Imagery|3031/.test(path)) {
+      // arcgis let resolutions = [238810.81335399998, 119405.40667699999, 59702.70333849987, 29851.351669250063, 14925.675834625032, 7462.837917312516, 3731.4189586563907, 1865.709479328063, 932.8547396640315, 466.42736983214803, 233.21368491607402, 116.60684245803701, 58.30342122888621, 29.151710614575396, 14.5758553072877, 7.28792765351156, 3.64396382688807, 1.82198191331174, 0.910990956788164, 0.45549547826179, 0.227747739130895, 0.113873869697739, 0.05693693484887, 0.028468467424435];
+      // nooa let resolutions = [67733.46880027094, 33866.73440013547, 16933.367200067736, 8466.683600033868, 4233.341800016934, 2116.670900008467, 1058.3354500042335, 529.1677250021168, 264.5838625010584];
+      let resolutions = [21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547, 169.33367200067735, 84.66683600033868, 42.33341800016934];
+      crs = new L.Proj.CRS('EPSG:3031', '+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs', {
+        resolutions,
+        origin: [-28567900,32567900]
+      });
+
 
     } else {
       crs = null; //new L.Proj.CRS("EPSG:4326","+proj=longlat +datum=WGS84 +no_defs");

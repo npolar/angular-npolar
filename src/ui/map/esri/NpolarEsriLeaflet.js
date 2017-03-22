@@ -19,6 +19,8 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   let self = this;
 
+  this.L = () => { return L; };
+
   const EPSG = 4326;
 
   this.element = 'npolar-esri-leaflet-map'; // The map's html element @id
@@ -51,10 +53,10 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
       case 'Antarktis':
       case 'Dronning Maud Land':
-        epsg = 3031;
-        zoom = 1;
+        epsg = 4326;
+        zoom = 4;
         area = 'Dronning Maud Land';
-        view = [-90, 0];
+        view = [-75, 0];
         break;
 
       case 'Peter I Øy':
@@ -74,7 +76,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       default:
         epsg = 4326;
         zoom = 3;
-        area = 'World';
+        area = null;
         view = [0,0];
     }
     let config = { area, epsg, zoom, view, element };
@@ -106,8 +108,8 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
         uri = '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
       } else if (epsg === 3031) {
         uri += '/Basisdata_Intern/NP_Antarktis_WMTS_3031/MapServer';
-        //uri = '//maps.ngdc.noaa.gov/arcgis/rest/services/antarctic/antarctic_basemap/MapServer';
-        //uri = '//services.arcgisonline.com/arcgis/rest/services/Polar/Antarctic_Imagery/MapServer';
+        // uri = '//maps.ngdc.noaa.gov/arcgis/rest/services/antarctic/antarctic_basemap/MapServer';
+        // uri = '//services.arcgisonline.com/arcgis/rest/services/Polar/Antarctic_Imagery/MapServer/tile/{x}/{y}/{z}';
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
@@ -131,12 +133,20 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       crs = self.WMTS_53032_CRSFactory();
 
     } else if (/Antarctic_Imagery|3031/.test(path)) {
-      // arcgis let resolutions = [238810.81335399998, 119405.40667699999, 59702.70333849987, 29851.351669250063, 14925.675834625032, 7462.837917312516, 3731.4189586563907, 1865.709479328063, 932.8547396640315, 466.42736983214803, 233.21368491607402, 116.60684245803701, 58.30342122888621, 29.151710614575396, 14.5758553072877, 7.28792765351156, 3.64396382688807, 1.82198191331174, 0.910990956788164, 0.45549547826179, 0.227747739130895, 0.113873869697739, 0.05693693484887, 0.028468467424435];
-      // nooa let resolutions = [67733.46880027094, 33866.73440013547, 16933.367200067736, 8466.683600033868, 4233.341800016934, 2116.670900008467, 1058.3354500042335, 529.1677250021168, 264.5838625010584];
+      // arcgis
+      // let resolutions = [238810.81335399998, 119405.40667699999, 59702.70333849987, 29851.351669250063, 14925.675834625032, 7462.837917312516, 3731.4189586563907, 1865.709479328063, 932.8547396640315, 466.42736983214803, 233.21368491607402, 116.60684245803701, 58.30342122888621, 29.151710614575396, 14.5758553072877, 7.28792765351156, 3.64396382688807, 1.82198191331174, 0.910990956788164, 0.45549547826179, 0.227747739130895, 0.113873869697739, 0.05693693484887, 0.028468467424435];
+      // let origin = [-33699550.99203,33699551.01703];
+
+      // nooa
+      // let resolutions = [67733.46880027094, 33866.73440013547, 16933.367200067736, 8466.683600033868, 4233.341800016934, 2116.670900008467, 1058.3354500042335, 529.1677250021168, 264.5838625010584];
+      //
+
+      // npolar
       let resolutions = [21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547, 169.33367200067735, 84.66683600033868, 42.33341800016934];
-      crs = new L.Proj.CRS('EPSG:3031', '+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs', {
+      let origin = [-28567900,32567900];
+      crs = new L.Proj.CRS('EPSG:3031', '+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs', {
         resolutions,
-        origin: [-28567900,32567900]
+        origin
       });
 
 
@@ -172,7 +182,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
   // ESRI:53032
   // Sphere Azimuthal Equidistant
-  // WARNING
+  // WARNING: https://osgeo-org.atlassian.net/browse/GEOS-7778
   this.WMTS_53032_CRSFactory = function () {
     console.warn('Do not use, will offset positions, see: https://osgeo-org.atlassian.net/browse/GEOS-7778');
     let resolutions = [173397.6801286936, 86698.8400643468, 43349.4200321734, 21674.7100160867, 10837.35500804335, 5418.677504021675, 2709.3387520108377, 1354.6693760054188, 677.3346880027094, 338.6673440013547];
@@ -227,7 +237,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
     let map = new L.Map(self.element, mapConfig);
     map.addLayer(self.tileLayerFactory(esriBase, tileLayerConfig));
-    map.setView([80, 0], 0);
+    map.setView([0, 0], 0);
 
     // Disable zoom handlers.
     map.touchZoom.disable();

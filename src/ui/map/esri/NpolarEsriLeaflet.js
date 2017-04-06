@@ -14,7 +14,7 @@ require('leaflet.heat/dist/leaflet-heat');
 L.esri = esri;
 L.Icon.Default.imagePath = '/assets/images';
 
-let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
+let NpolarEsriLeaflet = function(NpolarMessage) {
   'ngInject';
 
   let self = this;
@@ -35,15 +35,16 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
 
     switch (area) {
       case 'Arktis':
+      case 'Arctic':
         epsg = 32661;
         zoom = 2;
-        area = null;
+        area = 'Arctic';
         view = [75, 0];
         break;
 
       case 'Svalbard':
         epsg = 25833;
-        zoom = 9;
+        zoom = 10;
         area = 'Svalbard';
         view = [77.98455, 18.477247];
         break;
@@ -56,6 +57,13 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
         break;
 
       case 'Antarktis':
+      case 'Antarctica':
+        epsg = 3031;
+        zoom = 11;
+        area = 'Antarctica';
+        view = [-90, 0];
+        break;
+
       case 'Dronning Maud Land':
         epsg = 3031;
         zoom = 6;
@@ -95,11 +103,9 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     let attr = `<a href="http://npolar.no">Norsk Polarinstitutt</a>`;
     if ((/server\.arcgisonline\.com/).test(uri)) {
       attr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
-    } else if ((/NP_Satellitt|tmp_dmlgeologywork/).test(uri)) {
+    } else if ((/NP_Satellitt/).test(uri)) {
       attr = [attr, `<a href="https://landsat.usgs.gov/ ">USGS</a>`, `<a href="https://landsat.gsfc.nasa.gov/">NASA Landsat</a>`];
     }
-
-    console.debug(attr, uri);
     return attr;
   };
 
@@ -124,8 +130,12 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       } else if (epsg === 3857) {
         uri = '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
       } else if (epsg === 3031) {
-        uri = '//geodata.npolar.no/arcgis/rest/services/Basisdata_Intern/NP_Satellitt_DronningMaudLand_WMTS_3031/MapServer';
-        // uri = '//services.arcgisonline.com/arcgis/rest/services/Polar/Antarctic_Imagery/MapServer/tile/{z}/{y}/{x}';
+        if (area === "Dronning Maud Land") {
+          uri = '//geodata.npolar.no/arcgis/rest/services/Basisdata_Intern/NP_Satellitt_DronningMaudLand_WMTS_3031/MapServer';
+        } else {
+          uri = '//services.arcgisonline.com/arcgis/rest/services/Polar/Antarctic_Imagery/MapServer/tile/{z}/{y}/{x}';
+        }
+
       } else {
         console.error(`Unsupported EPSG ${epsg}`);
       }
@@ -137,9 +147,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
   // @return instance of Proj4Leaflet CRS (L.Proj.CRS)
   this.crsFactory = function(uri) {
     let crs;
-    let path = uri; //.split(`${self.base}`)[1];
-    console.log('crsFactory path', path);
-    //path = 'tmp_dmlgeologywork';
+    let path = uri;
 
     if ((/(WMTS_25833|25833)/).test(path)) {
       crs = self.UTM_33N_CRSFactory();
@@ -151,24 +159,23 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
       crs = self.WMTS_53032_CRSFactory();
 
     } else if (/Antarctic_Imagery|3031/.test(path)) {
-      // arcgis
-      //let resolutions = [238810.81335399998, 119405.40667699999, 59702.70333849987, 29851.351669250063, 14925.675834625032, 7462.837917312516, 3731.4189586563907, 1865.709479328063, 932.8547396640315, 466.42736983214803, 233.21368491607402, 116.60684245803701, 58.30342122888621, 29.151710614575396, 14.5758553072877, 7.28792765351156, 3.64396382688807, 1.82198191331174, 0.910990956788164, 0.45549547826179, 0.227747739130895, 0.113873869697739, 0.05693693484887, 0.028468467424435];
-      //let transformation = new L.Transformation(1, 33699550.99203, -1, 33699551.01703);
-
-      // npolar
-      let resolutions = [2116.670900008467, 1058.3354500042335, 529.1677250021168, 264.5838625010584, 132.2919312505292, 66.1459656252646, 26.458386250105836, 15.000052916772502, 6.614596562526459];
-      let transformation = new L.Transformation(1, 30636100, -1, 30636100);
+      let resolutions;
+      let transformation;
+      if (area === 'Dronning Maud Land') {
+        resolutions = [2116.670900008467, 1058.3354500042335, 529.1677250021168, 264.5838625010584, 132.2919312505292, 66.1459656252646, 26.458386250105836, 15.000052916772502, 6.614596562526459];
+        transformation = new L.Transformation(1, 30636100, -1, 30636100);
+      } else {
+        resolutions = [238810.81335399998, 119405.40667699999, 59702.70333849987, 29851.351669250063, 14925.675834625032, 7462.837917312516, 3731.4189586563907, 1865.709479328063, 932.8547396640315, 466.42736983214803, 233.21368491607402, 116.60684245803701, 58.30342122888621, 29.151710614575396, 14.5758553072877, 7.28792765351156, 3.64396382688807, 1.82198191331174, 0.910990956788164, 0.45549547826179, 0.227747739130895, 0.113873869697739, 0.05693693484887, 0.028468467424435];
+        transformation = new L.Transformation(1, 33699550.99203, -1, 33699551.01703);
+      }
       let crsConfig = {
         resolutions,
         transformation
       };
       crs = new L.Proj.CRS('EPSG:3031', '+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs', crsConfig);
-
-
     } else {
       crs = null; //new L.Proj.CRS("EPSG:4326","+proj=longlat +datum=WGS84 +no_defs");
     }
-    console.debug(crs);
     return crs;
   };
 
@@ -215,7 +222,7 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     );
   };
 
-  this.esriBaseUri = function(arg={ epsg: EPSG }) {
+  this.esriBaseUri = function(arg={ epsg: self.epsg }) {
     return self.uri(arg);
   };
 
@@ -248,11 +255,9 @@ let NpolarEsriLeaflet = function($http, $location, NpolarMessage) {
     if (!(mapConfig.crs instanceof L.Proj.CRS)) {
       delete mapConfig.crs;
     }
-
     let map = new L.Map(self.element, mapConfig);
     map.addLayer(self.tileLayerFactory(esriBase, tileLayerConfig));
-    //map.setView([0, 0], 0);
-
+    
     // Disable zoom handlers.
     map.touchZoom.disable();
     map.doubleClickZoom.disable();

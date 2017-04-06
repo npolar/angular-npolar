@@ -1,6 +1,6 @@
 {
   "name": "angular-npolar",
-  "version": "2.8.4",
+  "version": "2.8.5",
   "description": "[angular-npolar](https://github.com/npolar/angular-npolar) simplifies development of Angular web apps driven by the [Npolar API](http://api.npolar.no/).",
   "main": "src/index.js",
   "scripts": {

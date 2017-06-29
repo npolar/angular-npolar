@@ -21,14 +21,13 @@
     "angular-utf8-base64": "*",
     "language-tags": "^1.0.3",
     "special-entities": "^1.0.2",
-    "leaflet": "^1",
+    "leaflet": ">= 1.0 <1.1",
     "leaflet-draw": "*",
     "leaflet-fullscreen": "^1",
     "leaflet.heat": "*",
     "esri-leaflet": "^2",
     "proj4": "^2",
-    "proj4leaflet": "^1",
-    "angular-leaflet-directive": "*"
+    "proj4leaflet": "^1"
   },
   "author": "",
   "license": "MIT",
